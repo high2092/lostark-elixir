@@ -37,7 +37,10 @@ class CPU {
   pickOption(id: number) {
     const idx = this.elixirs.findIndex((elixir) => elixir.id === id);
     if (idx === null) throw new Error('CPU.pickOption: could not find id');
-    return this.elixirs.splice(idx, 1);
+    const [elixir] = this.elixirs.splice(idx, 1);
+    const { part } = elixir;
+    if (part) this.elixirs = this.elixirs.filter((elixir) => elixir.part !== part);
+    return elixir;
   }
 }
 
