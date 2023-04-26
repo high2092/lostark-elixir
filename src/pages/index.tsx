@@ -12,21 +12,15 @@ const MaterialSectionText = {
   SELECT_OPTION: '엘릭서에 정제할 효과를 위 항목에서 선택하세요.',
 };
 
-interface ElixirOption {
-  name: string;
-  type?: '혼돈' | '질서';
-  part?: '투구' | '상의' | '하의' | '어깨' | '장갑';
-}
-
 interface Sage {
   SELECT_OPTION_DIALOGUE_END: string;
 }
 
-const elixirOptions: ElixirOption[] = [{ name: '폭발물 달인' }, { name: '선봉대', type: '혼돈', part: '장갑' }, { name: '지능' }];
+const elixirOptions: Elixir[] = [{ name: '폭발물 달인' }, { name: '선봉대', type: '혼돈', part: '장갑' }, { name: '지능' }];
 const sages: Sage[] = [{ SELECT_OPTION_DIALOGUE_END: '효과를 정제하는건 어때?' }, { SELECT_OPTION_DIALOGUE_END: '효과를 정제하는건 어떤가?' }, { SELECT_OPTION_DIALOGUE_END: '효과를 정제하는건 어때요?' }];
 
 interface AdviceTextProps {
-  elixirOption: ElixirOption;
+  elixirOption: Elixir;
   sage: Sage;
 }
 const AdviceText = ({ elixirOption, sage }: AdviceTextProps) => {
