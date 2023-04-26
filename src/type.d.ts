@@ -4,3 +4,7 @@ interface Elixir {
   part?: '투구' | '상의' | '하의' | '어깨' | '장갑';
   odds: number;
 }
+
+interface ElixirInstance extends Elixir {
+  id: number;
+}

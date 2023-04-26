@@ -2,10 +2,6 @@ import { ELIXIRS } from './database/elixir';
 
 const ADVICE_COUNT = 3;
 
-interface ElixirInstance extends Elixir {
-  id: number;
-}
-
 class CPU {
   elixirs: ElixirInstance[];
   oddsSum = ELIXIRS.reduce((acc, { odds }) => {
