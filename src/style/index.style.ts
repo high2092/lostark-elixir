@@ -11,6 +11,8 @@ export const Home = styled.div`
 
   display: flex;
   flex-direction: column;
+
+  user-select: none;
 `;
 
 export const ElixirOptionSection = styled.div`
@@ -46,11 +48,12 @@ export const AdviceSection = styled.div`
 `;
 
 const ADVICE_MARGIN_REM = 0.6;
-export const Advice = styled.div`
+export const Advice = styled.div<{ selected: boolean }>`
   flex: 1;
   height: 4.5rem;
 
   background-color: beige;
+  ${({ selected }) => (selected ? 'outline: 3px solid #FF8400;' : '')}
 
   margin: ${ADVICE_MARGIN_REM}rem ${ADVICE_MARGIN_REM / 2}rem;
 

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import * as S from '../style/index.style';
 
 const ELIXIR_OPTION_COUNT = 5;
@@ -51,6 +52,12 @@ const Gold = ({ amount }: { amount: number }) => {
 };
 
 const Home = () => {
+  const [selectedAdviceIndex, setSelectedAdviceIndex] = useState<number>();
+  const handleAdviceClick = (e: React.MouseEvent, idx: number) => {
+    setSelectedAdviceIndex(idx);
+    new Audio('sound/click.mp3').play();
+  };
+
   return (
     <S.Home>
       <S.MainSection>
@@ -61,7 +68,7 @@ const Home = () => {
         </S.ElixirOptionSection>
         <S.AdviceSection>
           {Array.from({ length: ADVICE_COUNT }).map((advice, idx) => (
-            <S.Advice>
+            <S.Advice onClick={(e) => handleAdviceClick(e, idx)} selected={selectedAdviceIndex === idx}>
               <AdviceText elixirOption={elixirOptions[idx]} sage={sages[idx]} />
             </S.Advice>
           ))}
