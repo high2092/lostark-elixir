@@ -41,6 +41,15 @@ const AdviceText = ({ elixirOption, sage }: AdviceTextProps) => {
   );
 };
 
+const Gold = ({ amount }: { amount: number }) => {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center' }}>
+      <span>{amount}</span>
+      <img src="image/gold.png" style={{ width: '16px', height: '16px' }} />
+    </div>
+  );
+};
+
 const Home = () => {
   return (
     <S.Home>
@@ -68,7 +77,7 @@ const Home = () => {
               <div style={{ padding: '1rem' }}>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                   <div style={{ flex: 1 }}>
-                    <img style={{ width: '30px', height: '30px' }} />
+                    <img style={{ width: '30px', height: '30px', background: '#0b2447' }} src="image/material.png" />
                   </div>
                   <div style={{ flex: 4, padding: '0.5rem' }}>안정된 연성 촉매</div>
                   <div style={{ flex: 4, padding: '0.5rem', textAlign: 'right' }}>413 / 5</div>
@@ -81,11 +90,11 @@ const Home = () => {
               <div style={{ padding: '1rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                   <div>정제 비용</div>
-                  <div>280</div>
+                  <Gold amount={280} />
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                   <div>소지 금액</div>
-                  <div>26,741</div>
+                  <Gold amount={26741} />
                 </div>
               </div>
             </S.MaterialInfoSubSection>

@@ -24,7 +24,7 @@ export const ElixirOptionSection = styled.div`
 
 export const ElixirOption = styled.div`
   width: 23vw;
-  height: 5rem;
+  height: 9vh;
 
   background-color: blueviolet;
 
@@ -83,7 +83,8 @@ export const MainSection = styled.div`
   width: 100%;
   height: 80%;
 
-  background-color: blue;
+  background: url('image/background.png');
+  background-size: cover;
 `;
 
 export const DescriptionSection = styled.div`
