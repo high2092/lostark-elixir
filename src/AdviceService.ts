@@ -44,7 +44,16 @@ class AdviceService {
 
   pickAdvice(advice: IAdviceInstance, beforeElixirs: ElixirInstance[], optionIdx: number) {
     try {
-      return { ok: true, data: advice.execute(beforeElixirs, optionIdx) };
+      let before = beforeElixirs.map((elixir) => elixir.level);
+      const result = advice.execute(beforeElixirs, optionIdx);
+
+      for (let i = 0; i < OPTION_COUNT; i++) {
+        const diff = result[i].level - before[i];
+        if (diff > 0) result[i].statusText = '연성 단계 상승';
+        else if (diff < 0) result[i].statusText = '연성 단계 하락';
+        else result[i].statusText = null;
+      }
+      return { ok: true, data: result };
     } catch {
       return { ok: false, data: advice, statusText: '엘릭서를 선택해주세요.' };
     }
