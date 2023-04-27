@@ -9,7 +9,7 @@ class CPU {
   }, 0);
 
   init() {
-    this.elixirs = ELIXIRS.map((elixir, idx) => ({ ...elixir, id: idx }));
+    this.elixirs = ELIXIRS.map((elixir, idx) => ({ ...elixir, id: idx, level: 0, locked: false }));
   }
 
   drawOptions(count?: number) {

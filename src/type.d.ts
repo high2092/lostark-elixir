@@ -7,4 +7,22 @@ interface Elixir {
 
 interface ElixirInstance extends Elixir {
   id: number;
+  level: number;
+  locked: boolean;
+}
+
+type ChoiceEffect = (optionIdx: number) => ElixirInstance[];
+type AdviceResult = ElixirInstance[] | ChoiceEffect;
+interface AdviceParameter {
+  optionIdx?: number;
+}
+
+interface Advice {
+  name: string;
+  effect: (beforeElixirs: ElixirInstance[], parameter?: AdviceParameter) => () => AdviceResult;
+  odds: number;
+}
+
+interface IAdviceInstance extends Advice {
+  execute: () => AdviceResult;
 }
