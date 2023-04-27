@@ -1,7 +1,8 @@
+/** @jsxImportSource @emotion/react */
 import { useEffect, useState } from 'react';
 import * as S from '../style/index.style';
 import { cpu } from '../CPU';
-import { ADVICE_COUNT, ALCHEMY_CHANCE } from '../constants';
+import { ADVICE_COUNT, ALCHEMY_CHANCE, CENTERED_FLEX_STYLE, MAX_ACTIVE } from '../constants';
 import { adviceService } from '../AdviceService';
 
 const REFINE_BUTTON_TEXT = '효과 정제';
@@ -30,7 +31,7 @@ interface ElixirOptionDialogueProps {
 const SelectOptionDialogue = ({ SelectOption: elixirOption, sage }: ElixirOptionDialogueProps) => {
   const { name, type, part } = elixirOption;
   return (
-    <div style={{ height: '100%', padding: '1rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.8rem' }}>
+    <div style={{ height: '100%', padding: '1rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center' }}>
       <div>
         <span>{`${name}${type ? ` (${type})` : ''}`}</span>
         <span>{` 효과를 정제하는건 ${sage.SELECT_OPTION_DIALOGUE_END}`}</span>
@@ -91,7 +92,7 @@ const Home = () => {
   }, [alchemyChance]);
 
   const handleRefineButtonClick = () => {
-    if (!selectedAdviceIndex) {
+    if (selectedAdviceIndex === null) {
       alert('조언을 선택해주세요.');
       return;
     }
@@ -127,11 +128,24 @@ const Home = () => {
     <S.Home>
       <S.MainSection>
         <S.ElixirOptionSection>
-          {selectedOptions.map(({ name, level, hitRate, bigHitRate }, idx) => (
+          {selectedOptions.map(({ name, part, level, hitRate, bigHitRate }, idx) => (
             <S.ElixirOption onClick={(e) => handleElixirOptionClick(e, idx)} selected={selectedOptionIndex === idx}>
-              <div>{`${name} (${level} 활성화)`}</div>
-              <div>{`선택 확률: ${hitRate}%`}</div>
-              <div>{`대성공 확률: ${bigHitRate}%`}</div>
+              <div css={[CENTERED_FLEX_STYLE, { flex: 2 }]}>{`${hitRate}%`}</div>
+              <div css={{ flex: 7, paddingRight: '1rem', display: 'flex', justifyContent: 'center', flexDirection: 'column' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span>{name}</span>
+                  <span>{`(${part ? `${part} 전용` : '공용'})`}</span>
+                </div>
+                <div style={{ display: 'flex' }}>
+                  {Array.from({ length: level }).map((_, idx) => {
+                    return <div key={`${name}-actived-${idx}`}>■</div>;
+                  })}
+                  {Array.from({ length: MAX_ACTIVE - level }).map((_, idx) => {
+                    return <div key={`${name}-inactived-${idx}`}>□</div>;
+                  })}
+                </div>
+                <div style={{ textAlign: 'right' }}>{`${bigHitRate}%`}</div>
+              </div>
             </S.ElixirOption>
           ))}
           {Array.from({ length: OPTION_COUNT - selectedOptions.length }).map((_) => (
@@ -180,6 +194,7 @@ const Home = () => {
             </S.MaterialInfoSubSection>
           </S.MaterialInfo>
         </S.MaterialSection>
+        <div>{`연성 ${alchemyChance}회 가능`}</div>
         <S.RefineButton onClick={handleRefineButtonClick}>{REFINE_BUTTON_TEXT}</S.RefineButton>
       </S.DescriptionSection>
     </S.Home>

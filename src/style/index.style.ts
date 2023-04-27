@@ -33,6 +33,9 @@ export const ElixirOption = styled.div<{ selected?: boolean }>`
   margin: 1.5rem;
 
   ${({ selected }) => (selected ? 'outline: 3px solid #FF8400;' : '')}
+
+  display: flex;
+  align-content: center;
 `;
 
 const ADVICE_SECTION_WIDTH_VW = 75;
@@ -63,6 +66,8 @@ export const Advice = styled.div<{ selected: boolean }>`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+
+  font-size: 0.8rem;
 `;
 
 const ADVICE_REROLL_BUTTON_FLEX_RATIO = 1;
