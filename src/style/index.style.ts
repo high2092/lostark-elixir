@@ -53,11 +53,12 @@ export const AdviceSection = styled.div`
 `;
 
 const ADVICE_MARGIN_REM = 0.6;
-export const Advice = styled.div<{ selected: boolean }>`
+export const Advice = styled.div<{ selected: boolean; disabled: boolean }>`
   flex: 1;
   height: 4.5rem;
 
-  background-color: beige;
+  background-color: ${({ disabled }) => (disabled ? 'grey' : 'beige')};
+
   ${({ selected }) => (selected ? 'outline: 3px solid #FF8400;' : '')}
 
   margin: ${ADVICE_MARGIN_REM}rem ${ADVICE_MARGIN_REM / 2}rem;
@@ -139,10 +140,10 @@ export const MaterialInfoSubSection = styled.div`
   justify-content: center;
 `;
 
-export const RefineButton = styled.div`
+export const RefineButton = styled.div<{ disabled: boolean }>`
   padding: 0.7rem 2.1rem;
 
-  background-color: aliceblue;
+  background-color: ${({ disabled }) => (disabled ? 'grey' : 'aliceblue')};
 `;
 
 export const VerticalRule = styled.div<{ height?: string }>`

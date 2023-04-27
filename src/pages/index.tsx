@@ -4,8 +4,21 @@ import * as S from '../style/index.style';
 import { cpu } from '../CPU';
 import { ADVICE_COUNT, ALCHEMY_CHANCE, CENTERED_FLEX_STYLE, MAX_ACTIVE } from '../constants';
 import { adviceService } from '../AdviceService';
+import { alchemyService } from '../AlchemyService';
 
-const REFINE_BUTTON_TEXT = '효과 정제';
+const AlchemyStatus = {
+  REFINE: 'refine', // 정제
+  ADVICE: 'advice', // 조언
+  ALCHEMY: 'alchemy', // 연성
+} as const;
+
+type AlchemyStatus = (typeof AlchemyStatus)[keyof typeof AlchemyStatus];
+
+const ButtonTexts = {
+  [AlchemyStatus.REFINE]: '효과 정제',
+  [AlchemyStatus.ADVICE]: '조언 선택',
+  [AlchemyStatus.ALCHEMY]: '연성하기',
+};
 
 const getAdviceRerollButtonText = (chance: number) => `다른 조언 보기 (${chance}회 남음)`;
 
@@ -64,6 +77,7 @@ const OPTION_COUNT = 5;
 const Home = () => {
   const [selectedAdviceIndex, setSelectedAdviceIndex] = useState<number>(null);
   const handleAdviceClick = (e: React.MouseEvent, idx: number) => {
+    if (alchemyStatus === AlchemyStatus.ALCHEMY || getDisabled()) return;
     setSelectedAdviceIndex(idx);
     new Audio('sound/click.mp3').play();
   };
@@ -73,17 +87,30 @@ const Home = () => {
   const [alchemyChance, setAlchemyChance] = useState(ALCHEMY_CHANCE);
   const [adviceOptions, setAdviceOptions] = useState<IAdviceInstance[]>([]);
   const [selectedOptionIndex, setSelectedOptionIndex] = useState<number>(null);
+  const [alchemyStatus, setAlchemyStatus] = useState<AlchemyStatus>();
+
+  useEffect(() => {
+    switch (alchemyStatus) {
+      case AlchemyStatus.REFINE: {
+        setElixirOptions(cpu.drawOptions());
+        break;
+      }
+      case AlchemyStatus.ADVICE: {
+        setAdviceOptions(adviceService.drawAdvices(selectedOptions));
+        break;
+      }
+    }
+  }, [alchemyStatus]);
 
   useEffect(() => {
     cpu.init();
+    setAlchemyStatus(AlchemyStatus.REFINE);
   }, []);
 
   useEffect(() => {
-    if (selectOptionChance) setElixirOptions(cpu.drawOptions());
-    else {
-      setElixirOptions([]);
-      setAdviceOptions(adviceService.drawAdvices(selectedOptions));
-    }
+    if (selectOptionChance === OPTION_COUNT) return;
+    setElixirOptions(cpu.drawOptions());
+    if (selectOptionChance === 0) setAlchemyStatus(AlchemyStatus.ADVICE);
   }, [selectOptionChance]);
 
   useEffect(() => {
@@ -92,27 +119,39 @@ const Home = () => {
   }, [alchemyChance]);
 
   const handleRefineButtonClick = () => {
-    if (selectedAdviceIndex === null) {
+    if (alchemyChance <= 0) return;
+    if (selectedAdviceIndex === null && alchemyStatus !== AlchemyStatus.ALCHEMY) {
       alert('조언을 선택해주세요.');
       return;
     }
 
-    if (selectOptionChance) {
-      const id = elixirOptions[selectedAdviceIndex].id;
-      const option = cpu.pickOption(id);
-      setSelectedOptions((selectedOptions) => selectedOptions.concat(option));
-      setSelectOptionChance(selectOptionChance - 1);
-    } else if (alchemyChance) {
-      const advice = adviceOptions[selectedAdviceIndex];
-      const response = adviceService.pickAdvice(advice, { optionIdx: selectedOptionIndex });
-
-      if (!response.ok) {
-        alert(response.statusText);
-        return;
+    switch (alchemyStatus) {
+      case AlchemyStatus.REFINE: {
+        const id = elixirOptions[selectedAdviceIndex].id;
+        const option = cpu.pickOption(id);
+        setSelectedOptions((selectedOptions) => selectedOptions.concat(option));
+        setSelectOptionChance(selectOptionChance - 1);
+        break;
       }
+      case AlchemyStatus.ADVICE: {
+        const advice = adviceOptions[selectedAdviceIndex];
+        const response = adviceService.pickAdvice(advice, { optionIdx: selectedOptionIndex });
 
-      setSelectedOptions(response.data as ElixirInstance[]);
-      setAlchemyChance(alchemyChance - 1);
+        if (!response.ok) {
+          alert(response.statusText);
+          return;
+        }
+
+        setSelectedOptions(response.data as ElixirInstance[]);
+        setAlchemyStatus(AlchemyStatus.ALCHEMY);
+        break;
+      }
+      case AlchemyStatus.ALCHEMY: {
+        alchemyService.alchemy(selectedOptions);
+        setAlchemyChance(alchemyChance - 1);
+        setAlchemyStatus(AlchemyStatus.ADVICE);
+        break;
+      }
     }
 
     setSelectedAdviceIndex(null);
@@ -120,8 +159,13 @@ const Home = () => {
   };
 
   const handleElixirOptionClick = (e: React.MouseEvent, idx: number) => {
+    if (alchemyStatus === AlchemyStatus.ALCHEMY || getDisabled()) return;
     setSelectedOptionIndex(idx);
     new Audio('sound/click.mp3').play();
+  };
+
+  const getDisabled = () => {
+    return alchemyChance <= 0;
   };
 
   return (
@@ -154,9 +198,9 @@ const Home = () => {
         </S.ElixirOptionSection>
         <S.AdviceSection>
           {Array.from({ length: ADVICE_COUNT }).map((_, idx) => (
-            <S.Advice onClick={(e) => handleAdviceClick(e, idx)} selected={selectedAdviceIndex === idx}>
-              {elixirOptions.length !== 0 && <SelectOptionDialogue SelectOption={elixirOptions[idx]} sage={sages[idx]} />}
-              {adviceOptions.length !== 0 && <AdviceDialogue advice={adviceOptions[idx]} sage={sages[idx]} />}
+            <S.Advice onClick={(e) => handleAdviceClick(e, idx)} selected={selectedAdviceIndex === idx} disabled={alchemyStatus === AlchemyStatus.ALCHEMY || getDisabled()}>
+              {alchemyStatus === AlchemyStatus.REFINE && elixirOptions.length && <SelectOptionDialogue SelectOption={elixirOptions[idx]} sage={sages[idx]} />}
+              {alchemyStatus !== AlchemyStatus.REFINE && adviceOptions.length && <AdviceDialogue advice={adviceOptions[idx]} sage={sages[idx]} />}
             </S.Advice>
           ))}
           <S.AdviceRerollButton>{getAdviceRerollButtonText(2)}</S.AdviceRerollButton>
@@ -195,7 +239,9 @@ const Home = () => {
           </S.MaterialInfo>
         </S.MaterialSection>
         <div>{`연성 ${alchemyChance}회 가능`}</div>
-        <S.RefineButton onClick={handleRefineButtonClick}>{REFINE_BUTTON_TEXT}</S.RefineButton>
+        <S.RefineButton onClick={handleRefineButtonClick} disabled={getDisabled()}>
+          {ButtonTexts[alchemyStatus]}
+        </S.RefineButton>
       </S.DescriptionSection>
     </S.Home>
   );
