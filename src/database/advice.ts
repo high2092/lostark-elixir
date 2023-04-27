@@ -52,8 +52,7 @@ export const ADVICES: Advice[] = [
       () => {
         const result = [...beforeElixirs];
         const diff = Math.floor(Math.random() * 5) - 2;
-        // TODO: 0 밑으로 떨어지지 않게 하기
-        result[optionIdx].level += diff;
+        result[optionIdx].level = Math.max(result[optionIdx].level + diff, 0);
         return result;
       },
     odds: 1,
@@ -65,7 +64,7 @@ export const ADVICES: Advice[] = [
       () => {
         const result = [...beforeElixirs];
         const diff = Math.floor(Math.random() * 4) - 1;
-        result[optionIdx].level += diff;
+        result[optionIdx].level = Math.max(result[optionIdx].level + diff, 0);
         return result;
       },
     odds: 1,
@@ -76,7 +75,7 @@ export const ADVICES: Advice[] = [
       return (optionIdx) => {
         const result = [...beforeElixirs];
         const diff = Math.floor(Math.random() * 5) - 2;
-        result[optionIdx].level += diff;
+        result[optionIdx].level = Math.max(result[optionIdx].level + diff, 0);
         return result;
       };
     },
@@ -88,7 +87,7 @@ export const ADVICES: Advice[] = [
       return (optionIdx) => {
         const result = [...beforeElixirs];
         const diff = Math.floor(Math.random() * 4) - 1;
-        result[optionIdx].level += diff;
+        result[optionIdx].level = Math.max(result[optionIdx].level + diff, 0);
         return result;
       };
     },
