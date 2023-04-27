@@ -1,6 +1,7 @@
+import { ADVICE_COUNT, OPTION_COUNT } from './constants';
 import { ELIXIRS } from './database/elixir';
 
-const ADVICE_COUNT = 3;
+const DEFAULT_BIG_HIT_RATE_PERCENT = 10;
 
 class CPU {
   elixirs: ElixirInstance[];
@@ -9,7 +10,7 @@ class CPU {
   }, 0);
 
   init() {
-    this.elixirs = ELIXIRS.map((elixir, idx) => ({ ...elixir, id: idx, level: 0, locked: false }));
+    this.elixirs = ELIXIRS.map((elixir, idx) => ({ ...elixir, id: idx, level: 0, locked: false, hitRate: 100 / OPTION_COUNT, bigHitRate: DEFAULT_BIG_HIT_RATE_PERCENT }));
   }
 
   drawOptions(count?: number) {

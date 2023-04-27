@@ -2,9 +2,6 @@ import { useEffect, useState } from 'react';
 import * as S from '../style/index.style';
 import { cpu } from '../CPU';
 
-const ELIXIR_OPTION_COUNT = 5;
-const ADVICE_COUNT = 3;
-
 const REFINE_BUTTON_TEXT = '효과 정제';
 
 const getAdviceRerollButtonText = (chance: number) => `다른 조언 보기 (${chance}회 남음)`;
@@ -79,8 +76,12 @@ const Home = () => {
     <S.Home>
       <S.MainSection>
         <S.ElixirOptionSection>
-          {selectedOptions.map((elixirOption) => (
-            <S.ElixirOption>{elixirOption.name}</S.ElixirOption>
+          {selectedOptions.map(({ name, level, hitRate, bigHitRate }) => (
+            <S.ElixirOption>
+              <div>{`${name} (${level} 활성화)`}</div>
+              <div>{`선택 확률: ${hitRate}%`}</div>
+              <div>{`대성공 확률: ${bigHitRate}%`}</div>
+            </S.ElixirOption>
           ))}
           {Array.from({ length: OPTION_COUNT - selectedOptions.length }).map((_) => (
             <S.ElixirOption />

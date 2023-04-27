@@ -9,6 +9,8 @@ interface ElixirInstance extends Elixir {
   id: number;
   level: number;
   locked: boolean;
+  hitRate: number;
+  bigHitRate: number;
 }
 
 type ChoiceEffect = (optionIdx: number) => ElixirInstance[];
