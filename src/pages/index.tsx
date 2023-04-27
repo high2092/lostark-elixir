@@ -5,6 +5,7 @@ import { cpu } from '../CPU';
 import { ADVICE_COUNT, ALCHEMY_CHANCE, CENTERED_FLEX_STYLE, MAX_ACTIVE } from '../constants';
 import { adviceService } from '../AdviceService';
 import { alchemyService } from '../AlchemyService';
+import { Activation } from '../components/Activation';
 
 const AlchemyStatus = {
   REFINE: 'refine', // 정제
@@ -180,14 +181,7 @@ const Home = () => {
                   <span>{name}</span>
                   <span>{`(${part ? `${part} 전용` : '공용'})`}</span>
                 </div>
-                <div style={{ display: 'flex' }}>
-                  {Array.from({ length: level }).map((_, idx) => {
-                    return <div key={`${name}-actived-${idx}`}>■</div>;
-                  })}
-                  {Array.from({ length: MAX_ACTIVE - level }).map((_, idx) => {
-                    return <div key={`${name}-inactived-${idx}`}>□</div>;
-                  })}
-                </div>
+                <Activation percentage={level / MAX_ACTIVE} />
                 <div style={{ textAlign: 'right' }}>{`${bigHitRate}%`}</div>
               </div>
             </S.ElixirOption>

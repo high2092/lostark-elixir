@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { DEFAULT_BORDER_RADIUS_PX } from '../constants';
 
 const ADVICE_REROLL_BUTTON_WIDTH_REM = 14;
 const ADVICE_REROLL_BUTTON_MARGIN_LEFT_REM = 10.5 - ADVICE_REROLL_BUTTON_WIDTH_REM / 2;
@@ -28,11 +29,13 @@ export const ElixirOption = styled.div<{ selected?: boolean }>`
   width: 23vw;
   height: 9vh;
 
-  background-color: blueviolet;
+  background-color: #c8b6a6;
 
   margin: 1.5rem;
 
   ${({ selected }) => (selected ? 'outline: 3px solid #FF8400;' : '')}
+
+  border-radius: 2rem ${DEFAULT_BORDER_RADIUS_PX}px ${DEFAULT_BORDER_RADIUS_PX}px 2rem;
 
   display: flex;
   align-content: center;
@@ -62,6 +65,8 @@ export const Advice = styled.div<{ selected: boolean; disabled: boolean }>`
   ${({ selected }) => (selected ? 'outline: 3px solid #FF8400;' : '')}
 
   margin: ${ADVICE_MARGIN_REM}rem ${ADVICE_MARGIN_REM / 2}rem;
+
+  border-radius: ${DEFAULT_BORDER_RADIUS_PX}px;
 
   display: flex;
   flex-direction: column;
@@ -102,7 +107,7 @@ export const DescriptionSection = styled.div`
   width: 100%;
   height: 25%;
 
-  background-color: red;
+  background-color: #a4907c;
 
   display: flex;
   flex-direction: column;

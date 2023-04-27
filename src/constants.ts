@@ -10,3 +10,5 @@ export const CENTERED_FLEX_STYLE = css`
   justify-content: center;
   align-items: center;
 `;
+
+export const DEFAULT_BORDER_RADIUS_PX = 2;
