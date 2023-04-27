@@ -87,7 +87,7 @@ export const ADVICES: Advice[] = [
       return (optionIdx) => {
         const result = [...beforeElixirs];
         const diff = Math.floor(Math.random() * 4) - 1;
-        result[optionIdx].level = Math.max(result[optionIdx].level + diff, 0);
+        result[optionIdx].level += diff;
         return result;
       };
     },

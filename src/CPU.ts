@@ -10,7 +10,7 @@ class CPU {
   }, 0);
 
   init() {
-    this.elixirs = ELIXIRS.map((elixir, idx) => ({ ...elixir, id: idx, level: 0, locked: false, hitRate: 100 / OPTION_COUNT, bigHitRate: DEFAULT_BIG_HIT_RATE_PERCENT }));
+    this.elixirs = ELIXIRS.map((elixir, idx) => ({ ...elixir, id: idx, level: 0, locked: false, hitRate: 100 / OPTION_COUNT, bigHitRate: DEFAULT_BIG_HIT_RATE_PERCENT, statusText: null }));
   }
 
   drawOptions(count?: number) {

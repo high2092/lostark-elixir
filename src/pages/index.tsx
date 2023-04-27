@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import * as S from '../style/index.style';
 import { cpu } from '../CPU';
 import { ADVICE_COUNT, ALCHEMY_CHANCE, CENTERED_FLEX_STYLE, MAX_ACTIVE } from '../constants';
@@ -89,6 +89,7 @@ const Home = () => {
   const [adviceOptions, setAdviceOptions] = useState<IAdviceInstance[]>([]);
   const [selectedOptionIndex, setSelectedOptionIndex] = useState<number>(null);
   const [alchemyStatus, setAlchemyStatus] = useState<AlchemyStatus>();
+  const statusTextTimeoutRef = useRef<NodeJS.Timeout>();
 
   useEffect(() => {
     switch (alchemyStatus) {
@@ -148,7 +149,7 @@ const Home = () => {
         break;
       }
       case AlchemyStatus.ALCHEMY: {
-        alchemyService.alchemy(selectedOptions);
+        setSelectedOptions(alchemyService.alchemy(selectedOptions));
         setAlchemyChance(alchemyChance - 1);
         setAlchemyStatus(AlchemyStatus.ADVICE);
         break;
@@ -157,6 +158,7 @@ const Home = () => {
 
     setSelectedAdviceIndex(null);
     setSelectedOptionIndex(null);
+    setStatusTextTimeout();
   };
 
   const handleElixirOptionClick = (e: React.MouseEvent, idx: number) => {
@@ -169,11 +171,19 @@ const Home = () => {
     return alchemyChance <= 0;
   };
 
+  const STATUS_TEXT_DISPLAY_TIME_MS = 2000;
+  const setStatusTextTimeout = () => {
+    clearTimeout(statusTextTimeoutRef.current);
+    statusTextTimeoutRef.current = setTimeout(() => {
+      setSelectedOptions((selectedOptions) => selectedOptions.map((option) => ({ ...option, statusText: null })));
+    }, STATUS_TEXT_DISPLAY_TIME_MS);
+  };
+
   return (
     <S.Home>
       <S.MainSection>
         <S.ElixirOptionSection>
-          {selectedOptions.map(({ name, part, level, hitRate, bigHitRate }, idx) => (
+          {selectedOptions.map(({ name, part, level, hitRate, bigHitRate, statusText }, idx) => (
             <S.ElixirOption onClick={(e) => handleElixirOptionClick(e, idx)} selected={selectedOptionIndex === idx}>
               <div css={[CENTERED_FLEX_STYLE, { flex: 2 }]}>{`${hitRate}%`}</div>
               <div css={{ flex: 7, paddingRight: '1rem', display: 'flex', justifyContent: 'center', flexDirection: 'column' }}>
@@ -182,7 +192,10 @@ const Home = () => {
                   <span>{`(${part ? `${part} 전용` : '공용'})`}</span>
                 </div>
                 <Activation percentage={level / MAX_ACTIVE} />
-                <div style={{ textAlign: 'right' }}>{`${bigHitRate}%`}</div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <div>{statusText}</div>
+                  <div>{`${bigHitRate}%`}</div>
+                </div>
               </div>
             </S.ElixirOption>
           ))}
