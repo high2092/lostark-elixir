@@ -1,6 +1,6 @@
 export const OPTION_NAME_PLACEHOLDER = '?{option}';
 
-const ADVICES: Advice[] = [
+export const ADVICES: Advice[] = [
   {
     name: `${OPTION_NAME_PLACEHOLDER} 효과를 25% 확률로 +1 올려`,
     effect:
