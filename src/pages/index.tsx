@@ -71,6 +71,7 @@ const Home = () => {
   const [selectedOptions, setSelectedOptions] = useState<ElixirInstance[]>([]);
   const [alchemyChance, setAlchemyChance] = useState(ALCHEMY_CHANCE);
   const [adviceOptions, setAdviceOptions] = useState<IAdviceInstance[]>([]);
+  const [selectedOptionIndex, setSelectedOptionIndex] = useState<number>(null);
 
   useEffect(() => {
     cpu.init();
@@ -90,6 +91,11 @@ const Home = () => {
   }, [alchemyChance]);
 
   const handleRefineButtonClick = () => {
+    if (!selectedAdviceIndex) {
+      alert('조언을 선택해주세요.');
+      return;
+    }
+
     if (selectOptionChance) {
       const id = elixirOptions[selectedAdviceIndex].id;
       const option = cpu.pickOption(id);
@@ -97,22 +103,32 @@ const Home = () => {
       setSelectOptionChance(selectOptionChance - 1);
     } else if (alchemyChance) {
       const advice = adviceOptions[selectedAdviceIndex];
-      const adviceResult = adviceService.pickAdvice(advice);
+      const response = adviceService.pickAdvice(advice, { optionIdx: selectedOptionIndex });
 
-      if (typeof adviceResult === 'function') {
-      } else setSelectedOptions(adviceResult);
+      if (!response.ok) {
+        alert(response.statusText);
+        return;
+      }
 
+      setSelectedOptions(response.data as ElixirInstance[]);
       setAlchemyChance(alchemyChance - 1);
     }
+
     setSelectedAdviceIndex(null);
+    setSelectedOptionIndex(null);
+  };
+
+  const handleElixirOptionClick = (e: React.MouseEvent, idx: number) => {
+    setSelectedOptionIndex(idx);
+    new Audio('sound/click.mp3').play();
   };
 
   return (
     <S.Home>
       <S.MainSection>
         <S.ElixirOptionSection>
-          {selectedOptions.map(({ name, level, hitRate, bigHitRate }) => (
-            <S.ElixirOption>
+          {selectedOptions.map(({ name, level, hitRate, bigHitRate }, idx) => (
+            <S.ElixirOption onClick={(e) => handleElixirOptionClick(e, idx)} selected={selectedOptionIndex === idx}>
               <div>{`${name} (${level} 활성화)`}</div>
               <div>{`선택 확률: ${hitRate}%`}</div>
               <div>{`대성공 확률: ${bigHitRate}%`}</div>

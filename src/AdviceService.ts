@@ -44,8 +44,19 @@ class AdviceService {
     return result;
   }
 
-  pickAdvice(advice: IAdviceInstance) {
-    return advice.execute();
+  pickAdvice(advice: IAdviceInstance, parameter: AdviceParameter) {
+    const adviceResult = advice.execute();
+
+    const { optionIdx } = parameter;
+
+    if (typeof adviceResult === 'function') {
+      if (!optionIdx) return { ok: false, data: advice, statusText: '엘릭서를 선택해주세요.' };
+      else {
+        return { ok: true, data: adviceResult(optionIdx) };
+      }
+    } else {
+      return { ok: true, data: advice.execute() };
+    }
   }
 }
 

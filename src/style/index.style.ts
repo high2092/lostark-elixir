@@ -24,13 +24,15 @@ export const ElixirOptionSection = styled.div`
   transform: translateY(-50%);
 `;
 
-export const ElixirOption = styled.div`
+export const ElixirOption = styled.div<{ selected?: boolean }>`
   width: 23vw;
   height: 9vh;
 
   background-color: blueviolet;
 
   margin: 1.5rem;
+
+  ${({ selected }) => (selected ? 'outline: 3px solid #FF8400;' : '')}
 `;
 
 const ADVICE_SECTION_WIDTH_VW = 75;
