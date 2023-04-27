@@ -1,4 +1,4 @@
-import { MAX_ACTIVE, OPTION_COUNT } from './constants';
+import { MAX_ACTIVE, OPTION_COUNT, playRefineSuccessSound } from './constants';
 
 class AlchemyService {
   alchemy(beforeElixirs: ElixirInstance[]) {
@@ -14,8 +14,10 @@ class AlchemyService {
     for (let i = 0; i < OPTION_COUNT; i++) {
       const diff = result[i].level - before[i];
 
-      if (diff === 2) result[i].statusText = '연성 대성공';
-      else if (diff === 1) result[i].statusText = '연성 성공';
+      if (diff === 2) {
+        result[i].statusText = '연성 대성공';
+        playRefineSuccessSound();
+      } else if (diff === 1) result[i].statusText = '연성 성공';
       else result[i].statusText = null;
     }
 

@@ -1,4 +1,4 @@
-import { ADVICE_COUNT, OPTION_COUNT } from './constants';
+import { ADVICE_COUNT, OPTION_COUNT, playRefineFailureSound, playRefineSuccessSound } from './constants';
 import { ADVICES, OPTION_NAME_PLACEHOLDER } from './database/advice';
 
 class AdviceInstance implements IAdviceInstance {
@@ -47,12 +47,21 @@ class AdviceService {
       let before = beforeElixirs.map((elixir) => elixir.level);
       const result = advice.execute(beforeElixirs, optionIdx);
 
+      let success = false;
+
       for (let i = 0; i < OPTION_COUNT; i++) {
         const diff = result[i].level - before[i];
-        if (diff > 0) result[i].statusText = '연성 단계 상승';
-        else if (diff < 0) result[i].statusText = '연성 단계 하락';
-        else result[i].statusText = null;
+        if (diff > 0) {
+          result[i].statusText = '연성 단계 상승';
+          success = true;
+        } else if (diff < 0) {
+          result[i].statusText = '연성 단계 하락';
+        } else result[i].statusText = null;
       }
+
+      if (success) playRefineSuccessSound();
+      else playRefineFailureSound();
+
       return { ok: true, data: result };
     } catch {
       return { ok: false, data: advice, statusText: '엘릭서를 선택해주세요.' };
