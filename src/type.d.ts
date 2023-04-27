@@ -18,9 +18,14 @@ interface ElixirInstance extends Elixir {
 
 type AdviceEffect = (beforeElixirs: ElixirInstance[], optionIdx?: number) => ElixirInstance[];
 
+interface AdviceParam {
+  optionIndex?: number;
+  n?: number;
+}
+
 interface Advice {
   name: string;
-  effect: (optionIdx?: number) => AdviceEffect;
+  effect: (param?: AdviceParam) => AdviceEffect;
   odds: number;
 }
 

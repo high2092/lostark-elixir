@@ -1,15 +1,21 @@
 import { ADVICE_COUNT, OPTION_COUNT, playRefineFailureSound, playRefineSuccessSound } from './constants';
-import { ADVICES, OPTION_NAME_PLACEHOLDER } from './database/advice';
+import { ADVICES, N_NPLUS1_PLACEHOLDER, N_PLACEHOLDER, OPTION_NAME_PLACEHOLDER } from './database/advice';
+
+const N_TABLE = [1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 5, 5];
 
 class AdviceInstance implements IAdviceInstance {
   name: string;
-  effect: (optionIdx?: number) => AdviceEffect;
+  effect: (param: AdviceParam) => AdviceEffect;
   execute: AdviceEffect;
   odds: number;
 
-  constructor(advice: Advice, name: string, optionIdx: number) {
-    this.name = advice.name.replace(OPTION_NAME_PLACEHOLDER, name);
-    this.execute = advice.effect(optionIdx);
+  constructor(advice: Advice, name: string, optionIndex: number, turn: number) {
+    const n = N_TABLE[turn];
+    this.name = advice.name
+      .replace(OPTION_NAME_PLACEHOLDER, name)
+      .replace(N_NPLUS1_PLACEHOLDER, `[${n}~${n + 1}]`)
+      .replace(N_PLACEHOLDER, n?.toString());
+    this.execute = advice.effect({ optionIndex, n });
   }
 }
 
@@ -18,12 +24,12 @@ class AdviceService {
     return acc + odds;
   }, 0);
 
-  createAdviceInstance(advice: Advice, beforeElixirs: ElixirInstance[]) {
+  createAdviceInstance(advice: Advice, beforeElixirs: ElixirInstance[], turn: number) {
     const idx = Math.floor(Math.random() * OPTION_COUNT);
-    return new AdviceInstance(advice, beforeElixirs[idx].name, idx);
+    return new AdviceInstance(advice, beforeElixirs[idx].name, idx, turn);
   }
 
-  drawAdvices(beforeElixirs: ElixirInstance[]) {
+  drawAdvices(beforeElixirs: ElixirInstance[], turn: number) {
     const result: AdviceInstance[] = [];
 
     // TODO: 완전히 동일한 조언 중복 제거
@@ -33,7 +39,7 @@ class AdviceService {
       for (let i = 0; i < ADVICES.length; i++) {
         const advice = ADVICES[i];
         if (randomNumber <= (oddsAcc += advice.odds)) {
-          result.push(this.createAdviceInstance(advice, beforeElixirs));
+          result.push(this.createAdviceInstance(advice, beforeElixirs, turn));
           break;
         }
       }
@@ -63,7 +69,8 @@ class AdviceService {
       else playRefineFailureSound();
 
       return { ok: true, data: result };
-    } catch {
+    } catch (e) {
+      console.error(e);
       return { ok: false, data: advice, statusText: '엘릭서를 선택해주세요.' };
     }
   }

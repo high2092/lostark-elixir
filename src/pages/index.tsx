@@ -6,6 +6,7 @@ import { ADVICE_COUNT, ALCHEMY_CHANCE, CENTERED_FLEX_STYLE, MAX_ACTIVE } from '.
 import { adviceService } from '../AdviceService';
 import { alchemyService } from '../AlchemyService';
 import { Activation } from '../components/Activation';
+import { ADVICE_DIALOGUE_END1_PLACEHOLDER } from '../database/advice';
 
 const AlchemyStatus = {
   REFINE: 'refine', // 정제
@@ -29,13 +30,13 @@ const MaterialSectionText = {
 
 interface Sage {
   SELECT_OPTION_DIALOGUE_END: string;
-  ADVICE_DIALOGUE_END: string;
+  ADVICE_DIALOGUE_END1: string;
 }
 
 const sages: Sage[] = [
-  { SELECT_OPTION_DIALOGUE_END: '어때?', ADVICE_DIALOGUE_END: '주지.' },
-  { SELECT_OPTION_DIALOGUE_END: '어떤가?', ADVICE_DIALOGUE_END: '주겠네.' },
-  { SELECT_OPTION_DIALOGUE_END: '어때요?', ADVICE_DIALOGUE_END: '드리죠.' },
+  { SELECT_OPTION_DIALOGUE_END: '어때?', ADVICE_DIALOGUE_END1: '주지' },
+  { SELECT_OPTION_DIALOGUE_END: '어떤가?', ADVICE_DIALOGUE_END1: '주겠네' },
+  { SELECT_OPTION_DIALOGUE_END: '어때요?', ADVICE_DIALOGUE_END1: '드리죠' },
 ];
 
 interface ElixirOptionDialogueProps {
@@ -61,7 +62,7 @@ interface AdviceDialogueProps {
 }
 
 const AdviceDialogue = ({ advice, sage }: AdviceDialogueProps) => {
-  return <div>{`${advice.name}${sage.ADVICE_DIALOGUE_END}`}</div>;
+  return <div>{advice.name.replace(ADVICE_DIALOGUE_END1_PLACEHOLDER, sage.ADVICE_DIALOGUE_END1)}</div>;
 };
 
 const Gold = ({ amount }: { amount: number }) => {
@@ -90,6 +91,7 @@ const Home = () => {
   const [selectedOptionIndex, setSelectedOptionIndex] = useState<number>(null);
   const [alchemyStatus, setAlchemyStatus] = useState<AlchemyStatus>();
   const statusTextTimeoutRef = useRef<NodeJS.Timeout>();
+  const [turn, setTurn] = useState(0);
 
   useEffect(() => {
     switch (alchemyStatus) {
@@ -98,7 +100,7 @@ const Home = () => {
         break;
       }
       case AlchemyStatus.ADVICE: {
-        setAdviceOptions(adviceService.drawAdvices(selectedOptions));
+        setAdviceOptions(adviceService.drawAdvices(selectedOptions, turn));
         break;
       }
     }
@@ -117,7 +119,7 @@ const Home = () => {
 
   useEffect(() => {
     if (alchemyChance === ALCHEMY_CHANCE) return;
-    setAdviceOptions(adviceService.drawAdvices(selectedOptions));
+    setAdviceOptions(adviceService.drawAdvices(selectedOptions, turn));
   }, [alchemyChance]);
 
   const handleRefineButtonClick = () => {
@@ -151,6 +153,7 @@ const Home = () => {
       case AlchemyStatus.ALCHEMY: {
         setSelectedOptions(alchemyService.alchemy(selectedOptions));
         setAlchemyChance(alchemyChance - 1);
+        setTurn(turn + 1);
         setAlchemyStatus(AlchemyStatus.ADVICE);
         break;
       }
