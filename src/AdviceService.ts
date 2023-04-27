@@ -15,7 +15,7 @@ class AdviceInstance implements IAdviceInstance {
   }
 }
 
-export class AdviceService {
+class AdviceService {
   oddsSum = ADVICES.reduce((acc, { odds }) => {
     return acc + odds;
   }, 0);
@@ -40,5 +40,13 @@ export class AdviceService {
         }
       }
     }
+
+    return result;
+  }
+
+  pickAdvice(advice: IAdviceInstance) {
+    return advice.execute();
   }
 }
+
+export const adviceService = new AdviceService();

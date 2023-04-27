@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import * as S from '../style/index.style';
 import { cpu } from '../CPU';
+import { ADVICE_COUNT, ALCHEMY_CHANCE } from '../constants';
+import { adviceService } from '../AdviceService';
 
 const REFINE_BUTTON_TEXT = '효과 정제';
 
@@ -12,25 +14,39 @@ const MaterialSectionText = {
 
 interface Sage {
   SELECT_OPTION_DIALOGUE_END: string;
+  ADVICE_DIALOGUE_END: string;
 }
 
-const sages: Sage[] = [{ SELECT_OPTION_DIALOGUE_END: '효과를 정제하는건 어때?' }, { SELECT_OPTION_DIALOGUE_END: '효과를 정제하는건 어떤가?' }, { SELECT_OPTION_DIALOGUE_END: '효과를 정제하는건 어때요?' }];
+const sages: Sage[] = [
+  { SELECT_OPTION_DIALOGUE_END: '어때?', ADVICE_DIALOGUE_END: '주지.' },
+  { SELECT_OPTION_DIALOGUE_END: '어떤가?', ADVICE_DIALOGUE_END: '주겠네.' },
+  { SELECT_OPTION_DIALOGUE_END: '어때요?', ADVICE_DIALOGUE_END: '드리죠.' },
+];
 
-interface AdviceTextProps {
-  elixirOption: ElixirInstance;
+interface ElixirOptionDialogueProps {
+  SelectOption: ElixirInstance;
   sage: Sage;
 }
-const AdviceText = ({ elixirOption, sage }: AdviceTextProps) => {
+const SelectOptionDialogue = ({ SelectOption: elixirOption, sage }: ElixirOptionDialogueProps) => {
   const { name, type, part } = elixirOption;
   return (
     <div style={{ height: '100%', padding: '1rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.8rem' }}>
       <div>
         <span>{`${name}${type ? ` (${type})` : ''}`}</span>
-        <span>{` ${sage.SELECT_OPTION_DIALOGUE_END}`}</span>
+        <span>{` 효과를 정제하는건 ${sage.SELECT_OPTION_DIALOGUE_END}`}</span>
       </div>
       <div>{`(${part ? `${part} 전용` : '공용'})`}</div>
     </div>
   );
+};
+
+interface AdviceDialogueProps {
+  advice: IAdviceInstance;
+  sage: Sage;
+}
+
+const AdviceDialogue = ({ advice, sage }: AdviceDialogueProps) => {
+  return <div>{`${advice.name}${sage.ADVICE_DIALOGUE_END}`}</div>;
 };
 
 const Gold = ({ amount }: { amount: number }) => {
@@ -51,25 +67,44 @@ const Home = () => {
     new Audio('sound/click.mp3').play();
   };
   const [elixirOptions, setElixirOptions] = useState<ElixirInstance[]>([]);
-  const [pickOptionChance, setPickOptionChance] = useState(OPTION_COUNT);
+  const [selectOptionChance, setSelectOptionChance] = useState(OPTION_COUNT);
   const [selectedOptions, setSelectedOptions] = useState<ElixirInstance[]>([]);
+  const [alchemyChance, setAlchemyChance] = useState(ALCHEMY_CHANCE);
+  const [adviceOptions, setAdviceOptions] = useState<IAdviceInstance[]>([]);
 
   useEffect(() => {
     cpu.init();
   }, []);
 
   useEffect(() => {
-    setElixirOptions(cpu.drawOptions());
-  }, [pickOptionChance]);
+    if (selectOptionChance) setElixirOptions(cpu.drawOptions());
+    else {
+      setElixirOptions([]);
+      setAdviceOptions(adviceService.drawAdvices(selectedOptions));
+    }
+  }, [selectOptionChance]);
+
+  useEffect(() => {
+    if (alchemyChance === ALCHEMY_CHANCE) return;
+    setAdviceOptions(adviceService.drawAdvices(selectedOptions));
+  }, [alchemyChance]);
 
   const handleRefineButtonClick = () => {
-    if (pickOptionChance) {
+    if (selectOptionChance) {
       const id = elixirOptions[selectedAdviceIndex].id;
       const option = cpu.pickOption(id);
       setSelectedOptions((selectedOptions) => selectedOptions.concat(option));
-      setSelectedAdviceIndex(null);
-      setPickOptionChance(pickOptionChance - 1);
+      setSelectOptionChance(selectOptionChance - 1);
+    } else if (alchemyChance) {
+      const advice = adviceOptions[selectedAdviceIndex];
+      const adviceResult = adviceService.pickAdvice(advice);
+
+      if (typeof adviceResult === 'function') {
+      } else setSelectedOptions(adviceResult);
+
+      setAlchemyChance(alchemyChance - 1);
     }
+    setSelectedAdviceIndex(null);
   };
 
   return (
@@ -88,9 +123,10 @@ const Home = () => {
           ))}
         </S.ElixirOptionSection>
         <S.AdviceSection>
-          {elixirOptions.map((advice, idx) => (
+          {Array.from({ length: ADVICE_COUNT }).map((_, idx) => (
             <S.Advice onClick={(e) => handleAdviceClick(e, idx)} selected={selectedAdviceIndex === idx}>
-              {pickOptionChance > 0 && <AdviceText elixirOption={elixirOptions[idx]} sage={sages[idx]} />}
+              {elixirOptions.length !== 0 && <SelectOptionDialogue SelectOption={elixirOptions[idx]} sage={sages[idx]} />}
+              {adviceOptions.length !== 0 && <AdviceDialogue advice={adviceOptions[idx]} sage={sages[idx]} />}
             </S.Advice>
           ))}
           <S.AdviceRerollButton>{getAdviceRerollButtonText(2)}</S.AdviceRerollButton>
