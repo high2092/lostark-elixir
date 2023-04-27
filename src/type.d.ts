@@ -16,18 +16,14 @@ interface ElixirInstance extends Elixir {
   statusText: AlchemyStatusText;
 }
 
-type ChoiceEffect = (optionIdx: number) => ElixirInstance[];
-type AdviceResult = ElixirInstance[] | ChoiceEffect;
-interface AdviceParameter {
-  optionIdx?: number;
-}
+type AdviceEffect = (beforeElixirs: ElixirInstance[], optionIdx?: number) => ElixirInstance[];
 
 interface Advice {
   name: string;
-  effect: (beforeElixirs: ElixirInstance[], parameter?: AdviceParameter) => () => AdviceResult;
+  effect: (optionIdx?: number) => AdviceEffect;
   odds: number;
 }
 
 interface IAdviceInstance extends Advice {
-  execute: () => AdviceResult;
+  execute: AdviceEffect;
 }

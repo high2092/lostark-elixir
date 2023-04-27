@@ -137,7 +137,7 @@ const Home = () => {
       }
       case AlchemyStatus.ADVICE: {
         const advice = adviceOptions[selectedAdviceIndex];
-        const response = adviceService.pickAdvice(advice, { optionIdx: selectedOptionIndex });
+        const response = adviceService.pickAdvice(advice, selectedOptions, selectedOptionIndex);
 
         if (!response.ok) {
           alert(response.statusText);

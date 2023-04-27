@@ -3,15 +3,13 @@ import { ADVICES, OPTION_NAME_PLACEHOLDER } from './database/advice';
 
 class AdviceInstance implements IAdviceInstance {
   name: string;
-  effect: (before: ElixirInstance[]) => () => ElixirInstance[];
-  execute: () => AdviceResult;
+  effect: (optionIdx?: number) => AdviceEffect;
+  execute: AdviceEffect;
   odds: number;
 
-  constructor(advice: Advice, beforeElixirs: ElixirInstance[], parameter: AdviceParameter) {
-    const { optionIdx } = parameter;
-    const elixir = beforeElixirs[optionIdx];
-    this.name = advice.name.replace(OPTION_NAME_PLACEHOLDER, elixir.name);
-    this.execute = advice.effect(beforeElixirs, parameter);
+  constructor(advice: Advice, name: string, optionIdx: number) {
+    this.name = advice.name.replace(OPTION_NAME_PLACEHOLDER, name);
+    this.execute = advice.effect(optionIdx);
   }
 }
 
@@ -22,7 +20,7 @@ class AdviceService {
 
   createAdviceInstance(advice: Advice, beforeElixirs: ElixirInstance[]) {
     const idx = Math.floor(Math.random() * OPTION_COUNT);
-    return new AdviceInstance(advice, beforeElixirs, { optionIdx: idx });
+    return new AdviceInstance(advice, beforeElixirs[idx].name, idx);
   }
 
   drawAdvices(beforeElixirs: ElixirInstance[]) {
@@ -44,18 +42,11 @@ class AdviceService {
     return result;
   }
 
-  pickAdvice(advice: IAdviceInstance, parameter: AdviceParameter) {
-    const adviceResult = advice.execute();
-
-    const { optionIdx } = parameter;
-
-    if (typeof adviceResult === 'function') {
-      if (!optionIdx) return { ok: false, data: advice, statusText: '엘릭서를 선택해주세요.' };
-      else {
-        return { ok: true, data: adviceResult(optionIdx) };
-      }
-    } else {
-      return { ok: true, data: advice.execute() };
+  pickAdvice(advice: IAdviceInstance, beforeElixirs: ElixirInstance[], optionIdx: number) {
+    try {
+      return { ok: true, data: advice.execute(beforeElixirs, optionIdx) };
+    } catch {
+      return { ok: false, data: advice, statusText: '엘릭서를 선택해주세요.' };
     }
   }
 }
