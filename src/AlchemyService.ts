@@ -1,4 +1,5 @@
 import { MAX_ACTIVE, OPTION_COUNT } from './constants';
+import { AdviceEffectResult } from './type/advice';
 import { ElixirInstance } from './type/elixir';
 import { gacha, playRefineSuccessSound } from './util';
 
@@ -10,14 +11,19 @@ class AlchemyService {
     }
   }
 
-  alchemy(beforeElixirs: ElixirInstance[]) {
+  alchemy(adviceEffectResult: AdviceEffectResult) {
+    const { elixirs: beforeElixirs, extraTarget } = adviceEffectResult;
     let delta = 1;
     const result = [...beforeElixirs];
-    const idx = gacha(beforeElixirs, 'hitRate');
+    const targetIndexList = gacha(beforeElixirs, 'hitRate', 1 + extraTarget);
     let before = beforeElixirs.map((elixir) => elixir.level);
-    const randomNumber = Math.random() * 100;
-    if (randomNumber <= result[idx].bigHitRate) delta++;
-    result[idx].level = Math.min(result[idx].level + delta, MAX_ACTIVE);
+
+    for (let i = 0; i < targetIndexList.length; i++) {
+      const idx = targetIndexList[i];
+      const randomNumber = Math.random() * 100;
+      if (randomNumber <= result[idx].bigHitRate) delta++;
+      result[idx].level = Math.min(result[idx].level + delta, MAX_ACTIVE);
+    }
 
     for (let i = 0; i < OPTION_COUNT; i++) {
       const diff = result[i].level - before[i];

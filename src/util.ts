@@ -1,7 +1,22 @@
 import { MAX_ACTIVE, OPTION_COUNT, SageTypes } from './constants';
 import { SageInstance, SageTypesType, SageTypesTypes } from './type/sage';
 
-export const gacha = <T>(arr: T[], oddsKey: 'odds' | 'hitRate') => {
+export const gacha = <T>(arr: T[], oddsKey: 'odds' | 'hitRate', count?: number) => {
+  count ??= 1;
+  if (count > arr.length - 1) throw new Error('gacha: Given count is greater than arr length.');
+
+  const _arr = [...arr];
+  const result = [];
+  for (let i = 0; i < count; i++) {
+    const idx = gachaInternal(_arr, oddsKey);
+    result.push(idx);
+    _arr.splice(idx, 1, { ..._arr[idx], [oddsKey]: 0 });
+  }
+
+  return result;
+};
+
+const gachaInternal = <T>(arr: T[], oddsKey: 'odds' | 'hitRate') => {
   const oddsSum = arr.reduce((acc, cur) => {
     const odds = cur[oddsKey];
     if (typeof odds !== 'number') throw new Error('gacha: Given odds key has value that is not a number.');

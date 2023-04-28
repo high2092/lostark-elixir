@@ -1,5 +1,5 @@
 import { DIALOGUE_END_INDEX as I, MAX_ACTIVE, OPTION_COUNT, Placeholders } from '../constants';
-import { Advice } from '../type/advice';
+import { Advice, AdviceParam } from '../type/advice';
 import { SageKey, SageKeys, SageTypesType, SageTypesTypes } from '../type/sage';
 import { convertToSignedString, validateOptionIndex } from '../util';
 
@@ -149,6 +149,7 @@ export const ADVICES: Advice[] = [
   amplifySelectedHitRateAdviceTemplate(15, 1, { special: SageTypesTypes.ORDER, sage: SageKeys.L }),
   amplifySelectedHitRateAdviceTemplate(15, 1, { special: SageTypesTypes.ORDER, sage: SageKeys.B }),
   amplifySelectedHitRateAdviceTemplate(15, 1, { special: SageTypesTypes.ORDER, sage: SageKeys.C }),
+  extraTargetAdviceTemplate(1, { extraTarget: 1, extraChanceConsume: 1 }),
 ];
 
 function potentialAlchemyAdviceTemplate(percentage: number, odds: number): Advice {
@@ -198,6 +199,8 @@ function changePotentialLevelAdviceTemplate(maxRisk: number, maxReturn: number, 
 interface AdviceTemplateProps {
   special?: SageTypesType;
   sage?: SageKey;
+  extraTarget?: number;
+  extraChanceConsume?: number;
 }
 
 /**
@@ -332,6 +335,19 @@ function amplifyBigHitRateTemporarilyAdviceTemplate(n: number, odds: number): Ad
         });
         return { elixirs: result };
       },
+    odds,
+  };
+}
+
+function extraTargetAdviceTemplate(odds: number, params?: AdviceTemplateProps): Advice {
+  params ??= {};
+  const { extraTarget, extraChanceConsume } = params;
+  return {
+    name: `이번 연성에서 ${extraTarget + 1}개의 효과를 동시에 연성해${Placeholders[I.주겠네]}.${extraChanceConsume ? ` 다만, 기회를 ${extraChanceConsume + 1}번 소모${Placeholders[I.할걸세]}.` : ''}`,
+    type: 'util',
+    effect: () => (beforeElixirs) => {
+      return { elixirs: beforeElixirs, extraTarget, extraChanceConsume };
+    },
     odds,
   };
 }

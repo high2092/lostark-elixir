@@ -49,7 +49,8 @@ class AdviceService {
     try {
       const { advice } = sages[selectedSageIndex];
       let before = beforeElixirs.map((elixir) => elixir.level);
-      const { elixirs } = advice.execute(beforeElixirs, optionIdx);
+      const adviceEffectResult = advice.execute(beforeElixirs, optionIdx);
+      const { elixirs } = adviceEffectResult;
 
       let success = false;
 
@@ -82,7 +83,7 @@ class AdviceService {
         }
       }
 
-      return { ok: true, result: { elixirs }, sages, statusText: null };
+      return { ok: true, result: adviceEffectResult, sages, statusText: null };
     } catch (e) {
       console.error(e);
       return { ok: false, statusText: '엘릭서를 선택해주세요.' };

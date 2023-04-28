@@ -34,6 +34,7 @@ export const DIALOGUE_END_INDEX = {
   하겠네: 4,
   자네: 5,
   선택한: 6,
+  할걸세: 7,
 };
 
 export const Placeholders = {
@@ -47,6 +48,7 @@ export const Placeholders = {
   [DIALOGUE_END_INDEX.하겠네]: '?{하겠네}',
   [DIALOGUE_END_INDEX.자네]: '?{자네}',
   [DIALOGUE_END_INDEX.선택한]: '?{선택한}',
+  [DIALOGUE_END_INDEX.할걸세]: '?{할걸세}',
 };
 
 export const SAGE_TYPE_STACK_SIZE = '1.4vw';

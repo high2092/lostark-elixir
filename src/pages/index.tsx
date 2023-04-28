@@ -13,6 +13,7 @@ import { SageTypeStackCounter } from '../components/SageTypeStackCounter';
 import { Sage } from '../domain/Sage';
 import { AdviceInstance } from '../domain/AdviceInstance';
 import { ElixirInstance } from '../type/elixir';
+import { AdviceEffectResult } from '../type/advice';
 
 const AlchemyStatus = {
   REFINE: 'refine', // 정제
@@ -98,6 +99,13 @@ const Home = () => {
   const statusTextTimeoutRef = useRef<NodeJS.Timeout>();
   const [turn, setTurn] = useState(0);
   const [sages, setSages] = useState<SageInstance[]>(initialSages);
+  const [adviceEffectResult, setAdviceEffectResult] = useState<AdviceEffectResult>();
+
+  useEffect(() => {
+    if (!adviceEffectResult) return;
+    const { elixirs } = adviceEffectResult;
+    setSelectedOptions(elixirs);
+  }, [adviceEffectResult]);
 
   useEffect(() => {
     switch (alchemyStatus) {
@@ -146,19 +154,17 @@ const Home = () => {
           return;
         }
 
-        const {
-          result: { elixirs },
-          sages: _sages,
-        } = response;
+        const { result: adviceEffectResult, sages: _sages } = response;
+        console.log(adviceEffectResult);
 
-        setSelectedOptions(elixirs);
+        setAdviceEffectResult(adviceEffectResult);
         setSages(_sages);
         setAlchemyStatus(AlchemyStatus.ALCHEMY);
         break;
       }
       case AlchemyStatus.ALCHEMY: {
-        setSelectedOptions(alchemyService.alchemy(selectedOptions));
-        setAlchemyChance(alchemyChance - 1);
+        setSelectedOptions(alchemyService.alchemy(adviceEffectResult));
+        setAlchemyChance(alchemyChance - (1 + adviceEffectResult.extraChanceConsume ?? 0));
         setTurn(turn + 1);
         setAlchemyStatus(AlchemyStatus.ADVICE);
         break;
