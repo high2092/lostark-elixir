@@ -91,7 +91,7 @@ export const Advice = styled.div`
 `;
 
 const ADVICE_REROLL_BUTTON_FLEX_RATIO = 1;
-export const AdviceRerollButton = styled.div`
+export const AdviceRerollButton = styled.div<{ disabled: boolean }>`
   flex: ${ADVICE_REROLL_BUTTON_FLEX_RATIO};
   height: 3.5rem;
 
@@ -99,7 +99,7 @@ export const AdviceRerollButton = styled.div`
 
   margin-left: ${ADVICE_SECTION_WIDTH_VW / 20 - 1 * ADVICE_REROLL_BUTTON_FLEX_RATIO}vw;
 
-  background-color: orange;
+  background-color: ${({ disabled }) => (disabled ? '#999999' : 'orange')};
 
   display: flex;
   justify-content: center;

@@ -2,11 +2,11 @@
 import { useEffect, useRef, useState } from 'react';
 import * as S from '../style/index.style';
 import { cpu } from '../CPU';
-import { ADVICE_COUNT, ALCHEMY_CHANCE, CENTERED_FLEX_STYLE, DIALOGUE_END_INDEX as I, MAX_ACTIVE, Placeholders, STACK_COUNTER_EXPECTED_HEIGHT, SageTypes } from '../constants';
+import { ADVICE_COUNT, ALCHEMY_CHANCE, CENTERED_FLEX_STYLE, DEFAULT_ADVICE_REROLL_CHANCE, DIALOGUE_END_INDEX as I, MAX_ACTIVE, Placeholders, STACK_COUNTER_EXPECTED_HEIGHT, SageTypes } from '../constants';
 import { adviceService } from '../AdviceService';
 import { alchemyService } from '../AlchemyService';
 import { Activation } from '../components/Activation';
-import { getStackForDisplaying, isFullStack, playClickSound } from '../util';
+import { getAdviceRerollButtonText, getStackForDisplaying, isFullStack, playClickSound } from '../util';
 import { SageTemplates } from '../database/sage';
 import { SageInstance, SageKeys } from '../type/sage';
 import { SageTypeStackCounter } from '../components/SageTypeStackCounter';
@@ -28,8 +28,6 @@ const ButtonTexts = {
   [AlchemyStatus.ADVICE]: '조언 선택',
   [AlchemyStatus.ALCHEMY]: '연성하기',
 };
-
-const getAdviceRerollButtonText = (chance: number) => `다른 조언 보기 (${chance}회 남음)`;
 
 const MaterialSectionText = {
   SELECT_OPTION: '엘릭서에 정제할 효과를 위 항목에서 선택하세요.',
@@ -100,6 +98,11 @@ const Home = () => {
   const [turn, setTurn] = useState(0);
   const [sages, setSages] = useState<SageInstance[]>(initialSages);
   const [adviceEffectResult, setAdviceEffectResult] = useState<AdviceEffectResult>();
+  const [adviceRerollChance, setAdviceRerollChance] = useState(DEFAULT_ADVICE_REROLL_CHANCE);
+
+  const rerollAdvice = () => {
+    setSages(adviceService.drawAdvices(selectedOptions, sages, turn));
+  };
 
   useEffect(() => {
     if (!adviceEffectResult) return;
@@ -114,7 +117,7 @@ const Home = () => {
         break;
       }
       case AlchemyStatus.ADVICE: {
-        setSages(adviceService.drawAdvices(selectedOptions, sages, turn));
+        rerollAdvice();
         break;
       }
     }
@@ -181,6 +184,13 @@ const Home = () => {
     playClickSound();
   };
 
+  const handleRerollButtonClick = () => {
+    if (adviceRerollChance <= 0 || alchemyStatus !== AlchemyStatus.ADVICE) return;
+    rerollAdvice();
+    setAdviceRerollChance(adviceRerollChance - 1);
+    playClickSound();
+  };
+
   const getDisabled = () => {
     return alchemyChance <= 0;
   };
@@ -233,7 +243,9 @@ const Home = () => {
               </S.Advice>
             );
           })}
-          <S.AdviceRerollButton>{getAdviceRerollButtonText(2)}</S.AdviceRerollButton>
+          <S.AdviceRerollButton onClick={handleRerollButtonClick} disabled={adviceRerollChance <= 0}>
+            {getAdviceRerollButtonText(adviceRerollChance)}
+          </S.AdviceRerollButton>
         </S.AdviceSection>
       </S.MainSection>
       <S.DescriptionSection>

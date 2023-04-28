@@ -64,3 +64,5 @@ export const convertToSignedString = (n: number) => {
   if (n > 0) return `+${n}`;
   return `${n}`;
 };
+
+export const getAdviceRerollButtonText = (chance: number) => `다른 조언 보기 (${chance}회 남음)`;
