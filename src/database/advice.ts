@@ -110,7 +110,7 @@ export const ADVICES: Advice[] = [
     odds: 1,
   },
   {
-    name: `선택한 효과의 단계를 ${Placeholders.OPTION} 중 하나로 변경해${Placeholders[I.주겠네]}.`,
+    name: `선택한 효과의 단계를 ${Placeholders.N_NPLUS_1} 중 하나로 변경해${Placeholders[I.주겠네]}.`,
     type: 'util',
     effect:
       ({ n }) =>
