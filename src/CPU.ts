@@ -10,7 +10,11 @@ class CPU {
   }, 0);
 
   init() {
-    this.elixirs = ELIXIRS.map((elixir, idx) => ({ ...elixir, id: idx, level: 0, locked: false, hitRate: 100 / OPTION_COUNT, bigHitRate: DEFAULT_BIG_HIT_RATE_PERCENT, statusText: null }));
+    this.elixirs = ELIXIRS.map((elixir, idx) => {
+      const hitRate = 100 / OPTION_COUNT;
+      const bigHitRate = DEFAULT_BIG_HIT_RATE_PERCENT;
+      return { ...elixir, id: idx, level: 0, locked: false, hitRate, bigHitRate, statusText: null, nextHitRate: hitRate, nextBigHitRate: bigHitRate };
+    });
   }
 
   drawOptions(count?: number) {

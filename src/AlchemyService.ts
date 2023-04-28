@@ -1,11 +1,18 @@
 import { MAX_ACTIVE, OPTION_COUNT, playRefineSuccessSound } from './constants';
+import { gacha } from './util';
 
 class AlchemyService {
+  private clean(elixirs: ElixirInstance[]) {
+    for (const elixir of elixirs) {
+      elixir.hitRate = elixir.nextHitRate;
+      elixir.bigHitRate = elixir.nextBigHitRate;
+    }
+  }
+
   alchemy(beforeElixirs: ElixirInstance[]) {
     let delta = 1;
     const result = [...beforeElixirs];
-    const idx = Math.floor(Math.random() * OPTION_COUNT);
-
+    const idx = gacha(beforeElixirs, 'hitRate');
     let before = beforeElixirs.map((elixir) => elixir.level);
     const randomNumber = Math.random() * 100;
     if (randomNumber <= result[idx].bigHitRate) delta++;
@@ -20,6 +27,8 @@ class AlchemyService {
       } else if (diff === 1) result[i].statusText = '연성 성공';
       else result[i].statusText = null;
     }
+
+    this.clean(result);
 
     return result;
   }

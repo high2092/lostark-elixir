@@ -205,4 +205,29 @@ export const ADVICES: Advice[] = [
     },
     odds: 1,
   },
+  amplifyHitRateAdviceTemplate(70, 1),
+  amplifyHitRateAdviceTemplate(30, 1),
+  amplifyHitRateAdviceTemplate(20, 1),
 ];
+
+function amplifyHitRateAdviceTemplate(n: number, odds: number) {
+  return {
+    name: `이번 연성에서 ${OPTION_NAME_PLACEHOLDER} 효과의 연성 확률을 +${n}% 높여${ADVICE_DIALOGUE_END1_PLACEHOLDER}.`,
+    effect:
+      ({ optionIndex }) =>
+      (beforeElixirs: ElixirInstance[]) => {
+        const result = [...beforeElixirs];
+        console.log(result.map((e) => e.hitRate));
+        result.forEach((option, idx) => {
+          option.nextHitRate = option.hitRate;
+          option.nextBigHitRate = option.bigHitRate;
+
+          if (optionIndex === idx) option.hitRate = Math.min(option.hitRate + n, 100);
+          else option.hitRate = Math.max(option.hitRate - n / (OPTION_COUNT - 1), 0);
+        });
+        console.log(result.map((e) => e.hitRate));
+        return result;
+      },
+    odds,
+  };
+}

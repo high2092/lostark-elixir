@@ -14,6 +14,8 @@ interface ElixirInstance extends Elixir {
   hitRate: number;
   bigHitRate: number;
   statusText: AlchemyStatusText;
+  nextHitRate: number;
+  nextBigHitRate: number;
 }
 
 type AdviceEffect = (beforeElixirs: ElixirInstance[], optionIdx?: number) => ElixirInstance[];
