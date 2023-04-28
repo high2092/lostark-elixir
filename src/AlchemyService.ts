@@ -15,7 +15,7 @@ class AlchemyService {
     const { elixirs: beforeElixirs, extraTarget } = adviceEffectResult;
     let delta = 1;
     const result = [...beforeElixirs];
-    const targetIndexList = gacha(beforeElixirs, 'hitRate', 1 + extraTarget);
+    const targetIndexList = gacha(beforeElixirs, 'hitRate', 1 + (extraTarget ?? 0));
     let before = beforeElixirs.map((elixir) => elixir.level);
 
     for (let i = 0; i < targetIndexList.length; i++) {

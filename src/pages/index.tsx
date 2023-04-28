@@ -155,7 +155,6 @@ const Home = () => {
         }
 
         const { result: adviceEffectResult, sages: _sages } = response;
-        console.log(adviceEffectResult);
 
         setAdviceEffectResult(adviceEffectResult);
         setSages(_sages);
@@ -164,7 +163,7 @@ const Home = () => {
       }
       case AlchemyStatus.ALCHEMY: {
         setSelectedOptions(alchemyService.alchemy(adviceEffectResult));
-        setAlchemyChance(alchemyChance - (1 + adviceEffectResult.extraChanceConsume ?? 0));
+        setAlchemyChance(alchemyChance - (1 + (adviceEffectResult.extraChanceConsume ?? 0)));
         setTurn(turn + 1);
         setAlchemyStatus(AlchemyStatus.ADVICE);
         break;
