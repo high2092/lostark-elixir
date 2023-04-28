@@ -1,3 +1,5 @@
+import { AdviceInstance } from '../domain/AdviceInstance';
+
 export interface SageTemplate {
   name: string;
   dialogueEnds: { [key: string]: string };
@@ -7,7 +9,7 @@ export interface Sage {
   name: string;
   dialogueEnds: { [key: string]: string };
   stack: number;
-  advice: IAdviceInstance;
+  advice: AdviceInstance;
 }
 
 export const SageTypesTypes = {
@@ -20,7 +22,7 @@ export type SageTypesType = (typeof SageTypesTypes)[keyof typeof SageTypesTypes]
 export interface SageInstance extends Sage {
   type?: SageTypesType;
   stack: number;
-  advice: IAdviceInstance;
+  advice: AdviceInstance;
 }
 
 export const SageKeys = {

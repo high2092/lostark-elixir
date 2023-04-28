@@ -7,10 +7,12 @@ import { adviceService } from '../AdviceService';
 import { alchemyService } from '../AlchemyService';
 import { Activation } from '../components/Activation';
 import { getStackForDisplaying, isFullStack, playClickSound } from '../util';
-import { Sage } from '../domain/Sage';
 import { SageTemplates } from '../database/sage';
 import { SageInstance, SageKeys } from '../type/sage';
 import { SageTypeStackCounter } from '../components/SageTypeStackCounter';
+import { Sage } from '../domain/Sage';
+import { AdviceInstance } from '../domain/AdviceInstance';
+import { ElixirInstance } from '../type/elixir';
 
 const AlchemyStatus = {
   REFINE: 'refine', // 정제
@@ -90,7 +92,7 @@ const Home = () => {
   const [selectOptionChance, setSelectOptionChance] = useState(OPTION_COUNT);
   const [selectedOptions, setSelectedOptions] = useState<ElixirInstance[]>([]);
   const [alchemyChance, setAlchemyChance] = useState(ALCHEMY_CHANCE);
-  const [adviceOptions, setAdviceOptions] = useState<IAdviceInstance[]>([]);
+  const [adviceOptions, setAdviceOptions] = useState<AdviceInstance[]>([]);
   const [selectedOptionIndex, setSelectedOptionIndex] = useState<number>(null);
   const [alchemyStatus, setAlchemyStatus] = useState<AlchemyStatus>();
   const statusTextTimeoutRef = useRef<NodeJS.Timeout>();

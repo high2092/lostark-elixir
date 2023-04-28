@@ -1,27 +1,12 @@
 import { OPTION_COUNT, Placeholders, SageTypes } from './constants';
 import { ADVICES } from './database/advice';
+import { AdviceInstance } from './domain/AdviceInstance';
+import { Advice } from './type/advice';
+import { ElixirInstance } from './type/elixir';
 import { SageInstance } from './type/sage';
 import { calculateOddsSum, isFullStack, playRefineFailureSound, playRefineSuccessSound } from './util';
 
 const N_TABLE = [1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 5, 5];
-
-class AdviceInstance implements IAdviceInstance {
-  name: string;
-  type: AdviceType;
-  effect: (param: AdviceParam) => AdviceEffect;
-  execute: AdviceEffect;
-  odds: number;
-
-  constructor(advice: Advice, name: string, optionIndex: number, turn: number) {
-    const n = N_TABLE[turn];
-    this.name = advice.name
-      .replace(Placeholders.OPTION, name)
-      .replace(Placeholders.N_NPLUS_1, `[${n}~${n + 1}]`)
-      .replace(Placeholders.N, n?.toString());
-    this.type = advice.type;
-    this.execute = advice.effect({ optionIndex, n });
-  }
-}
 
 class AdviceService {
   oddsSum = ADVICES.reduce((acc, { odds }) => {

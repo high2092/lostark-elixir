@@ -1,4 +1,5 @@
 import { MAX_ACTIVE, OPTION_COUNT } from './constants';
+import { ElixirInstance } from './type/elixir';
 import { gacha, playRefineSuccessSound } from './util';
 
 class AlchemyService {

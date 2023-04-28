@@ -1,3 +1,5 @@
+import { Elixir } from '../type/elixir';
+
 export const ELIXIRS: Elixir[] = [
   { name: '강맹', type: '질서', part: '투구', odds: 0.555555555555555 },
   { name: '달인', type: '질서', part: '투구', odds: 0.555555555555555 },

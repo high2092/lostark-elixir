@@ -1,5 +1,6 @@
 import { ADVICE_COUNT, OPTION_COUNT } from './constants';
 import { ELIXIRS } from './database/elixir';
+import { ElixirInstance } from './type/elixir';
 
 const DEFAULT_BIG_HIT_RATE_PERCENT = 10;
 
