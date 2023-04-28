@@ -146,7 +146,11 @@ const Home = () => {
           return;
         }
 
-        const { elixirs, sages: _sages } = response.data;
+        const {
+          result: { elixirs },
+          sages: _sages,
+        } = response;
+
         setSelectedOptions(elixirs);
         setSages(_sages);
         setAlchemyStatus(AlchemyStatus.ALCHEMY);

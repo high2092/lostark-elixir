@@ -1,4 +1,5 @@
 import { DIALOGUE_END_INDEX as I, MAX_ACTIVE, OPTION_COUNT, Placeholders } from '../constants';
+import { Advice } from '../type/advice';
 import { SageKey, SageKeys, SageTypesType, SageTypesTypes } from '../type/sage';
 import { convertToSignedString, validateOptionIndex } from '../util';
 
@@ -20,7 +21,7 @@ export const ADVICES: Advice[] = [
         const result = [...beforeElixirs];
         const afterLevel = n + Math.floor(Math.random() * 2);
         result[optionIndex].level = afterLevel;
-        return result;
+        return { elixirs: result };
       },
     odds: 1,
   },
@@ -33,7 +34,7 @@ export const ADVICES: Advice[] = [
         const result = [...beforeElixirs];
         const afterLevel = n + Math.floor(Math.random() * 2);
         result[optionIndex].level = afterLevel;
-        return result;
+        return { elixirs: result };
       },
     odds: 1,
   },
@@ -45,7 +46,7 @@ export const ADVICES: Advice[] = [
       (beforeElixirs) => {
         const result = [...beforeElixirs];
         result[optionIndex].level++;
-        return result;
+        return { elixirs: result };
       },
     odds: 1,
   },
@@ -61,7 +62,7 @@ export const ADVICES: Advice[] = [
       const candidate = result.filter((elixir) => elixir.level === maxLevel);
       const targetIndex = Math.floor(Math.random() * candidate.length);
       candidate[targetIndex].level = Math.min(candidate[targetIndex].level + 1, MAX_ACTIVE);
-      return result;
+      return { elixirs: result };
     },
     odds: 1,
   },
@@ -77,7 +78,7 @@ export const ADVICES: Advice[] = [
       const candidate = result.filter((elixir) => elixir.level === minLevel);
       const targetIndex = Math.floor(Math.random() * candidate.length);
       candidate[targetIndex].level = Math.min(candidate[targetIndex].level + 1, MAX_ACTIVE);
-      return result;
+      return { elixirs: result };
     },
     odds: 1,
   },
@@ -88,7 +89,7 @@ export const ADVICES: Advice[] = [
       const result = [...beforeElixirs];
       result[1].level = Math.min(result[1].level + 1, MAX_ACTIVE);
       result[3].level = Math.min(result[3].level + 1, MAX_ACTIVE);
-      return result;
+      return { elixirs: result };
     },
     odds: 1,
   },
@@ -99,7 +100,7 @@ export const ADVICES: Advice[] = [
       const result = [...beforeElixirs];
       const targetIndex = Math.floor(Math.random() * OPTION_COUNT);
       result[targetIndex].level = Math.min(result[targetIndex].level + 1, MAX_ACTIVE);
-      return result;
+      return { elixirs: result };
     },
     odds: 1,
   },
@@ -128,7 +129,7 @@ export const ADVICES: Advice[] = [
       for (const option of candidate) {
         option.level = Math.min(option.level + 1, MAX_ACTIVE);
       }
-      return result;
+      return { elixirs: result };
     },
     odds: 1,
   },
@@ -159,7 +160,7 @@ function potentialAlchemyAdviceTemplate(percentage: number, odds: number): Advic
       (beforeElixirs) => {
         const result = [...beforeElixirs];
         if (Math.random() * 100 <= percentage) result[optionIndex].level++;
-        return result;
+        return { elixirs: result };
       },
     odds,
   };
@@ -172,7 +173,7 @@ function potentialSelectedAlchemyAdviceTemplate(percentage: number, odds: number
     effect: () => (beforeElixirs, optionIndex) => {
       const result = [...beforeElixirs];
       if (Math.random() * 100 <= percentage) result[optionIndex].level++;
-      return result;
+      return { elixirs: result };
     },
     odds,
   };
@@ -188,7 +189,7 @@ function changePotentialLevelAdviceTemplate(maxRisk: number, maxReturn: number, 
         const result = [...beforeElixirs];
         const diff = Math.floor(Math.random() * maxReturn - maxRisk + 1) - maxRisk;
         result[optionIndex].level = Math.max(result[optionIndex].level + diff, 0);
-        return result;
+        return { elixirs: result };
       },
     odds,
   };
@@ -223,7 +224,7 @@ function changeSelectedPotentialLevelAdviceTemplate(maxRisk: number, maxReturn: 
       const result = [...beforeElixirs];
       const diff = Math.floor(Math.random() * (maxReturn - maxRisk + 1)) - maxRisk;
       result[optionIndex].level = Math.max(result[optionIndex].level + diff, 0);
-      return result;
+      return { elixirs: result };
     },
     odds,
   };
@@ -235,7 +236,7 @@ function amplifyHitRateTemporarilyAdviceTemplate(n: number, odds: number): Advic
     type: 'util',
     effect:
       ({ optionIndex }) =>
-      (beforeElixirs: ElixirInstance[]) => {
+      (beforeElixirs) => {
         const result = [...beforeElixirs];
         result.forEach((option, idx) => {
           option.nextHitRate = option.hitRate;
@@ -244,7 +245,7 @@ function amplifyHitRateTemporarilyAdviceTemplate(n: number, odds: number): Advic
           else option.hitRate -= n / (OPTION_COUNT - 1);
           option.hitRate = Math.max(Math.min(option.hitRate, 100), 0);
         });
-        return result;
+        return { elixirs: result };
       },
     odds,
   };
@@ -256,7 +257,7 @@ function amplifyHitRateAdviceTemplate(n: number, odds: number): Advice {
     type: 'util',
     effect:
       ({ optionIndex }) =>
-      (beforeElixirs: ElixirInstance[]) => {
+      (beforeElixirs) => {
         const result = [...beforeElixirs];
         result.forEach((option, idx) => {
           if (optionIndex === idx) option.hitRate += n;
@@ -265,7 +266,7 @@ function amplifyHitRateAdviceTemplate(n: number, odds: number): Advice {
 
           option.nextHitRate = option.hitRate;
         });
-        return result;
+        return { elixirs: result };
       },
     odds,
   };
@@ -279,7 +280,7 @@ function amplifySelectedHitRateAdviceTemplate(n: number, odds: number, props?: A
     type: 'util',
     special,
     sage,
-    effect: () => (beforeElixirs: ElixirInstance[], optionIndex) => {
+    effect: () => (beforeElixirs, optionIndex) => {
       const result = [...beforeElixirs];
       validateOptionIndex(optionIndex);
       result.forEach((option, idx) => {
@@ -289,7 +290,7 @@ function amplifySelectedHitRateAdviceTemplate(n: number, odds: number, props?: A
 
         option.nextHitRate = option.hitRate;
       });
-      return result;
+      return { elixirs: result };
     },
     odds,
   };
@@ -301,7 +302,7 @@ function amplifyBigHitRateAdviceTemplate(n: number, odds: number): Advice {
     type: 'util',
     effect:
       ({ optionIndex }) =>
-      (beforeElixirs: ElixirInstance[]) => {
+      (beforeElixirs) => {
         const result = [...beforeElixirs];
         result.forEach((option, idx) => {
           if (optionIndex === idx) option.bigHitRate += n;
@@ -309,7 +310,7 @@ function amplifyBigHitRateAdviceTemplate(n: number, odds: number): Advice {
 
           option.nextBigHitRate = option.bigHitRate;
         });
-        return result;
+        return { elixirs: result };
       },
     odds,
   };
@@ -321,7 +322,7 @@ function amplifyBigHitRateTemporarilyAdviceTemplate(n: number, odds: number): Ad
     type: 'util',
     effect:
       ({ optionIndex }) =>
-      (beforeElixirs: ElixirInstance[]) => {
+      (beforeElixirs) => {
         const result = [...beforeElixirs];
         result.forEach((option, idx) => {
           option.nextBigHitRate = option.bigHitRate;
@@ -329,7 +330,7 @@ function amplifyBigHitRateTemporarilyAdviceTemplate(n: number, odds: number): Ad
           if (optionIndex === idx) option.bigHitRate += n;
           option.bigHitRate = Math.max(Math.min(option.bigHitRate, 100), 0);
         });
-        return result;
+        return { elixirs: result };
       },
     odds,
   };

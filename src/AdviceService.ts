@@ -1,7 +1,8 @@
 import { OPTION_COUNT, Placeholders, SageTypes } from './constants';
 import { ADVICES } from './database/advice';
 import { AdviceInstance } from './domain/AdviceInstance';
-import { Advice } from './type/advice';
+import { Sage } from './domain/Sage';
+import { Advice, AdviceEffectResult } from './type/advice';
 import { ElixirInstance } from './type/elixir';
 import { SageInstance } from './type/sage';
 import { calculateOddsSum, isFullStack, playRefineFailureSound, playRefineSuccessSound } from './util';
@@ -48,18 +49,18 @@ class AdviceService {
     try {
       const { advice } = sages[selectedSageIndex];
       let before = beforeElixirs.map((elixir) => elixir.level);
-      const result = advice.execute(beforeElixirs, optionIdx);
+      const { elixirs } = advice.execute(beforeElixirs, optionIdx);
 
       let success = false;
 
       for (let i = 0; i < OPTION_COUNT; i++) {
-        const diff = result[i].level - before[i];
+        const diff = elixirs[i].level - before[i];
         if (diff > 0) {
-          result[i].statusText = '연성 단계 상승';
+          elixirs[i].statusText = '연성 단계 상승';
           success = true;
         } else if (diff < 0) {
-          result[i].statusText = '연성 단계 하락';
-        } else result[i].statusText = null;
+          elixirs[i].statusText = '연성 단계 하락';
+        } else elixirs[i].statusText = null;
       }
 
       if (advice.type === 'util' || success) playRefineSuccessSound();
@@ -81,20 +82,18 @@ class AdviceService {
         }
       }
 
-      return { ok: true, data: { elixirs: result, sages: [...sages] }, statusText: null };
+      return { ok: true, result: { elixirs }, sages, statusText: null };
     } catch (e) {
       console.error(e);
-      return { ok: false, data: { elixirs: beforeElixirs, sages: [...sages] }, statusText: '엘릭서를 선택해주세요.' };
+      return { ok: false, statusText: '엘릭서를 선택해주세요.' };
     }
   }
 }
 
 interface PickAdviceReturnType {
   ok: boolean;
-  data: {
-    elixirs: ElixirInstance[];
-    sages: SageInstance[];
-  };
+  result?: AdviceEffectResult;
+  sages?: Sage[];
   statusText: string;
 }
 

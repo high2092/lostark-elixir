@@ -1,4 +1,3 @@
-import { Sage } from '../domain/Sage';
 import { ElixirInstance } from './elixir';
 import { SageKey, SageTypesType } from './sage';
 
@@ -13,7 +12,6 @@ export interface Advice {
 
 export interface AdviceEffectResult {
   elixirs: ElixirInstance[];
-  sages: Sage[];
   extraTarget?: number;
   extraAlchemy?: number;
   saveChance?: boolean;
@@ -22,7 +20,7 @@ export interface AdviceEffectResult {
   reset?: boolean;
 }
 
-export type AdviceEffect = (beforeElixirs: ElixirInstance[], optionIdx?: number) => ElixirInstance[];
+export type AdviceEffect = (beforeElixirs: ElixirInstance[], optionIdx?: number) => AdviceEffectResult;
 
 export interface AdviceParam {
   optionIndex?: number;
