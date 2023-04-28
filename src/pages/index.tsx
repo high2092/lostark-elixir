@@ -166,7 +166,7 @@ const Home = () => {
       }
       case AlchemyStatus.ALCHEMY: {
         setSelectedOptions(alchemyService.alchemy(adviceEffectResult));
-        setAlchemyChance(alchemyChance - (1 + (adviceEffectResult.extraChanceConsume ?? 0)));
+        if (!adviceEffectResult.saveChance) setAlchemyChance(alchemyChance - (1 + (adviceEffectResult.extraChanceConsume ?? 0)));
         setTurn(turn + 1);
         setAlchemyStatus(AlchemyStatus.ADVICE);
         break;

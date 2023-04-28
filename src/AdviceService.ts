@@ -5,7 +5,7 @@ import { Sage } from './domain/Sage';
 import { Advice, AdviceEffectResult } from './type/advice';
 import { ElixirInstance } from './type/elixir';
 import { SageInstance } from './type/sage';
-import { calculateOddsSum, isFullStack, playRefineFailureSound, playRefineSuccessSound } from './util';
+import { calculateOddsSum, gacha, isFullStack, playRefineFailureSound, playRefineSuccessSound } from './util';
 
 const N_TABLE = [1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 5, 5];
 
@@ -15,13 +15,13 @@ class AdviceService {
   }, 0);
 
   createAdviceInstance(advice: Advice, beforeElixirs: ElixirInstance[], turn: number) {
-    const idx = Math.floor(Math.random() * OPTION_COUNT);
+    const [idx] = gacha(beforeElixirs);
     return new AdviceInstance(advice, beforeElixirs[idx].name, idx, turn);
   }
 
   private getAdvices(sage: SageInstance) {
     if (isFullStack(sage)) {
-      return ADVICES.filter((advice) => advice.sage === sage.name && advice.special === sage.type);
+      return ADVICES.filter((advice) => advice.special === sage.type && (advice.sage === sage.name || !advice.sage));
     }
     return ADVICES.filter((advice) => !advice.special);
   }

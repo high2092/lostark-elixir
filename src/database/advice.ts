@@ -1,7 +1,7 @@
 import { DIALOGUE_END_INDEX as I, MAX_ACTIVE, OPTION_COUNT, Placeholders } from '../constants';
 import { Advice, AdviceParam } from '../type/advice';
 import { SageKey, SageKeys, SageTypesType, SageTypesTypes } from '../type/sage';
-import { convertToSignedString, validateOptionIndex } from '../util';
+import { applyAdvice, convertToSignedString, gacha, getLockedCount, validateOptionIndex } from '../util';
 
 const NO_OPTION_SELECTED_ERROR_MESSAGE = '옵션을 선택해주세요.';
 
@@ -21,8 +21,7 @@ export const ADVICES: Advice[] = [
       ({ optionIndex, n }) =>
       (beforeElixirs) => {
         const result = [...beforeElixirs];
-        const afterLevel = n + Math.floor(Math.random() * 2);
-        result[optionIndex].level = afterLevel;
+        applyAdvice(result[optionIndex], { level: n + Math.floor(Math.random() * 2) });
         return { elixirs: result };
       },
     odds: 1,
@@ -34,8 +33,7 @@ export const ADVICES: Advice[] = [
       ({ n }) =>
       (beforeElixirs, optionIndex) => {
         const result = [...beforeElixirs];
-        const afterLevel = n + Math.floor(Math.random() * 2);
-        result[optionIndex].level = afterLevel;
+        applyAdvice(result[optionIndex], { level: n + Math.floor(Math.random() * 2) });
         return { elixirs: result };
       },
     odds: 1,
@@ -47,7 +45,7 @@ export const ADVICES: Advice[] = [
       ({ optionIndex }) =>
       (beforeElixirs) => {
         const result = [...beforeElixirs];
-        result[optionIndex].level++;
+        applyAdvice(result[optionIndex], { level: result[optionIndex].level + 1 });
         return { elixirs: result };
       },
     odds: 1,
@@ -62,8 +60,8 @@ export const ADVICES: Advice[] = [
       }, result[0].level);
 
       const candidate = result.filter((elixir) => elixir.level === maxLevel);
-      const targetIndex = Math.floor(Math.random() * candidate.length);
-      candidate[targetIndex].level = Math.min(candidate[targetIndex].level + 1, MAX_ACTIVE);
+      const targetIndex = Math.floor(Math.random()) * candidate.length;
+      applyAdvice(candidate[targetIndex], { level: candidate[targetIndex].level + 1 });
       return { elixirs: result };
     },
     odds: 1,
@@ -78,8 +76,8 @@ export const ADVICES: Advice[] = [
       }, result[0].level);
 
       const candidate = result.filter((elixir) => elixir.level === minLevel);
-      const targetIndex = Math.floor(Math.random() * candidate.length);
-      candidate[targetIndex].level = Math.min(candidate[targetIndex].level + 1, MAX_ACTIVE);
+      const targetIndex = Math.floor(Math.random()) * candidate.length;
+      applyAdvice(candidate[targetIndex], { level: candidate[targetIndex].level + 1 });
       return { elixirs: result };
     },
     odds: 1,
@@ -89,8 +87,9 @@ export const ADVICES: Advice[] = [
     type: 'util',
     effect: () => (beforeElixirs) => {
       const result = [...beforeElixirs];
-      result[1].level = Math.min(result[1].level + 1, MAX_ACTIVE);
-      result[3].level = Math.min(result[3].level + 1, MAX_ACTIVE);
+
+      applyAdvice(result[1], { level: result[1].level + 1 });
+      applyAdvice(result[3], { level: result[3].level + 1 });
       return { elixirs: result };
     },
     odds: 1,
@@ -100,8 +99,9 @@ export const ADVICES: Advice[] = [
     type: 'util',
     effect: () => (beforeElixirs) => {
       const result = [...beforeElixirs];
-      const targetIndex = Math.floor(Math.random() * OPTION_COUNT);
-      result[targetIndex].level = Math.min(result[targetIndex].level + 1, MAX_ACTIVE);
+      const candidate = result.filter((option) => !option.locked);
+      const targetIndex = Math.floor(Math.random()) * candidate.length;
+      applyAdvice(candidate[targetIndex], { level: candidate[targetIndex].level + 1 });
       return { elixirs: result };
     },
     odds: 1,
@@ -129,7 +129,7 @@ export const ADVICES: Advice[] = [
       const result = [...beforeElixirs];
       const candidate = result.filter((elixir) => elixir.level === 0);
       for (const option of candidate) {
-        option.level = Math.min(option.level + 1, MAX_ACTIVE);
+        applyAdvice(option, { level: option.level + 1 });
       }
       return { elixirs: result };
     },
@@ -148,10 +148,15 @@ export const ADVICES: Advice[] = [
   changeSelectedPotentialLevelAdviceTemplate(1, { maxRisk: 0, maxReturn: 4, special: SageTypesTypes.CHAOS, sage: SageKeys.L }),
   changeSelectedPotentialLevelAdviceTemplate(1, { maxRisk: -2, maxReturn: 3, special: SageTypesTypes.CHAOS, sage: SageKeys.B }),
   changeSelectedPotentialLevelAdviceTemplate(1, { maxRisk: 4, maxReturn: 5, special: SageTypesTypes.CHAOS, sage: SageKeys.C }),
-  amplifySelectedHitRateAdviceTemplate(1, { percentage: 15, special: SageTypesTypes.ORDER, sage: SageKeys.L }),
-  amplifySelectedHitRateAdviceTemplate(1, { percentage: 15, special: SageTypesTypes.ORDER, sage: SageKeys.B }),
-  amplifySelectedHitRateAdviceTemplate(1, { percentage: 15, special: SageTypesTypes.ORDER, sage: SageKeys.C }),
+  amplifySelectedHitRateAdviceTemplate(1, { percentage: 15, special: SageTypesTypes.ORDER }),
   extraTargetAdviceTemplate(1, { extraTarget: 1, extraChanceConsume: 1 }),
+  addRerollChanceAdviceTemplate(1, { addRerollChance: 1, special: SageTypesTypes.ORDER }),
+  addRerollChanceAdviceTemplate(1, { addRerollChance: 2, special: SageTypesTypes.ORDER }),
+  moveUpLevelAdviceTemplate(1, { special: SageTypesTypes.CHAOS }),
+  moveDownLevelAdviceTemplate(1, { special: SageTypesTypes.CHAOS }),
+  lockAdviceTemplate(1, { extraChanceConsume: 0 }),
+  lockAdviceTemplate(1, { extraChanceConsume: 1 }),
+  lockAdviceTemplate(1, { saveChance: true, special: SageTypesTypes.ORDER }),
 ];
 
 function potentialAlchemyAdviceTemplate(odds: number, params: AdviceTemplateProps): Advice {
@@ -163,7 +168,7 @@ function potentialAlchemyAdviceTemplate(odds: number, params: AdviceTemplateProp
       ({ optionIndex }) =>
       (beforeElixirs) => {
         const result = [...beforeElixirs];
-        if (Math.random() * 100 <= percentage) result[optionIndex].level++;
+        if (Math.random() * 100 <= percentage) applyAdvice(result[optionIndex], { level: result[optionIndex].level + 1 });
         return { elixirs: result };
       },
     odds,
@@ -177,8 +182,8 @@ function potentialSelectedAlchemyAdviceTemplate(odds: number, params: AdviceTemp
     type: 'potential',
     effect: () => (beforeElixirs, optionIndex) => {
       const result = [...beforeElixirs];
-      if (!optionIndex) throw new Error(NO_OPTION_SELECTED_ERROR_MESSAGE);
-      if (Math.random() * 100 <= percentage) result[optionIndex].level++;
+      if (typeof optionIndex !== 'number') throw new Error(NO_OPTION_SELECTED_ERROR_MESSAGE);
+      if (Math.random() * 100 <= percentage) applyAdvice(result[optionIndex], { level: result[optionIndex].level + 1 });
       return { elixirs: result };
     },
     odds,
@@ -195,7 +200,7 @@ function changePotentialLevelAdviceTemplate(odds: number, params: AdviceTemplate
       (beforeElixirs) => {
         const result = [...beforeElixirs];
         const diff = Math.floor(Math.random() * maxReturn - maxRisk + 1) - maxRisk;
-        result[optionIndex].level = Math.max(result[optionIndex].level + diff, 0);
+        applyAdvice(result[optionIndex], { level: result[optionIndex].level + diff });
         return { elixirs: result };
       },
     odds,
@@ -207,6 +212,8 @@ interface AdviceTemplateProps {
   percentage?: number;
   special?: SageTypesType;
   sage?: SageKey;
+  addRerollChance?: number;
+  saveChance?: boolean;
   maxRisk?: number;
   maxReturn?: number;
   extraTarget?: number;
@@ -236,7 +243,7 @@ function changeSelectedPotentialLevelAdviceTemplate(odds: number, props?: Advice
     effect: () => (beforeElixirs, optionIndex) => {
       const result = [...beforeElixirs];
       const diff = Math.floor(Math.random() * (maxReturn - maxRisk + 1)) - maxRisk;
-      result[optionIndex].level = Math.max(result[optionIndex].level + diff, 0);
+      applyAdvice(result[optionIndex], { level: result[optionIndex].level + diff });
       return { elixirs: result };
     },
     odds,
@@ -255,9 +262,8 @@ function amplifyHitRateTemporarilyAdviceTemplate(odds: number, params: AdviceTem
         result.forEach((option, idx) => {
           option.nextHitRate = option.hitRate;
 
-          if (optionIndex === idx) option.hitRate += percentage;
-          else option.hitRate -= percentage / (OPTION_COUNT - 1);
-          option.hitRate = Math.max(Math.min(option.hitRate, 100), 0);
+          if (optionIndex === idx) applyAdvice(option, { hitRate: option.hitRate + percentage });
+          else applyAdvice(option, { hitRate: option.hitRate - percentage / (OPTION_COUNT - 1) });
         });
         return { elixirs: result };
       },
@@ -274,10 +280,12 @@ function amplifyHitRateAdviceTemplate(odds: number, params: AdviceTemplateProps)
       ({ optionIndex }) =>
       (beforeElixirs) => {
         const result = [...beforeElixirs];
+        const lockedCount = getLockedCount(result);
         result.forEach((option, idx) => {
-          if (optionIndex === idx) option.hitRate += percentage;
-          else option.hitRate -= percentage / (OPTION_COUNT - 1);
-          option.hitRate = Math.max(Math.min(option.hitRate, 100), 0);
+          if (option.locked) return;
+
+          if (optionIndex === idx) applyAdvice(option, { hitRate: option.hitRate + percentage });
+          else applyAdvice(option, { hitRate: option.hitRate - percentage / (OPTION_COUNT - lockedCount - 1) });
 
           option.nextHitRate = option.hitRate;
         });
@@ -297,11 +305,11 @@ function amplifySelectedHitRateAdviceTemplate(odds: number, props?: AdviceTempla
     sage,
     effect: () => (beforeElixirs, optionIndex) => {
       const result = [...beforeElixirs];
+      const lockedCount = getLockedCount(result);
       validateOptionIndex(optionIndex);
       result.forEach((option, idx) => {
-        if (optionIndex === idx) option.hitRate += percentage;
-        else option.hitRate -= percentage / (OPTION_COUNT - 1);
-        option.hitRate = Math.max(Math.min(option.hitRate, 100), 0);
+        if (optionIndex === idx) applyAdvice(option, { hitRate: option.hitRate + percentage });
+        else applyAdvice(option, { hitRate: option.hitRate - percentage / (OPTION_COUNT - lockedCount - 1) });
 
         option.nextHitRate = option.hitRate;
       });
@@ -321,8 +329,7 @@ function amplifyBigHitRateAdviceTemplate(odds: number, params: AdviceTemplatePro
       (beforeElixirs) => {
         const result = [...beforeElixirs];
         result.forEach((option, idx) => {
-          if (optionIndex === idx) option.bigHitRate += percentage;
-          option.bigHitRate = Math.max(Math.min(option.bigHitRate, 100), 0);
+          if (optionIndex === idx) applyAdvice(option, { bigHitRate: option.bigHitRate + percentage });
 
           option.nextBigHitRate = option.bigHitRate;
         });
@@ -344,7 +351,7 @@ function amplifyBigHitRateTemporarilyAdviceTemplate(odds: number, params: Advice
         result.forEach((option, idx) => {
           option.nextBigHitRate = option.bigHitRate;
 
-          if (optionIndex === idx) option.bigHitRate += percentage;
+          if (optionIndex === idx) applyAdvice(option, { bigHitRate: option.bigHitRate + percentage });
           option.bigHitRate = Math.max(Math.min(option.bigHitRate, 100), 0);
         });
         return { elixirs: result };
@@ -361,6 +368,81 @@ function extraTargetAdviceTemplate(odds: number, params?: AdviceTemplateProps): 
     type: 'util',
     effect: () => (beforeElixirs) => {
       return { elixirs: beforeElixirs, extraTarget, extraChanceConsume };
+    },
+    odds,
+  };
+}
+
+function addRerollChanceAdviceTemplate(odds: number, params: AdviceTemplateProps): Advice {
+  const { addRerollChance, special } = params;
+  return {
+    name: `다른 조언 보기 횟수를 ${addRerollChance}회 늘려${Placeholders[I.주겠네]}.`,
+    type: 'util',
+    special,
+    effect: () => (beforeElixirs) => {
+      return { elixirs: beforeElixirs, addRerollChance };
+    },
+    odds,
+  };
+}
+
+function moveUpLevelAdviceTemplate(odds: number, params: AdviceTemplateProps): Advice {
+  const { special } = params;
+  return {
+    name: `모든 효과의 단계를 위로 1 슬롯 씩 올려${Placeholders[I.주겠네]}.`,
+    type: 'util',
+    special,
+    effect: () => (beforeElixirs) => {
+      const result = [...beforeElixirs];
+      const first = result[0];
+      for (let i = 0; i < OPTION_COUNT - 1; i++) {
+        result[i] = result[i + 1];
+      }
+      result[OPTION_COUNT - 1] = first;
+      return { elixirs: result };
+    },
+    odds,
+  };
+}
+
+function moveDownLevelAdviceTemplate(odds: number, params: AdviceTemplateProps): Advice {
+  const { special } = params;
+  return {
+    name: `모든 효과의 단계를 아래로 1 슬롯 씩 내려${Placeholders[I.주겠네]}.`,
+    type: 'util',
+    special,
+    effect: () => (beforeElixirs) => {
+      const result = [...beforeElixirs];
+      const last = result[OPTION_COUNT - 1];
+      for (let i = 0; i < OPTION_COUNT - 1; i++) {
+        result[i + 1] = result[i];
+      }
+      result[0] = last;
+      return { elixirs: result };
+    },
+    odds,
+  };
+}
+
+function lockAdviceTemplate(odds: number, params: AdviceTemplateProps): Advice {
+  const { extraChanceConsume, saveChance, special } = params;
+  return {
+    name: `임의의 효과 하나를 봉인${Placeholders[I.하겠네]}.${extraChanceConsume ? ` 다만, 기회를 ${1 + extraChanceConsume}번 소모${Placeholders[I.할걸세]}.` : ''}${saveChance ? ` 이번 연성은 기회를 소모하지 ${Placeholders[I.않을걸세]}.` : ''}`,
+    type: 'util',
+    special,
+    effect: () => (beforeElixirs) => {
+      const result = [...beforeElixirs];
+      const [idx] = gacha(result);
+      result[idx].locked = true;
+      const lockedCount = result.reduce((acc, cur) => acc + Number(cur.locked), 0);
+      for (let i = 0; i < OPTION_COUNT; i++) {
+        if (!result[i].locked) {
+          applyAdvice(result[i], { hitRate: result[i].hitRate + result[idx].hitRate / (OPTION_COUNT - lockedCount) });
+          result[i].nextHitRate = result[i].hitRate;
+        }
+      }
+
+      return { elixirs: result, saveChance, extraChanceConsume };
     },
     odds,
   };
