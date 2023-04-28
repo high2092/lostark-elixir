@@ -5,6 +5,7 @@ const N_TABLE = [1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 5, 5];
 
 class AdviceInstance implements IAdviceInstance {
   name: string;
+  type: AdviceType;
   effect: (param: AdviceParam) => AdviceEffect;
   execute: AdviceEffect;
   odds: number;
@@ -15,6 +16,7 @@ class AdviceInstance implements IAdviceInstance {
       .replace(OPTION_NAME_PLACEHOLDER, name)
       .replace(N_NPLUS1_PLACEHOLDER, `[${n}~${n + 1}]`)
       .replace(N_PLACEHOLDER, n?.toString());
+    this.type = advice.type;
     this.execute = advice.effect({ optionIndex, n });
   }
 }
@@ -65,7 +67,7 @@ class AdviceService {
         } else result[i].statusText = null;
       }
 
-      if (success) playRefineSuccessSound();
+      if (advice.type === 'util' || success) playRefineSuccessSound();
       else playRefineFailureSound();
 
       return { ok: true, data: result };

@@ -8,6 +8,7 @@ export const ADVICE_DIALOGUE_END1_PLACEHOLDER = '?{END1}';
 export const ADVICES: Advice[] = [
   {
     name: `${OPTION_NAME_PLACEHOLDER} 효과를 25% 확률로 +1 올려${ADVICE_DIALOGUE_END1_PLACEHOLDER}.`,
+    type: 'potential',
     effect:
       ({ optionIndex }) =>
       (beforeElixirs) => {
@@ -19,6 +20,7 @@ export const ADVICES: Advice[] = [
   },
   {
     name: `${OPTION_NAME_PLACEHOLDER} 효과를 50% 확률로 +1 올려${ADVICE_DIALOGUE_END1_PLACEHOLDER}.`,
+    type: 'potential',
     effect:
       ({ optionIndex }) =>
       (beforeElixirs) => {
@@ -30,6 +32,7 @@ export const ADVICES: Advice[] = [
   },
   {
     name: `선택한 효과를 25% 확률로 +1 올려${ADVICE_DIALOGUE_END1_PLACEHOLDER}.`,
+    type: 'potential',
     effect: () => (beforeElixirs, optionIndex) => {
       const result = [...beforeElixirs];
       if (Math.random() * 100 <= 25) result[optionIndex].level++;
@@ -41,6 +44,7 @@ export const ADVICES: Advice[] = [
 
   {
     name: `선택한 효과를 50% 확률로 +1 올려${ADVICE_DIALOGUE_END1_PLACEHOLDER}.`,
+    type: 'potential',
     effect: () => (beforeElixirs, optionIndex) => {
       const result = [...beforeElixirs];
       if (Math.random() * 100 <= 50) result[optionIndex].level++;
@@ -50,6 +54,7 @@ export const ADVICES: Advice[] = [
   },
   {
     name: `${OPTION_NAME_PLACEHOLDER} 효과를 -2 ~ +2 단계 올려${ADVICE_DIALOGUE_END1_PLACEHOLDER}.`,
+    type: 'potential',
     effect:
       ({ optionIndex }) =>
       (beforeElixirs) => {
@@ -62,6 +67,7 @@ export const ADVICES: Advice[] = [
   },
   {
     name: `${OPTION_NAME_PLACEHOLDER} 효과를 -1 ~ +2 단계 올려${ADVICE_DIALOGUE_END1_PLACEHOLDER}.`,
+    type: 'potential',
     effect:
       ({ optionIndex }) =>
       (beforeElixirs) => {
@@ -74,6 +80,7 @@ export const ADVICES: Advice[] = [
   },
   {
     name: `선택한 효과를 -2 ~ +2 단계 올려${ADVICE_DIALOGUE_END1_PLACEHOLDER}.`,
+    type: 'potential',
     effect: () => (beforeElixirs, optionIndex) => {
       const result = [...beforeElixirs];
       const diff = Math.floor(Math.random() * 5) - 2;
@@ -84,6 +91,7 @@ export const ADVICES: Advice[] = [
   },
   {
     name: `선택한 효과를 -1 ~ +2 단계 올려${ADVICE_DIALOGUE_END1_PLACEHOLDER}.`,
+    type: 'potential',
     effect: () => (beforeElixirs, optionIndex) => {
       const result = [...beforeElixirs];
       const diff = Math.floor(Math.random() * 4) - 1;
@@ -94,6 +102,7 @@ export const ADVICES: Advice[] = [
   },
   {
     name: `${OPTION_NAME_PLACEHOLDER} 효과의 단계를 ${N_NPLUS1_PLACEHOLDER} 중 하나로 변경해${ADVICE_DIALOGUE_END1_PLACEHOLDER}.`,
+    type: 'util',
     effect:
       ({ optionIndex, n }) =>
       (beforeElixirs) => {
@@ -106,6 +115,7 @@ export const ADVICES: Advice[] = [
   },
   {
     name: `선택한 효과의 단계를 ${N_NPLUS1_PLACEHOLDER} 중 하나로 변경해${ADVICE_DIALOGUE_END1_PLACEHOLDER}.`,
+    type: 'util',
     effect:
       ({ n }) =>
       (beforeElixirs, optionIndex) => {
@@ -118,6 +128,7 @@ export const ADVICES: Advice[] = [
   },
   {
     name: `${OPTION_NAME_PLACEHOLDER} 효과의 단계를 +1 올려${ADVICE_DIALOGUE_END1_PLACEHOLDER}. 대신...`,
+    type: 'util',
     effect:
       ({ optionIndex }) =>
       (beforeElixirs) => {
@@ -129,6 +140,7 @@ export const ADVICES: Advice[] = [
   },
   {
     name: `최고 단계 효과를 +1 올려${ADVICE_DIALOGUE_END1_PLACEHOLDER}.`,
+    type: 'util',
     effect: () => (beforeElixirs) => {
       const result = [...beforeElixirs];
       const maxLevel = result.reduce((acc, cur) => {
@@ -144,6 +156,7 @@ export const ADVICES: Advice[] = [
   },
   {
     name: `최하 단계 효과를 +1 올려${ADVICE_DIALOGUE_END1_PLACEHOLDER}.`,
+    type: 'util',
     effect: () => (beforeElixirs) => {
       const result = [...beforeElixirs];
       const minLevel = result.reduce((acc, cur) => {
@@ -159,6 +172,7 @@ export const ADVICES: Advice[] = [
   },
   {
     name: `2, 4 슬롯의 효과를 +1 올려${ADVICE_DIALOGUE_END1_PLACEHOLDER}. 대신...`,
+    type: 'util',
     effect: () => (beforeElixirs) => {
       const result = [...beforeElixirs];
       result[1].level = Math.min(result[1].level + 1, MAX_ACTIVE);
@@ -169,6 +183,7 @@ export const ADVICES: Advice[] = [
   },
   {
     name: `임의 효과를 +1 올려${ADVICE_DIALOGUE_END1_PLACEHOLDER}. 대신 ...`,
+    type: 'util',
     effect: () => (beforeElixirs) => {
       const result = [...beforeElixirs];
       const targetIndex = Math.floor(Math.random() * OPTION_COUNT);
@@ -195,6 +210,7 @@ export const ADVICES: Advice[] = [
   // },
   {
     name: `연성되지 않은 모든 효과를 +1 올려${ADVICE_DIALOGUE_END1_PLACEHOLDER}.`,
+    type: 'util',
     effect: () => (beforeElixirs) => {
       const result = [...beforeElixirs];
       const candidate = result.filter((elixir) => elixir.level === 0);
@@ -210,9 +226,10 @@ export const ADVICES: Advice[] = [
   amplifyHitRateAdviceTemplate(20, 1),
 ];
 
-function amplifyHitRateAdviceTemplate(n: number, odds: number) {
+function amplifyHitRateAdviceTemplate(n: number, odds: number): Advice {
   return {
     name: `이번 연성에서 ${OPTION_NAME_PLACEHOLDER} 효과의 연성 확률을 +${n}% 높여${ADVICE_DIALOGUE_END1_PLACEHOLDER}.`,
+    type: 'util',
     effect:
       ({ optionIndex }) =>
       (beforeElixirs: ElixirInstance[]) => {

@@ -25,7 +25,9 @@ interface AdviceParam {
   n?: number;
 }
 
+type AdviceType = 'potential' | 'util';
 interface Advice {
+  type: AdviceType;
   name: string;
   effect: (param?: AdviceParam) => AdviceEffect;
   odds: number;
