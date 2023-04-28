@@ -53,8 +53,8 @@ export const validateOptionIndex = (idx: number) => {
   if (idx < 0 || idx >= OPTION_COUNT) throw new Error();
 };
 
-export const isFullStack = (type: SageTypesType, stack: number) => {
-  return stack === SageTypes[type]?.fullStack;
+export const isFullStack = (sage: SageInstance) => {
+  return sage.stack === SageTypes[sage.type]?.fullStack;
 };
 
 export const playRefineSuccessSound = () => new Audio('/sound/refine-success.mp3').play();

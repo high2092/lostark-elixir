@@ -220,13 +220,11 @@ const Home = () => {
         <S.AdviceSection>
           {Array.from({ length: ADVICE_COUNT }).map((_, idx) => {
             const sage = sages[idx];
-            const stack = getStackForDisplaying(sage.type, sage.stack);
-
-            const special = alchemyStatus === AlchemyStatus.ADVICE && isFullStack(sage.type, stack) ? sage.type : null;
+            const special = alchemyStatus === AlchemyStatus.ADVICE && isFullStack(sage) ? sage.type : null;
             return (
               <S.Advice key={`advice-${idx}`} onClick={(e) => handleAdviceClick(e, idx)}>
                 <div style={{ height: STACK_COUNTER_EXPECTED_HEIGHT }}>
-                  <SageTypeStackCounter type={sage.type} stack={sage.stack} />
+                  <SageTypeStackCounter sage={sage} />
                 </div>
                 <S.AdviceDialogue disabled={alchemyStatus === AlchemyStatus.ALCHEMY || getDisabled()} special={special} selected={selectedAdviceIndex === idx}>
                   {alchemyStatus === AlchemyStatus.REFINE && <SelectOptionDialogue SelectOption={elixirOptions[idx]} sage={sages[idx]} />}

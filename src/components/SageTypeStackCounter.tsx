@@ -1,6 +1,6 @@
 import * as S from './SageTypeStackCounter.style';
 import { SageTypes } from '../constants';
-import { SageTypesType, SageTypesTypes } from '../type/sage';
+import { SageInstance, SageTypesType, SageTypesTypes } from '../type/sage';
 import { getStackForDisplaying } from '../util';
 import { ActiveChaosStackIcon } from './ActiveChaosStackIcon';
 import { ActiveOrderStackIcon } from './ActiveOrderStackIcon';
@@ -8,13 +8,12 @@ import { InactiveChaosStackIcon } from './InactiveChaosStackIcon';
 import { InactiveOrderStackIcon } from './InactiveOrderStackIcon';
 
 interface SageTypeStackCounterProps {
-  type: SageTypesType;
-  stack: number;
+  sage: SageInstance;
 }
 
-export const SageTypeStackCounter = ({ type, stack: _stack }: SageTypeStackCounterProps) => {
+export const SageTypeStackCounter = ({ sage }: SageTypeStackCounterProps) => {
+  const { type, stack } = sage;
   if (!type) return <div></div>;
-  const stack = getStackForDisplaying(type, _stack);
   const maxStack = SageTypes[type].fullStack;
 
   const [ActiveStackIcon, InactiveStackIcon] = type === SageTypesTypes.CHAOS ? [ActiveChaosStackIcon, InactiveChaosStackIcon] : [ActiveOrderStackIcon, InactiveOrderStackIcon];

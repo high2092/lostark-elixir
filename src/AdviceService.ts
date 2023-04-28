@@ -20,8 +20,7 @@ class AdviceService {
   }
 
   private getAdvices(sage: SageInstance) {
-    if (isFullStack(sage.type, sage.stack)) {
-      sage.stack = 0;
+    if (isFullStack(sage)) {
       return ADVICES.filter((advice) => advice.sage === sage.name && advice.special === sage.type);
     }
     return ADVICES.filter((advice) => !advice.special);
@@ -68,6 +67,7 @@ class AdviceService {
       else playRefineFailureSound();
 
       for (let i = 0; i < sages.length; i++) {
+        if (isFullStack(sages[i])) sages[i].stack = 0;
         if (selectedSageIndex === i) {
           if (sages[i].type !== 'order') {
             sages[i].type = 'order';
