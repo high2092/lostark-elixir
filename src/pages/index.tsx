@@ -10,6 +10,7 @@ import { getStackForDisplaying, isFullStack } from '../util';
 import { Sage } from '../domain/Sage';
 import { SageKeys, SageTemplates } from '../database/sage';
 import { SageInstance } from '../type/sage';
+import { SageTypeStackCounter } from '../components/SageTypeStackCounter';
 
 const AlchemyStatus = {
   REFINE: 'refine', // 정제
@@ -210,7 +211,7 @@ const Home = () => {
             const special = alchemyStatus === AlchemyStatus.ADVICE && isFullStack(sage.type, stack) ? sage.type : null;
             return (
               <S.Advice onClick={(e) => handleAdviceClick(e, idx)} selected={selectedAdviceIndex === idx} disabled={alchemyStatus === AlchemyStatus.ALCHEMY || getDisabled()} special={special}>
-                <div>{sage.type && alchemyStatus === AlchemyStatus.ADVICE && `${sageTypeName} ${stack}`}</div>
+                <SageTypeStackCounter type={sage.type} stack={sage.stack} />
                 {alchemyStatus === AlchemyStatus.REFINE && <SelectOptionDialogue SelectOption={elixirOptions[idx]} sage={sages[idx]} />}
                 {alchemyStatus !== AlchemyStatus.REFINE && <AdviceDialogue sage={sages[idx]} />}
               </S.Advice>
