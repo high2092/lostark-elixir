@@ -31,27 +31,26 @@ class AdviceService {
     return new AdviceInstance(advice, beforeElixirs[idx].name, idx, turn);
   }
 
-  drawAdvices(beforeElixirs: ElixirInstance[], turn: number) {
-    const result: AdviceInstance[] = [];
-
+  drawAdvices(beforeElixirs: ElixirInstance[], sages: SageInstance[], turn: number): SageInstance[] {
+    const _sages = [...sages];
     // TODO: 완전히 동일한 조언 중복 제거
-    while (result.length < ADVICE_COUNT) {
+    for (let i = 0; i < sages.length; i++) {
       const randomNumber = Math.random() * this.oddsSum;
       let oddsAcc = 0;
-      for (let i = 0; i < ADVICES.length; i++) {
-        const advice = ADVICES[i];
+      for (const advice of ADVICES) {
         if (randomNumber <= (oddsAcc += advice.odds)) {
-          result.push(this.createAdviceInstance(advice, beforeElixirs, turn));
+          _sages[i].advice = this.createAdviceInstance(advice, beforeElixirs, turn);
           break;
         }
       }
     }
 
-    return result;
+    return _sages;
   }
 
-  pickAdvice(advice: IAdviceInstance, beforeElixirs: ElixirInstance[], optionIdx: number) {
+  pickAdvice(selectedSageIndex: number, beforeElixirs: ElixirInstance[], sages: SageInstance[], optionIdx: number): PickAdviceReturnType {
     try {
+      const { advice } = sages[selectedSageIndex];
       let before = beforeElixirs.map((elixir) => elixir.level);
       const result = advice.execute(beforeElixirs, optionIdx);
 
@@ -70,12 +69,37 @@ class AdviceService {
       if (advice.type === 'util' || success) playRefineSuccessSound();
       else playRefineFailureSound();
 
-      return { ok: true, data: result };
+      for (let i = 0; i < sages.length; i++) {
+        if (selectedSageIndex === i) {
+          if (sages[i].type !== 'order') {
+            sages[i].type = 'order';
+            sages[i].stack = 0;
+          }
+          sages[i].stack++;
+        } else {
+          if (sages[i].type !== 'chaos') {
+            sages[i].type = 'chaos';
+            sages[i].stack = 0;
+          }
+          sages[i].stack++;
+        }
+      }
+
+      return { ok: true, data: { elixirs: result, sages: [...sages] }, statusText: null };
     } catch (e) {
       console.error(e);
-      return { ok: false, data: advice, statusText: '엘릭서를 선택해주세요.' };
+      return { ok: false, data: { elixirs: beforeElixirs, sages: [...sages] }, statusText: '엘릭서를 선택해주세요.' };
     }
   }
+}
+
+interface PickAdviceReturnType {
+  ok: boolean;
+  data: {
+    elixirs: ElixirInstance[];
+    sages: SageInstance[];
+  };
+  statusText: string;
 }
 
 export const adviceService = new AdviceService();

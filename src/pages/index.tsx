@@ -28,15 +28,10 @@ const MaterialSectionText = {
   SELECT_OPTION: '엘릭서에 정제할 효과를 위 항목에서 선택하세요.',
 };
 
-interface Sage {
-  SELECT_OPTION_DIALOGUE_END: string;
-  ADVICE_DIALOGUE_END1: string;
-}
-
-const sages: Sage[] = [
-  { SELECT_OPTION_DIALOGUE_END: '어때?', ADVICE_DIALOGUE_END1: '주지' },
-  { SELECT_OPTION_DIALOGUE_END: '어떤가?', ADVICE_DIALOGUE_END1: '주겠네' },
-  { SELECT_OPTION_DIALOGUE_END: '어때요?', ADVICE_DIALOGUE_END1: '드리죠' },
+const initialSages: SageInstance[] = [
+  { name: '루베도', SELECT_OPTION_DIALOGUE_END: '어때?', ADVICE_DIALOGUE_END1: '주지', stack: 0, advice: null },
+  { name: '비르디타스', SELECT_OPTION_DIALOGUE_END: '어떤가?', ADVICE_DIALOGUE_END1: '주겠네', stack: 0, advice: null },
+  { name: '치트리니', SELECT_OPTION_DIALOGUE_END: '어때요?', ADVICE_DIALOGUE_END1: '드리죠', stack: 0, advice: null },
 ];
 
 interface ElixirOptionDialogueProps {
@@ -44,6 +39,8 @@ interface ElixirOptionDialogueProps {
   sage: Sage;
 }
 const SelectOptionDialogue = ({ SelectOption: elixirOption, sage }: ElixirOptionDialogueProps) => {
+  if (!elixirOption) return <></>;
+
   const { name, type, part } = elixirOption;
   return (
     <div style={{ height: '100%', padding: '1rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -57,11 +54,13 @@ const SelectOptionDialogue = ({ SelectOption: elixirOption, sage }: ElixirOption
 };
 
 interface AdviceDialogueProps {
-  advice: IAdviceInstance;
-  sage: Sage;
+  sage: SageInstance;
 }
 
-const AdviceDialogue = ({ advice, sage }: AdviceDialogueProps) => {
+const AdviceDialogue = ({ sage }: AdviceDialogueProps) => {
+  const { advice } = sage;
+  if (!advice) return <></>;
+
   return <div>{advice.name.replace(ADVICE_DIALOGUE_END1_PLACEHOLDER, sage.ADVICE_DIALOGUE_END1)}</div>;
 };
 
@@ -92,6 +91,11 @@ const Home = () => {
   const [alchemyStatus, setAlchemyStatus] = useState<AlchemyStatus>();
   const statusTextTimeoutRef = useRef<NodeJS.Timeout>();
   const [turn, setTurn] = useState(0);
+  const [sages, setSages] = useState<SageInstance[]>(initialSages);
+
+  useEffect(() => {
+    setAdviceOptions(sages.map((sage) => sage.advice));
+  }, [sages]);
 
   useEffect(() => {
     switch (alchemyStatus) {
@@ -100,7 +104,7 @@ const Home = () => {
         break;
       }
       case AlchemyStatus.ADVICE: {
-        setAdviceOptions(adviceService.drawAdvices(selectedOptions, turn));
+        setSages(adviceService.drawAdvices(selectedOptions, sages, turn));
         break;
       }
     }
@@ -119,7 +123,7 @@ const Home = () => {
 
   useEffect(() => {
     if (alchemyChance === ALCHEMY_CHANCE) return;
-    setAdviceOptions(adviceService.drawAdvices(selectedOptions, turn));
+    setSages(adviceService.drawAdvices(selectedOptions, sages, turn));
   }, [alchemyChance]);
 
   const handleRefineButtonClick = () => {
@@ -138,15 +142,16 @@ const Home = () => {
         break;
       }
       case AlchemyStatus.ADVICE: {
-        const advice = adviceOptions[selectedAdviceIndex];
-        const response = adviceService.pickAdvice(advice, selectedOptions, selectedOptionIndex);
+        const response = adviceService.pickAdvice(selectedAdviceIndex, selectedOptions, sages, selectedOptionIndex);
 
         if (!response.ok) {
           alert(response.statusText);
           return;
         }
 
-        setSelectedOptions(response.data as ElixirInstance[]);
+        const { elixirs, sages: _sages } = response.data;
+        setSelectedOptions(elixirs);
+        setSages(_sages);
         setAlchemyStatus(AlchemyStatus.ALCHEMY);
         break;
       }
@@ -209,8 +214,9 @@ const Home = () => {
         <S.AdviceSection>
           {Array.from({ length: ADVICE_COUNT }).map((_, idx) => (
             <S.Advice onClick={(e) => handleAdviceClick(e, idx)} selected={selectedAdviceIndex === idx} disabled={alchemyStatus === AlchemyStatus.ALCHEMY || getDisabled()}>
-              {alchemyStatus === AlchemyStatus.REFINE && elixirOptions.length && <SelectOptionDialogue SelectOption={elixirOptions[idx]} sage={sages[idx]} />}
-              {alchemyStatus !== AlchemyStatus.REFINE && adviceOptions.length && <AdviceDialogue advice={adviceOptions[idx]} sage={sages[idx]} />}
+              {sages[idx].type && <div>{`${sages[idx].type} ${sages[idx].stack}`}</div>}
+              {alchemyStatus === AlchemyStatus.REFINE && <SelectOptionDialogue SelectOption={elixirOptions[idx]} sage={sages[idx]} />}
+              {alchemyStatus !== AlchemyStatus.REFINE && <AdviceDialogue sage={sages[idx]} />}
             </S.Advice>
           ))}
           <S.AdviceRerollButton>{getAdviceRerollButtonText(2)}</S.AdviceRerollButton>
