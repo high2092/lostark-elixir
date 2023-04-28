@@ -210,7 +210,7 @@ const Home = () => {
         <S.ElixirOptionSection>
           {selectedOptions.map(({ name, part, level, hitRate, bigHitRate, statusText, locked }, idx) => (
             <S.ElixirOption key={`elixirOption-${idx}`} onClick={(e) => handleElixirOptionClick(e, idx)} selected={selectedOptionIndex === idx} locked={locked}>
-              <div css={[CENTERED_FLEX_STYLE, { flex: 2 }]}>{`${hitRate.toFixed(1)}%`}</div>
+              <div css={[CENTERED_FLEX_STYLE, { flex: 2 }]}>{locked ? '봉인' : `${hitRate.toFixed(1)}%`}</div>
               <div css={{ flex: 7, paddingRight: '1rem', display: 'flex', justifyContent: 'center', flexDirection: 'column' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                   <span>{name}</span>
