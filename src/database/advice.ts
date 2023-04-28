@@ -3,6 +3,8 @@ import { Advice, AdviceParam } from '../type/advice';
 import { SageKey, SageKeys, SageTypesType, SageTypesTypes } from '../type/sage';
 import { convertToSignedString, validateOptionIndex } from '../util';
 
+const NO_OPTION_SELECTED_ERROR_MESSAGE = '옵션을 선택해주세요.';
+
 export const ADVICES: Advice[] = [
   potentialAlchemyAdviceTemplate(1, { percentage: 25 }),
   potentialAlchemyAdviceTemplate(1, { percentage: 50 }),
@@ -175,6 +177,7 @@ function potentialSelectedAlchemyAdviceTemplate(odds: number, params: AdviceTemp
     type: 'potential',
     effect: () => (beforeElixirs, optionIndex) => {
       const result = [...beforeElixirs];
+      if (!optionIndex) throw new Error(NO_OPTION_SELECTED_ERROR_MESSAGE);
       if (Math.random() * 100 <= percentage) result[optionIndex].level++;
       return { elixirs: result };
     },
