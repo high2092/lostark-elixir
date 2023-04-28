@@ -47,6 +47,5 @@ export const playRefineFailureSound = () => new Audio('/sound/refine-failure.mp3
 export const playClickSound = () => new Audio('sound/click.mp3').play();
 export const convertToSignedString = (n: number) => {
   if (n > 0) return `+${n}`;
-  else if (n < 0) return `-${n}`;
   return `${n}`;
 };

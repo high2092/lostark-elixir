@@ -181,7 +181,7 @@ function potentialSelectedAlchemyAdviceTemplate(percentage: number, odds: number
 
 function changePotentialLevelAdviceTemplate(maxRisk: number, maxReturn: number, odds: number): Advice {
   return {
-    name: `${Placeholders.OPTION} 효과를 -${maxRisk} ~ +${maxReturn} 단계 올려${Placeholders[I.주겠네]}.`,
+    name: `${Placeholders.OPTION} 효과를 [${convertToSignedString(-maxRisk)}~${convertToSignedString(maxReturn)}] 중 하나만큼 올려${Placeholders[I.주겠네]}.`,
     type: 'potential',
     effect:
       ({ optionIndex }) =>
