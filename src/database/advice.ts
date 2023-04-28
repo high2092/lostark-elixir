@@ -2,100 +2,14 @@ import { DIALOGUE_END_INDEX as I, MAX_ACTIVE, OPTION_COUNT, Placeholders } from 
 import { validateOptionIndex } from '../util';
 
 export const ADVICES: Advice[] = [
-  {
-    name: `${Placeholders.OPTION} 효과를 25% 확률로 +1 올려${Placeholders[I.주겠네]}.`,
-    type: 'potential',
-    effect:
-      ({ optionIndex }) =>
-      (beforeElixirs) => {
-        const result = [...beforeElixirs];
-        if (Math.random() * 100 <= 25) result[optionIndex].level++;
-        return result;
-      },
-    odds: 1,
-  },
-  {
-    name: `${Placeholders.OPTION} 효과를 50% 확률로 +1 올려${Placeholders[I.주겠네]}.`,
-    type: 'potential',
-    effect:
-      ({ optionIndex }) =>
-      (beforeElixirs) => {
-        const result = [...beforeElixirs];
-        if (Math.random() * 100 <= 50) result[optionIndex].level++;
-        return result;
-      },
-    odds: 1,
-  },
-  {
-    name: `선택한 효과를 25% 확률로 +1 올려${Placeholders[I.주겠네]}.`,
-    type: 'potential',
-    effect: () => (beforeElixirs, optionIndex) => {
-      const result = [...beforeElixirs];
-      if (Math.random() * 100 <= 25) result[optionIndex].level++;
-      return result;
-    },
-
-    odds: 1,
-  },
-
-  {
-    name: `선택한 효과를 50% 확률로 +1 올려${Placeholders[I.주겠네]}.`,
-    type: 'potential',
-    effect: () => (beforeElixirs, optionIndex) => {
-      const result = [...beforeElixirs];
-      if (Math.random() * 100 <= 50) result[optionIndex].level++;
-      return result;
-    },
-    odds: 1,
-  },
-  {
-    name: `${Placeholders.OPTION} 효과를 -2 ~ +2 단계 올려${Placeholders[I.주겠네]}.`,
-    type: 'potential',
-    effect:
-      ({ optionIndex }) =>
-      (beforeElixirs) => {
-        const result = [...beforeElixirs];
-        const diff = Math.floor(Math.random() * 5) - 2;
-        result[optionIndex].level = Math.max(result[optionIndex].level + diff, 0);
-        return result;
-      },
-    odds: 1,
-  },
-  {
-    name: `${Placeholders.OPTION} 효과를 -1 ~ +2 단계 올려${Placeholders[I.주겠네]}.`,
-    type: 'potential',
-    effect:
-      ({ optionIndex }) =>
-      (beforeElixirs) => {
-        const result = [...beforeElixirs];
-        const diff = Math.floor(Math.random() * 4) - 1;
-        result[optionIndex].level = Math.max(result[optionIndex].level + diff, 0);
-        return result;
-      },
-    odds: 1,
-  },
-  {
-    name: `선택한 효과를 -2 ~ +2 단계 올려${Placeholders[I.주겠네]}.`,
-    type: 'potential',
-    effect: () => (beforeElixirs, optionIndex) => {
-      const result = [...beforeElixirs];
-      const diff = Math.floor(Math.random() * 5) - 2;
-      result[optionIndex].level = Math.max(result[optionIndex].level + diff, 0);
-      return result;
-    },
-    odds: 1,
-  },
-  {
-    name: `선택한 효과를 -1 ~ +2 단계 올려${Placeholders[I.주겠네]}.`,
-    type: 'potential',
-    effect: () => (beforeElixirs, optionIndex) => {
-      const result = [...beforeElixirs];
-      const diff = Math.floor(Math.random() * 4) - 1;
-      result[optionIndex].level += diff;
-      return result;
-    },
-    odds: 1,
-  },
+  potentialAlchemyAdviceTemplate(25, 1),
+  potentialAlchemyAdviceTemplate(50, 1),
+  potentialSelectedAlchemyAdviceTemplate(25, 1),
+  potentialSelectedAlchemyAdviceTemplate(50, 1),
+  changePotentialLevelAdviceTemplate(2, 2, 1),
+  changePotentialLevelAdviceTemplate(1, 2, 1),
+  changeSelectedPotentialLevelAdviceTemplate(2, 2, 1),
+  changeSelectedPotentialLevelAdviceTemplate(1, 2, 1),
   {
     name: `${Placeholders.OPTION} 효과의 단계를 ${Placeholders.N_NPLUS_1} 중 하나로 변경해${Placeholders[I.주겠네]}.`,
     type: 'util',
@@ -289,6 +203,64 @@ export const ADVICES: Advice[] = [
     sage: '치트리니',
   },
 ];
+
+function potentialAlchemyAdviceTemplate(percentage: number, odds: number): Advice {
+  return {
+    name: `${Placeholders.OPTION} 효과를 ${percentage}% 확률로 +1 올려${Placeholders[I.주겠네]}.`,
+    type: 'potential',
+    effect:
+      ({ optionIndex }) =>
+      (beforeElixirs) => {
+        const result = [...beforeElixirs];
+        if (Math.random() * 100 <= percentage) result[optionIndex].level++;
+        return result;
+      },
+    odds,
+  };
+}
+
+function potentialSelectedAlchemyAdviceTemplate(percentage: number, odds: number): Advice {
+  return {
+    name: `선택한 효과를 ${percentage}% 확률로 +1 올려${Placeholders[I.주겠네]}.`,
+    type: 'potential',
+    effect: () => (beforeElixirs, optionIndex) => {
+      const result = [...beforeElixirs];
+      if (Math.random() * 100 <= percentage) result[optionIndex].level++;
+      return result;
+    },
+    odds,
+  };
+}
+
+function changePotentialLevelAdviceTemplate(maxRisk: number, maxReturn: number, odds: number): Advice {
+  return {
+    name: `${Placeholders.OPTION} 효과를 -${maxRisk} ~ +${maxReturn} 단계 올려${Placeholders[I.주겠네]}.`,
+    type: 'potential',
+    effect:
+      ({ optionIndex }) =>
+      (beforeElixirs) => {
+        const result = [...beforeElixirs];
+        const diff = Math.floor(Math.random() * maxReturn - maxRisk + 1) - maxRisk;
+        result[optionIndex].level = Math.max(result[optionIndex].level + diff, 0);
+        return result;
+      },
+    odds,
+  };
+}
+
+function changeSelectedPotentialLevelAdviceTemplate(maxRisk: number, maxReturn: number, odds: number): Advice {
+  return {
+    name: `선택한 효과를 -${maxRisk} ~ +${maxReturn} 단계 올려${Placeholders[I.주겠네]}.`,
+    type: 'potential',
+    effect: () => (beforeElixirs, optionIndex) => {
+      const result = [...beforeElixirs];
+      const diff = Math.floor(Math.random() * maxReturn - maxRisk + 1) - maxRisk;
+      result[optionIndex].level = Math.max(result[optionIndex].level + diff, 0);
+      return result;
+    },
+    odds,
+  };
+}
 
 function amplifyHitRateTemporarilyAdviceTemplate(n: number, odds: number): Advice {
   return {
