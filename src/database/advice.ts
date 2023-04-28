@@ -227,6 +227,9 @@ export const ADVICES: Advice[] = [
   amplifyHitRateAdviceTemplate(5, 1),
   amplifyHitRateAdviceTemplate(10, 1),
   amplifyHitRateAdviceTemplate(-5, 1),
+  amplifyBigHitRateAdviceTemplate(7, 1),
+  amplifyBigHitRateAdviceTemplate(15, 1),
+  amplifyBigHitRateTemporarilyAdviceTemplate(100, 1),
 ];
 
 function amplifyHitRateTemporarilyAdviceTemplate(n: number, odds: number): Advice {
@@ -237,10 +240,8 @@ function amplifyHitRateTemporarilyAdviceTemplate(n: number, odds: number): Advic
       ({ optionIndex }) =>
       (beforeElixirs: ElixirInstance[]) => {
         const result = [...beforeElixirs];
-        console.log(result.map((e) => e.hitRate));
         result.forEach((option, idx) => {
           option.nextHitRate = option.hitRate;
-          option.nextBigHitRate = option.bigHitRate;
 
           if (optionIndex === idx) option.hitRate += n;
           else option.hitRate -= n / (OPTION_COUNT - 1);
@@ -260,14 +261,52 @@ function amplifyHitRateAdviceTemplate(n: number, odds: number): Advice {
       ({ optionIndex }) =>
       (beforeElixirs: ElixirInstance[]) => {
         const result = [...beforeElixirs];
-        console.log(result.map((e) => e.hitRate));
         result.forEach((option, idx) => {
           if (optionIndex === idx) option.hitRate += n;
           else option.hitRate -= n / (OPTION_COUNT - 1);
           option.hitRate = Math.max(Math.min(option.hitRate, 100), 0);
 
           option.nextHitRate = option.hitRate;
+        });
+        return result;
+      },
+    odds,
+  };
+}
+
+function amplifyBigHitRateAdviceTemplate(n: number, odds: number): Advice {
+  return {
+    name: `남은 연성에서 ${OPTION_NAME_PLACEHOLDER} 효과의 대성공 확률을 ${Math.abs(n)}% ${n >= 0 ? '높여' : '낮춰'}${ADVICE_DIALOGUE_END1_PLACEHOLDER}.`,
+    type: 'util',
+    effect:
+      ({ optionIndex }) =>
+      (beforeElixirs: ElixirInstance[]) => {
+        const result = [...beforeElixirs];
+        result.forEach((option, idx) => {
+          if (optionIndex === idx) option.bigHitRate += n;
+          option.bigHitRate = Math.max(Math.min(option.bigHitRate, 100), 0);
+
           option.nextBigHitRate = option.bigHitRate;
+        });
+        return result;
+      },
+    odds,
+  };
+}
+
+function amplifyBigHitRateTemporarilyAdviceTemplate(n: number, odds: number): Advice {
+  return {
+    name: `이번 연성에서 ${OPTION_NAME_PLACEHOLDER} 효과의 대성공 확률을 ${Math.abs(n)}% ${n >= 0 ? '높여' : '낮춰'}${ADVICE_DIALOGUE_END1_PLACEHOLDER}.`,
+    type: 'util',
+    effect:
+      ({ optionIndex }) =>
+      (beforeElixirs: ElixirInstance[]) => {
+        const result = [...beforeElixirs];
+        result.forEach((option, idx) => {
+          option.nextBigHitRate = option.bigHitRate;
+
+          if (optionIndex === idx) option.bigHitRate += n;
+          option.bigHitRate = Math.max(Math.min(option.bigHitRate, 100), 0);
         });
         return result;
       },
