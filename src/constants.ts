@@ -41,3 +41,6 @@ export const Placeholders = {
   [DIALOGUE_END_INDEX.어떤가]: '?{어떤가}',
   [DIALOGUE_END_INDEX.주겠네]: '?{주겠네}',
 };
+
+export const SAGE_TYPE_STACK_SIZE = '1.4vw';
+export const STACK_COUNTER_EXPECTED_HEIGHT = '3vw';

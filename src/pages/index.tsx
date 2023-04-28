@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import * as S from '../style/index.style';
 import { cpu } from '../CPU';
-import { ADVICE_COUNT, ALCHEMY_CHANCE, CENTERED_FLEX_STYLE, DIALOGUE_END_INDEX as I, MAX_ACTIVE, Placeholders, SageTypes } from '../constants';
+import { ADVICE_COUNT, ALCHEMY_CHANCE, CENTERED_FLEX_STYLE, DIALOGUE_END_INDEX as I, MAX_ACTIVE, Placeholders, STACK_COUNTER_EXPECTED_HEIGHT, SageTypes } from '../constants';
 import { adviceService } from '../AdviceService';
 import { alchemyService } from '../AlchemyService';
 import { Activation } from '../components/Activation';
@@ -205,15 +205,18 @@ const Home = () => {
         <S.AdviceSection>
           {Array.from({ length: ADVICE_COUNT }).map((_, idx) => {
             const sage = sages[idx];
-            const sageTypeName = SageTypes[sage.type]?.displayName;
             const stack = getStackForDisplaying(sage.type, sage.stack);
 
             const special = alchemyStatus === AlchemyStatus.ADVICE && isFullStack(sage.type, stack) ? sage.type : null;
             return (
-              <S.Advice onClick={(e) => handleAdviceClick(e, idx)} selected={selectedAdviceIndex === idx} disabled={alchemyStatus === AlchemyStatus.ALCHEMY || getDisabled()} special={special}>
-                <SageTypeStackCounter type={sage.type} stack={sage.stack} />
-                {alchemyStatus === AlchemyStatus.REFINE && <SelectOptionDialogue SelectOption={elixirOptions[idx]} sage={sages[idx]} />}
-                {alchemyStatus !== AlchemyStatus.REFINE && <AdviceDialogue sage={sages[idx]} />}
+              <S.Advice onClick={(e) => handleAdviceClick(e, idx)}>
+                <div style={{ height: STACK_COUNTER_EXPECTED_HEIGHT }}>
+                  <SageTypeStackCounter type={sage.type} stack={sage.stack} />
+                </div>
+                <S.AdviceDialogue disabled={alchemyStatus === AlchemyStatus.ALCHEMY || getDisabled()} special={special} selected={selectedAdviceIndex === idx}>
+                  {alchemyStatus === AlchemyStatus.REFINE && <SelectOptionDialogue SelectOption={elixirOptions[idx]} sage={sages[idx]} />}
+                  {alchemyStatus !== AlchemyStatus.REFINE && <AdviceDialogue sage={sages[idx]} />}
+                </S.AdviceDialogue>
               </S.Advice>
             );
           })}

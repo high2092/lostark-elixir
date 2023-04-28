@@ -1,9 +1,9 @@
-import { SageTypes } from '../constants';
+import { SAGE_TYPE_STACK_SIZE, SageTypes } from '../constants';
 import { SageTypesTypes } from '../type/sage';
 
 export const InactiveOrderStackIcon = () => {
   return (
-    <svg width="20px" height="20px" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="none">
+    <svg width={SAGE_TYPE_STACK_SIZE} height={SAGE_TYPE_STACK_SIZE} viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="none">
       <path
         fill={SageTypes[SageTypesTypes.ORDER].color}
         fill-rule="evenodd"
