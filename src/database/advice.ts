@@ -5,6 +5,12 @@ import { applyAdvice, convertToSignedString, gacha, getLockedCount, validateOpti
 
 const NO_OPTION_SELECTED_ERROR_MESSAGE = '옵션을 선택해주세요.';
 
+/** TODO: 봉인된 옵션에 대한 처리 방식 조사하기
+ * 1. 단계 위/아래로 한칸씩 이동
+ * 2. 재분배
+ * 3. 뒤섞기
+ */
+
 export const ADVICES: Advice[] = [
   potentialAlchemyAdviceTemplate(1, { percentage: 25 }),
   potentialAlchemyAdviceTemplate(1, { percentage: 50 }),
@@ -152,9 +158,9 @@ export const ADVICES: Advice[] = [
   extraTargetAdviceTemplate(1, { extraTarget: 1, extraChanceConsume: 1 }),
   addRerollChanceAdviceTemplate(1, { addRerollChance: 1, special: SageTypesTypes.ORDER }),
   addRerollChanceAdviceTemplate(1, { addRerollChance: 2, special: SageTypesTypes.ORDER }),
-  moveUpLevelAdviceTemplate(1, { special: SageTypesTypes.CHAOS }),
+  moveUpLevelAdviceTemplate(11111, { special: SageTypesTypes.CHAOS }),
   moveDownLevelAdviceTemplate(1, { special: SageTypesTypes.CHAOS }),
-  lockAdviceTemplate(1, { extraChanceConsume: 0 }),
+  lockAdviceTemplate(111, { extraChanceConsume: 0 }),
   lockAdviceTemplate(1, { extraChanceConsume: 1 }),
   lockAdviceTemplate(1, { saveChance: true, special: SageTypesTypes.ORDER }),
 ];
@@ -394,11 +400,11 @@ function moveUpLevelAdviceTemplate(odds: number, params: AdviceTemplateProps): A
     special,
     effect: () => (beforeElixirs) => {
       const result = [...beforeElixirs];
-      const first = result[0];
+      const firstLevel = result[0].level;
       for (let i = 0; i < OPTION_COUNT - 1; i++) {
-        result[i] = result[i + 1];
+        result[i].level = result[i + 1].level;
       }
-      result[OPTION_COUNT - 1] = first;
+      result[OPTION_COUNT - 1].level = firstLevel;
       return { elixirs: result };
     },
     odds,
@@ -413,11 +419,11 @@ function moveDownLevelAdviceTemplate(odds: number, params: AdviceTemplateProps):
     special,
     effect: () => (beforeElixirs) => {
       const result = [...beforeElixirs];
-      const last = result[OPTION_COUNT - 1];
+      const lastLevel = result[OPTION_COUNT - 1].level;
       for (let i = 0; i < OPTION_COUNT - 1; i++) {
-        result[i + 1] = result[i];
+        result[i + 1].level = result[i].level;
       }
-      result[0] = last;
+      result[0].level = lastLevel;
       return { elixirs: result };
     },
     odds,
