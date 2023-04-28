@@ -1,5 +1,6 @@
-import { ADVICE_COUNT, OPTION_COUNT, playRefineFailureSound, playRefineSuccessSound } from './constants';
+import { FullStack, OPTION_COUNT, playRefineFailureSound, playRefineSuccessSound } from './constants';
 import { ADVICES, N_NPLUS1_PLACEHOLDER, N_PLACEHOLDER, OPTION_NAME_PLACEHOLDER } from './database/advice';
+import { calculateOddsSum } from './util';
 
 const N_TABLE = [1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 5, 5];
 
@@ -31,15 +32,28 @@ class AdviceService {
     return new AdviceInstance(advice, beforeElixirs[idx].name, idx, turn);
   }
 
+  private isFullStack(sage: SageInstance) {
+    return sage.stack === FullStack[sage.type];
+  }
+
+  private getAdvices(sage: SageInstance) {
+    if (this.isFullStack(sage)) {
+      sage.stack = 0;
+      return ADVICES.filter((advice) => advice.sage === sage.name && advice.special === sage.type);
+    }
+    return ADVICES.filter((advice) => !advice.special);
+  }
+
   drawAdvices(beforeElixirs: ElixirInstance[], sages: SageInstance[], turn: number): SageInstance[] {
     const _sages = [...sages];
-    // TODO: 완전히 동일한 조언 중복 제거
-    for (let i = 0; i < sages.length; i++) {
-      const randomNumber = Math.random() * this.oddsSum;
+
+    for (const sage of _sages) {
+      const advices = this.getAdvices(sage);
+      const randomNumber = Math.random() * calculateOddsSum(advices, 'odds');
       let oddsAcc = 0;
-      for (const advice of ADVICES) {
+      for (const advice of advices) {
         if (randomNumber <= (oddsAcc += advice.odds)) {
-          _sages[i].advice = this.createAdviceInstance(advice, beforeElixirs, turn);
+          sage.advice = this.createAdviceInstance(advice, beforeElixirs, turn);
           break;
         }
       }

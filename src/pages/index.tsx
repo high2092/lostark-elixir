@@ -7,6 +7,7 @@ import { adviceService } from '../AdviceService';
 import { alchemyService } from '../AlchemyService';
 import { Activation } from '../components/Activation';
 import { ADVICE_DIALOGUE_END1_PLACEHOLDER } from '../database/advice';
+import { getStackForDisplaying } from '../util';
 
 const AlchemyStatus = {
   REFINE: 'refine', // 정제
@@ -94,10 +95,6 @@ const Home = () => {
   const [sages, setSages] = useState<SageInstance[]>(initialSages);
 
   useEffect(() => {
-    setAdviceOptions(sages.map((sage) => sage.advice));
-  }, [sages]);
-
-  useEffect(() => {
     switch (alchemyStatus) {
       case AlchemyStatus.REFINE: {
         setElixirOptions(cpu.drawOptions());
@@ -120,11 +117,6 @@ const Home = () => {
     setElixirOptions(cpu.drawOptions());
     if (selectOptionChance === 0) setAlchemyStatus(AlchemyStatus.ADVICE);
   }, [selectOptionChance]);
-
-  useEffect(() => {
-    if (alchemyChance === ALCHEMY_CHANCE) return;
-    setSages(adviceService.drawAdvices(selectedOptions, sages, turn));
-  }, [alchemyChance]);
 
   const handleRefineButtonClick = () => {
     if (alchemyChance <= 0) return;
@@ -214,7 +206,7 @@ const Home = () => {
         <S.AdviceSection>
           {Array.from({ length: ADVICE_COUNT }).map((_, idx) => (
             <S.Advice onClick={(e) => handleAdviceClick(e, idx)} selected={selectedAdviceIndex === idx} disabled={alchemyStatus === AlchemyStatus.ALCHEMY || getDisabled()}>
-              {sages[idx].type && <div>{`${sages[idx].type} ${sages[idx].stack}`}</div>}
+              {sages[idx].type && <div>{`${sages[idx].type} ${getStackForDisplaying(sages[idx].type, sages[idx].stack)}`}</div>}
               {alchemyStatus === AlchemyStatus.REFINE && <SelectOptionDialogue SelectOption={elixirOptions[idx]} sage={sages[idx]} />}
               {alchemyStatus !== AlchemyStatus.REFINE && <AdviceDialogue sage={sages[idx]} />}
             </S.Advice>

@@ -15,3 +15,9 @@ export const DEFAULT_BORDER_RADIUS_PX = 2;
 
 export const playRefineSuccessSound = () => new Audio('/sound/refine-success.mp3').play();
 export const playRefineFailureSound = () => new Audio('/sound/refine-failure.mp3').play();
+
+// TODO: enum
+export const FullStack = {
+  chaos: 6,
+  order: 3,
+} as const;

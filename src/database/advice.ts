@@ -1,4 +1,5 @@
 import { MAX_ACTIVE, OPTION_COUNT } from '../constants';
+import { validateOptionIndex } from '../util';
 
 export const OPTION_NAME_PLACEHOLDER = '?{option}';
 export const N_NPLUS1_PLACEHOLDER = '?{[n~n+1]}';
@@ -234,6 +235,64 @@ export const ADVICES: Advice[] = [
   amplifyBigHitRateAdviceTemplate(7, 1),
   amplifyBigHitRateAdviceTemplate(15, 1),
   amplifyBigHitRateTemporarilyAdviceTemplate(100, 1),
+  // TODO: 템플릿 만들기
+  {
+    name: `내 힘을 모두 소진하겠다. 대신 네가 고르는 효과의 단계를 [0~+4] 중 하나만큼 올려주지.`,
+    special: 'chaos',
+    sage: '루베도',
+    type: 'potential',
+    effect: () => (beforeElixirs, optionIndex) => {
+      const result = [...beforeElixirs];
+      const diff = Math.floor(Math.random() * 5);
+      result[optionIndex].level += diff;
+      result[optionIndex].level = Math.max(Math.min(result[optionIndex].level, 100), 0);
+      return result;
+    },
+    odds: 1,
+  },
+  {
+    name: `내 힘을 모두 소진하겠네. 대신 자네가 선택한 효과의 단계를 [+2~+3] 중 하나만큼 올릴걸세.`,
+    special: 'chaos',
+    sage: '비르디타스',
+    type: 'potential',
+    effect: () => (beforeElixirs, optionIndex) => {
+      const result = [...beforeElixirs];
+      const diff = Math.floor(Math.random() * 5);
+      result[optionIndex].level += diff;
+      result[optionIndex].level = Math.max(Math.min(result[optionIndex].level, 100), 0);
+      return result;
+    },
+    odds: 1,
+  },
+  {
+    name: `제 힘을 모두 소진하겠어요. 대신, 당신이 택한 효과의 단계를 [-4~+5] 중 하나만큼 올려드리죠.`,
+    special: 'chaos',
+    sage: '치트리니',
+    type: 'potential',
+    effect: () => (beforeElixirs, optionIndex) => {
+      const result = [...beforeElixirs];
+      const diff = Math.floor(Math.random() * 10) - 4;
+      result[optionIndex].level += diff;
+      result[optionIndex].level = Math.max(Math.min(result[optionIndex].level, 100), 0);
+      return result;
+    },
+    odds: 1,
+  },
+  {
+    ...amplifySelectedHitRateAdviceTemplate(15, 1),
+    special: 'order',
+    sage: '루베도',
+  },
+  {
+    ...amplifySelectedHitRateAdviceTemplate(15, 1),
+    special: 'order',
+    sage: '비르디타스',
+  },
+  {
+    ...amplifySelectedHitRateAdviceTemplate(15, 1),
+    special: 'order',
+    sage: '치트리니',
+  },
 ];
 
 function amplifyHitRateTemporarilyAdviceTemplate(n: number, odds: number): Advice {
@@ -274,6 +333,26 @@ function amplifyHitRateAdviceTemplate(n: number, odds: number): Advice {
         });
         return result;
       },
+    odds,
+  };
+}
+
+function amplifySelectedHitRateAdviceTemplate(n: number, odds: number): Advice {
+  return {
+    name: `남은 연성에서 선택한 효과의 연성 확률을 ${Math.abs(n)}% ${n >= 0 ? '높여' : '낮춰'}${ADVICE_DIALOGUE_END1_PLACEHOLDER}.`,
+    type: 'util',
+    effect: () => (beforeElixirs: ElixirInstance[], optionIndex) => {
+      const result = [...beforeElixirs];
+      validateOptionIndex(optionIndex);
+      result.forEach((option, idx) => {
+        if (optionIndex === idx) option.hitRate += n;
+        else option.hitRate -= n / (OPTION_COUNT - 1);
+        option.hitRate = Math.max(Math.min(option.hitRate, 100), 0);
+
+        option.nextHitRate = option.hitRate;
+      });
+      return result;
+    },
     odds,
   };
 }

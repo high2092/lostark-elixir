@@ -26,8 +26,11 @@ interface AdviceParam {
 }
 
 type AdviceType = 'potential' | 'util';
+type SageName = '루베도' | '비르디타스' | '치트리니';
 interface Advice {
   type: AdviceType;
+  special?: SageType;
+  sage?: SageName;
   name: string;
   effect: (param?: AdviceParam) => AdviceEffect;
   odds: number;
@@ -43,8 +46,9 @@ interface Sage {
   ADVICE_DIALOGUE_END1: string;
 }
 
+type SageType = 'order' | 'chaos';
 interface SageInstance extends Sage {
-  type?: 'order' | 'chaos';
+  type?: SageType;
   stack: number;
   advice: IAdviceInstance;
 }
