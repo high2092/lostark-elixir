@@ -180,6 +180,7 @@ const Home = () => {
 
   const handleElixirOptionClick = (e: React.MouseEvent, idx: number) => {
     if (alchemyStatus === AlchemyStatus.ALCHEMY || getDisabled()) return;
+    if (selectedOptions[idx].locked) return;
     setSelectedOptionIndex(idx);
     playClickSound();
   };
@@ -207,9 +208,9 @@ const Home = () => {
     <S.Home>
       <S.MainSection>
         <S.ElixirOptionSection>
-          {selectedOptions.map(({ name, part, level, hitRate, bigHitRate, statusText }, idx) => (
-            <S.ElixirOption key={`elixirOption-${idx}`} onClick={(e) => handleElixirOptionClick(e, idx)} selected={selectedOptionIndex === idx}>
-              <div css={[CENTERED_FLEX_STYLE, { flex: 2 }]}>{`${hitRate}%`}</div>
+          {selectedOptions.map(({ name, part, level, hitRate, bigHitRate, statusText, locked }, idx) => (
+            <S.ElixirOption key={`elixirOption-${idx}`} onClick={(e) => handleElixirOptionClick(e, idx)} selected={selectedOptionIndex === idx} locked={locked}>
+              <div css={[CENTERED_FLEX_STYLE, { flex: 2 }]}>{`${hitRate.toFixed(1)}%`}</div>
               <div css={{ flex: 7, paddingRight: '1rem', display: 'flex', justifyContent: 'center', flexDirection: 'column' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                   <span>{name}</span>

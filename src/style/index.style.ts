@@ -26,11 +26,11 @@ export const ElixirOptionSection = styled.div`
   transform: translateY(-50%);
 `;
 
-export const ElixirOption = styled.div<{ selected?: boolean }>`
+export const ElixirOption = styled.div<{ selected?: boolean; locked?: boolean }>`
   width: 23vw;
   height: 9vh;
 
-  background-color: #c8b6a6;
+  background-color: ${({ locked }) => (locked ? '#999999' : '#c8b6a6')};
 
   margin: 1.5rem;
 

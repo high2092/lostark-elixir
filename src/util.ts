@@ -1,14 +1,28 @@
 import { MAX_ACTIVE, OPTION_COUNT, SageTypes } from './constants';
 import { SageInstance, SageTypesType, SageTypesTypes } from './type/sage';
 
-export const gacha = <T>(arr: T[], oddsKey: 'odds' | 'hitRate', count?: number) => {
-  count ??= 1;
-  if (count > arr.length - 1) throw new Error('gacha: Given count is greater than arr length.');
+interface GachaProps {
+  oddsKey?: 'odds' | 'hitRate';
+  count?: number;
+}
 
-  const _arr = [...arr];
+export const gacha = (arr: Record<string, any>[], props?: GachaProps) => {
+  props ??= {};
+  let { oddsKey, count } = props;
+  count ??= 1;
+
+  const _arr = arr.map((elem) => {
+    const copy = { ...elem };
+    copy.odds = elem.locked ? 0 : oddsKey ? elem[oddsKey] : 1;
+    return copy;
+  });
   const result = [];
+
+  // Q: 가능성은 0에 가깝겠지만, 4개 봉인된 상태에서 2개 뽑아야 하는 상황이 생긴다면 어떻게 할 것인가
+
+  if (count > _arr.length - 1) throw new Error('gacha: Given count is greater than arr length.');
   for (let i = 0; i < count; i++) {
-    const idx = gachaInternal(_arr, oddsKey);
+    const idx = gachaInternal(_arr);
     result.push(idx);
     _arr.splice(idx, 1, { ..._arr[idx], [oddsKey]: 0 });
   }
@@ -16,17 +30,17 @@ export const gacha = <T>(arr: T[], oddsKey: 'odds' | 'hitRate', count?: number) 
   return result;
 };
 
-const gachaInternal = <T>(arr: T[], oddsKey: 'odds' | 'hitRate') => {
-  const oddsSum = arr.reduce((acc, cur) => {
-    const odds = cur[oddsKey];
-    if (typeof odds !== 'number') throw new Error('gacha: Given odds key has value that is not a number.');
+const gachaInternal = (arr: Record<string, any>[]) => {
+  const oddsSum = arr.reduce((acc, { odds }) => {
     return acc + odds;
   }, 0);
+
+  if (oddsSum === 0) throw new Error('gacha: 뽑을 수 있는 아이템이 없습니다.');
   const randomNumber = Math.random() * oddsSum;
 
   let oddsCur = 0;
   for (let i = 0; i < arr.length; i++) {
-    const odds = arr[i][oddsKey];
+    const { odds } = arr[i];
     if (randomNumber <= (oddsCur += odds)) {
       return i;
     }
