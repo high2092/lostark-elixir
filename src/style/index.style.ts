@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
-import { DEFAULT_BORDER_RADIUS_PX } from '../constants';
+import { DEFAULT_BORDER_RADIUS_PX, SageTypes } from '../constants';
+import { SageTypesType } from '../type/sage';
 
 const ADVICE_REROLL_BUTTON_WIDTH_REM = 14;
 const ADVICE_REROLL_BUTTON_MARGIN_LEFT_REM = 10.5 - ADVICE_REROLL_BUTTON_WIDTH_REM / 2;
@@ -56,13 +57,16 @@ export const AdviceSection = styled.div`
 `;
 
 const ADVICE_MARGIN_REM = 0.6;
-export const Advice = styled.div<{ selected: boolean; disabled: boolean }>`
+const CH_OUTLINE_COLOR = '';
+const ORDER_OUTLINE_COLOR = '';
+export const Advice = styled.div<{ selected: boolean; disabled: boolean; special: SageTypesType }>`
   flex: 1;
   height: 4.5rem;
 
   background-color: ${({ disabled }) => (disabled ? 'grey' : 'beige')};
 
   ${({ selected }) => (selected ? 'outline: 3px solid #FF8400;' : '')}
+  ${({ special }) => (special ? `box-shadow: 0 0 20px 5px ${SageTypes[special].color};` : '')}
 
   margin: ${ADVICE_MARGIN_REM}rem ${ADVICE_MARGIN_REM / 2}rem;
 

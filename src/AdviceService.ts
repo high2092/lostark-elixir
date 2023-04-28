@@ -1,7 +1,7 @@
-import { FullStack, OPTION_COUNT, Placeholders, playRefineFailureSound, playRefineSuccessSound } from './constants';
+import { OPTION_COUNT, Placeholders, SageTypes, playRefineFailureSound, playRefineSuccessSound } from './constants';
 import { ADVICES } from './database/advice';
 import { SageInstance } from './type/sage';
-import { calculateOddsSum } from './util';
+import { calculateOddsSum, isFullStack } from './util';
 
 const N_TABLE = [1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 5, 5];
 
@@ -33,12 +33,8 @@ class AdviceService {
     return new AdviceInstance(advice, beforeElixirs[idx].name, idx, turn);
   }
 
-  private isFullStack(sage: SageInstance) {
-    return sage.stack === FullStack[sage.type];
-  }
-
   private getAdvices(sage: SageInstance) {
-    if (this.isFullStack(sage)) {
+    if (isFullStack(sage.type, sage.stack)) {
       sage.stack = 0;
       return ADVICES.filter((advice) => advice.sage === sage.name && advice.special === sage.type);
     }

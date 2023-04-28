@@ -1,4 +1,5 @@
 import { css } from '@emotion/react';
+import { SageTypesTypes } from './type/sage';
 
 export const OPTION_COUNT = 5;
 export const ADVICE_COUNT = 3;
@@ -16,12 +17,18 @@ export const DEFAULT_BORDER_RADIUS_PX = 2;
 export const playRefineSuccessSound = () => new Audio('/sound/refine-success.mp3').play();
 export const playRefineFailureSound = () => new Audio('/sound/refine-failure.mp3').play();
 
-// TODO: enum
-export const FullStack = {
-  chaos: 6,
-  order: 3,
-} as const;
-
+export const SageTypes = {
+  [SageTypesTypes.CHAOS]: {
+    displayName: '혼돈',
+    fullStack: 6,
+    color: 'purple',
+  },
+  [SageTypesTypes.ORDER]: {
+    displayName: '질서',
+    fullStack: 3,
+    color: 'blue',
+  },
+};
 export const DIALOGUE_END_INDEX = {
   어떤가: 0,
   주겠네: 1,

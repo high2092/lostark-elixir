@@ -1,5 +1,5 @@
-import { FullStack, OPTION_COUNT } from './constants';
-import { SageType } from './type/sage';
+import { OPTION_COUNT, SageTypes } from './constants';
+import { SageInstance, SageTypesType, SageTypesTypes } from './type/sage';
 
 export const gacha = <T>(arr: T[], oddsKey: 'odds' | 'hitRate') => {
   const oddsSum = arr.reduce((acc, cur) => {
@@ -27,12 +27,17 @@ export const calculateOddsSum = <T>(arr: T[], oddsKey: 'odds' | 'hitRate') => {
   }, 0);
 };
 
-export const getStackForDisplaying = (type: SageType, stack: number) => {
-  if (stack === 0) return FullStack[type];
+export const getStackForDisplaying = (type: SageTypesType, stack: number) => {
+  if (!type) return null;
+  if (stack === 0) return SageTypes[type].fullStack;
   return stack;
 };
 
 export const validateOptionIndex = (idx: number) => {
   if (typeof idx !== 'number') throw new Error();
   if (idx < 0 || idx >= OPTION_COUNT) throw new Error();
+};
+
+export const isFullStack = (type: SageTypesType, stack: number) => {
+  return stack === SageTypes[type]?.fullStack;
 };

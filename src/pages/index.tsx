@@ -2,11 +2,11 @@
 import { useEffect, useRef, useState } from 'react';
 import * as S from '../style/index.style';
 import { cpu } from '../CPU';
-import { ADVICE_COUNT, ALCHEMY_CHANCE, CENTERED_FLEX_STYLE, DIALOGUE_END_INDEX as I, MAX_ACTIVE, Placeholders } from '../constants';
+import { ADVICE_COUNT, ALCHEMY_CHANCE, CENTERED_FLEX_STYLE, DIALOGUE_END_INDEX as I, MAX_ACTIVE, Placeholders, SageTypes } from '../constants';
 import { adviceService } from '../AdviceService';
 import { alchemyService } from '../AlchemyService';
 import { Activation } from '../components/Activation';
-import { getStackForDisplaying } from '../util';
+import { getStackForDisplaying, isFullStack } from '../util';
 import { Sage } from '../domain/Sage';
 import { SageKeys, SageTemplates } from '../database/sage';
 import { SageInstance } from '../type/sage';
@@ -202,13 +202,20 @@ const Home = () => {
           ))}
         </S.ElixirOptionSection>
         <S.AdviceSection>
-          {Array.from({ length: ADVICE_COUNT }).map((_, idx) => (
-            <S.Advice onClick={(e) => handleAdviceClick(e, idx)} selected={selectedAdviceIndex === idx} disabled={alchemyStatus === AlchemyStatus.ALCHEMY || getDisabled()}>
-              {sages[idx].type && <div>{`${sages[idx].type} ${getStackForDisplaying(sages[idx].type, sages[idx].stack)}`}</div>}
-              {alchemyStatus === AlchemyStatus.REFINE && <SelectOptionDialogue SelectOption={elixirOptions[idx]} sage={sages[idx]} />}
-              {alchemyStatus !== AlchemyStatus.REFINE && <AdviceDialogue sage={sages[idx]} />}
-            </S.Advice>
-          ))}
+          {Array.from({ length: ADVICE_COUNT }).map((_, idx) => {
+            const sage = sages[idx];
+            const sageTypeName = SageTypes[sage.type]?.displayName;
+            const stack = getStackForDisplaying(sage.type, sage.stack);
+
+            const special = alchemyStatus === AlchemyStatus.ADVICE && isFullStack(sage.type, stack) ? sage.type : null;
+            return (
+              <S.Advice onClick={(e) => handleAdviceClick(e, idx)} selected={selectedAdviceIndex === idx} disabled={alchemyStatus === AlchemyStatus.ALCHEMY || getDisabled()} special={special}>
+                <div>{sage.type && alchemyStatus === AlchemyStatus.ADVICE && `${sageTypeName} ${stack}`}</div>
+                {alchemyStatus === AlchemyStatus.REFINE && <SelectOptionDialogue SelectOption={elixirOptions[idx]} sage={sages[idx]} />}
+                {alchemyStatus !== AlchemyStatus.REFINE && <AdviceDialogue sage={sages[idx]} />}
+              </S.Advice>
+            );
+          })}
           <S.AdviceRerollButton>{getAdviceRerollButtonText(2)}</S.AdviceRerollButton>
         </S.AdviceSection>
       </S.MainSection>

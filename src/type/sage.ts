@@ -10,10 +10,15 @@ export interface Sage {
   advice: IAdviceInstance;
 }
 
-export type SageType = 'order' | 'chaos';
+export const SageTypesTypes = {
+  ORDER: 'order',
+  CHAOS: 'chaos',
+} as const;
+
+export type SageTypesType = (typeof SageTypesTypes)[keyof typeof SageTypesTypes];
 
 export interface SageInstance extends Sage {
-  type?: SageType;
+  type?: SageTypesType;
   stack: number;
   advice: IAdviceInstance;
 }
