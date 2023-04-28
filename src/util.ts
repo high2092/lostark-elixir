@@ -41,3 +41,7 @@ export const validateOptionIndex = (idx: number) => {
 export const isFullStack = (type: SageTypesType, stack: number) => {
   return stack === SageTypes[type]?.fullStack;
 };
+
+export const playRefineSuccessSound = () => new Audio('/sound/refine-success.mp3').play();
+export const playRefineFailureSound = () => new Audio('/sound/refine-failure.mp3').play();
+export const playClickSound = () => new Audio('sound/click.mp3').play();

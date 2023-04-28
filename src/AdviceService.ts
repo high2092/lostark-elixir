@@ -1,7 +1,7 @@
-import { OPTION_COUNT, Placeholders, SageTypes, playRefineFailureSound, playRefineSuccessSound } from './constants';
+import { OPTION_COUNT, Placeholders, SageTypes } from './constants';
 import { ADVICES } from './database/advice';
 import { SageInstance } from './type/sage';
-import { calculateOddsSum, isFullStack } from './util';
+import { calculateOddsSum, isFullStack, playRefineFailureSound, playRefineSuccessSound } from './util';
 
 const N_TABLE = [1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 5, 5];
 

@@ -6,7 +6,7 @@ import { ADVICE_COUNT, ALCHEMY_CHANCE, CENTERED_FLEX_STYLE, DIALOGUE_END_INDEX a
 import { adviceService } from '../AdviceService';
 import { alchemyService } from '../AlchemyService';
 import { Activation } from '../components/Activation';
-import { getStackForDisplaying, isFullStack } from '../util';
+import { getStackForDisplaying, isFullStack, playClickSound } from '../util';
 import { Sage } from '../domain/Sage';
 import { SageKeys, SageTemplates } from '../database/sage';
 import { SageInstance } from '../type/sage';
@@ -80,7 +80,7 @@ const Home = () => {
   const handleAdviceClick = (e: React.MouseEvent, idx: number) => {
     if (alchemyStatus === AlchemyStatus.ALCHEMY || getDisabled()) return;
     setSelectedAdviceIndex(idx);
-    new Audio('sound/click.mp3').play();
+    playClickSound();
   };
   const [elixirOptions, setElixirOptions] = useState<ElixirInstance[]>([]);
   const [selectOptionChance, setSelectOptionChance] = useState(OPTION_COUNT);
@@ -163,7 +163,7 @@ const Home = () => {
   const handleElixirOptionClick = (e: React.MouseEvent, idx: number) => {
     if (alchemyStatus === AlchemyStatus.ALCHEMY || getDisabled()) return;
     setSelectedOptionIndex(idx);
-    new Audio('sound/click.mp3').play();
+    playClickSound();
   };
 
   const getDisabled = () => {

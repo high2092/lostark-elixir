@@ -1,5 +1,5 @@
-import { MAX_ACTIVE, OPTION_COUNT, playRefineSuccessSound } from './constants';
-import { gacha } from './util';
+import { MAX_ACTIVE, OPTION_COUNT } from './constants';
+import { gacha, playRefineSuccessSound } from './util';
 
 class AlchemyService {
   private clean(elixirs: ElixirInstance[]) {
