@@ -1,5 +1,6 @@
-import { FullStack, OPTION_COUNT, playRefineFailureSound, playRefineSuccessSound } from './constants';
-import { ADVICES, N_NPLUS1_PLACEHOLDER, N_PLACEHOLDER, OPTION_NAME_PLACEHOLDER } from './database/advice';
+import { FullStack, OPTION_COUNT, Placeholders, playRefineFailureSound, playRefineSuccessSound } from './constants';
+import { ADVICES } from './database/advice';
+import { SageInstance } from './type/sage';
 import { calculateOddsSum } from './util';
 
 const N_TABLE = [1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 5, 5];
@@ -14,9 +15,9 @@ class AdviceInstance implements IAdviceInstance {
   constructor(advice: Advice, name: string, optionIndex: number, turn: number) {
     const n = N_TABLE[turn];
     this.name = advice.name
-      .replace(OPTION_NAME_PLACEHOLDER, name)
-      .replace(N_NPLUS1_PLACEHOLDER, `[${n}~${n + 1}]`)
-      .replace(N_PLACEHOLDER, n?.toString());
+      .replace(Placeholders.OPTION, name)
+      .replace(Placeholders.N_NPLUS_1, `[${n}~${n + 1}]`)
+      .replace(Placeholders.N, n?.toString());
     this.type = advice.type;
     this.execute = advice.effect({ optionIndex, n });
   }

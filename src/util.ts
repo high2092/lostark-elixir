@@ -1,4 +1,5 @@
 import { FullStack, OPTION_COUNT } from './constants';
+import { SageType } from './type/sage';
 
 export const gacha = <T>(arr: T[], oddsKey: 'odds' | 'hitRate') => {
   const oddsSum = arr.reduce((acc, cur) => {

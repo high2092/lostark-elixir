@@ -2,12 +2,14 @@
 import { useEffect, useRef, useState } from 'react';
 import * as S from '../style/index.style';
 import { cpu } from '../CPU';
-import { ADVICE_COUNT, ALCHEMY_CHANCE, CENTERED_FLEX_STYLE, MAX_ACTIVE } from '../constants';
+import { ADVICE_COUNT, ALCHEMY_CHANCE, CENTERED_FLEX_STYLE, DIALOGUE_END_INDEX as I, MAX_ACTIVE, Placeholders } from '../constants';
 import { adviceService } from '../AdviceService';
 import { alchemyService } from '../AlchemyService';
 import { Activation } from '../components/Activation';
-import { ADVICE_DIALOGUE_END1_PLACEHOLDER } from '../database/advice';
 import { getStackForDisplaying } from '../util';
+import { Sage } from '../domain/Sage';
+import { SageKeys, SageTemplates } from '../database/sage';
+import { SageInstance } from '../type/sage';
 
 const AlchemyStatus = {
   REFINE: 'refine', // 정제
@@ -29,11 +31,7 @@ const MaterialSectionText = {
   SELECT_OPTION: '엘릭서에 정제할 효과를 위 항목에서 선택하세요.',
 };
 
-const initialSages: SageInstance[] = [
-  { name: '루베도', SELECT_OPTION_DIALOGUE_END: '어때?', ADVICE_DIALOGUE_END1: '주지', stack: 0, advice: null },
-  { name: '비르디타스', SELECT_OPTION_DIALOGUE_END: '어떤가?', ADVICE_DIALOGUE_END1: '주겠네', stack: 0, advice: null },
-  { name: '치트리니', SELECT_OPTION_DIALOGUE_END: '어때요?', ADVICE_DIALOGUE_END1: '드리죠', stack: 0, advice: null },
-];
+const initialSages: SageInstance[] = [new Sage(SageTemplates[SageKeys.L]), new Sage(SageTemplates[SageKeys.B]), new Sage(SageTemplates[SageKeys.C])];
 
 interface ElixirOptionDialogueProps {
   SelectOption: ElixirInstance;
@@ -47,7 +45,7 @@ const SelectOptionDialogue = ({ SelectOption: elixirOption, sage }: ElixirOption
     <div style={{ height: '100%', padding: '1rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center' }}>
       <div>
         <span>{`${name}${type ? ` (${type})` : ''}`}</span>
-        <span>{` 효과를 정제하는건 ${sage.SELECT_OPTION_DIALOGUE_END}`}</span>
+        <span>{` 효과를 정제하는건 ${sage.dialogueEnds[I.어떤가]}?`}</span>
       </div>
       <div>{`(${part ? `${part} 전용` : '공용'})`}</div>
     </div>
@@ -62,7 +60,7 @@ const AdviceDialogue = ({ sage }: AdviceDialogueProps) => {
   const { advice } = sage;
   if (!advice) return <></>;
 
-  return <div>{advice.name.replace(ADVICE_DIALOGUE_END1_PLACEHOLDER, sage.ADVICE_DIALOGUE_END1)}</div>;
+  return <div>{advice.name.replace(Placeholders[I.주겠네], sage.dialogueEnds[I.주겠네])}</div>;
 };
 
 const Gold = ({ amount }: { amount: number }) => {

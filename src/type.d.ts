@@ -39,16 +39,3 @@ interface Advice {
 interface IAdviceInstance extends Advice {
   execute: AdviceEffect;
 }
-
-interface Sage {
-  name: string;
-  SELECT_OPTION_DIALOGUE_END: string;
-  ADVICE_DIALOGUE_END1: string;
-}
-
-type SageType = 'order' | 'chaos';
-interface SageInstance extends Sage {
-  type?: SageType;
-  stack: number;
-  advice: IAdviceInstance;
-}

@@ -1,14 +1,9 @@
-import { MAX_ACTIVE, OPTION_COUNT } from '../constants';
+import { DIALOGUE_END_INDEX as I, MAX_ACTIVE, OPTION_COUNT, Placeholders } from '../constants';
 import { validateOptionIndex } from '../util';
-
-export const OPTION_NAME_PLACEHOLDER = '?{option}';
-export const N_NPLUS1_PLACEHOLDER = '?{[n~n+1]}';
-export const N_PLACEHOLDER = '?{n}';
-export const ADVICE_DIALOGUE_END1_PLACEHOLDER = '?{END1}';
 
 export const ADVICES: Advice[] = [
   {
-    name: `${OPTION_NAME_PLACEHOLDER} 효과를 25% 확률로 +1 올려${ADVICE_DIALOGUE_END1_PLACEHOLDER}.`,
+    name: `${Placeholders.OPTION} 효과를 25% 확률로 +1 올려${Placeholders[I.주겠네]}.`,
     type: 'potential',
     effect:
       ({ optionIndex }) =>
@@ -20,7 +15,7 @@ export const ADVICES: Advice[] = [
     odds: 1,
   },
   {
-    name: `${OPTION_NAME_PLACEHOLDER} 효과를 50% 확률로 +1 올려${ADVICE_DIALOGUE_END1_PLACEHOLDER}.`,
+    name: `${Placeholders.OPTION} 효과를 50% 확률로 +1 올려${Placeholders[I.주겠네]}.`,
     type: 'potential',
     effect:
       ({ optionIndex }) =>
@@ -32,7 +27,7 @@ export const ADVICES: Advice[] = [
     odds: 1,
   },
   {
-    name: `선택한 효과를 25% 확률로 +1 올려${ADVICE_DIALOGUE_END1_PLACEHOLDER}.`,
+    name: `선택한 효과를 25% 확률로 +1 올려${Placeholders[I.주겠네]}.`,
     type: 'potential',
     effect: () => (beforeElixirs, optionIndex) => {
       const result = [...beforeElixirs];
@@ -44,7 +39,7 @@ export const ADVICES: Advice[] = [
   },
 
   {
-    name: `선택한 효과를 50% 확률로 +1 올려${ADVICE_DIALOGUE_END1_PLACEHOLDER}.`,
+    name: `선택한 효과를 50% 확률로 +1 올려${Placeholders[I.주겠네]}.`,
     type: 'potential',
     effect: () => (beforeElixirs, optionIndex) => {
       const result = [...beforeElixirs];
@@ -54,7 +49,7 @@ export const ADVICES: Advice[] = [
     odds: 1,
   },
   {
-    name: `${OPTION_NAME_PLACEHOLDER} 효과를 -2 ~ +2 단계 올려${ADVICE_DIALOGUE_END1_PLACEHOLDER}.`,
+    name: `${Placeholders.OPTION} 효과를 -2 ~ +2 단계 올려${Placeholders[I.주겠네]}.`,
     type: 'potential',
     effect:
       ({ optionIndex }) =>
@@ -67,7 +62,7 @@ export const ADVICES: Advice[] = [
     odds: 1,
   },
   {
-    name: `${OPTION_NAME_PLACEHOLDER} 효과를 -1 ~ +2 단계 올려${ADVICE_DIALOGUE_END1_PLACEHOLDER}.`,
+    name: `${Placeholders.OPTION} 효과를 -1 ~ +2 단계 올려${Placeholders[I.주겠네]}.`,
     type: 'potential',
     effect:
       ({ optionIndex }) =>
@@ -80,7 +75,7 @@ export const ADVICES: Advice[] = [
     odds: 1,
   },
   {
-    name: `선택한 효과를 -2 ~ +2 단계 올려${ADVICE_DIALOGUE_END1_PLACEHOLDER}.`,
+    name: `선택한 효과를 -2 ~ +2 단계 올려${Placeholders[I.주겠네]}.`,
     type: 'potential',
     effect: () => (beforeElixirs, optionIndex) => {
       const result = [...beforeElixirs];
@@ -91,7 +86,7 @@ export const ADVICES: Advice[] = [
     odds: 1,
   },
   {
-    name: `선택한 효과를 -1 ~ +2 단계 올려${ADVICE_DIALOGUE_END1_PLACEHOLDER}.`,
+    name: `선택한 효과를 -1 ~ +2 단계 올려${Placeholders[I.주겠네]}.`,
     type: 'potential',
     effect: () => (beforeElixirs, optionIndex) => {
       const result = [...beforeElixirs];
@@ -102,7 +97,7 @@ export const ADVICES: Advice[] = [
     odds: 1,
   },
   {
-    name: `${OPTION_NAME_PLACEHOLDER} 효과의 단계를 ${N_NPLUS1_PLACEHOLDER} 중 하나로 변경해${ADVICE_DIALOGUE_END1_PLACEHOLDER}.`,
+    name: `${Placeholders.OPTION} 효과의 단계를 ${Placeholders.N_NPLUS_1} 중 하나로 변경해${Placeholders[I.주겠네]}.`,
     type: 'util',
     effect:
       ({ optionIndex, n }) =>
@@ -115,7 +110,7 @@ export const ADVICES: Advice[] = [
     odds: 1,
   },
   {
-    name: `선택한 효과의 단계를 ${N_NPLUS1_PLACEHOLDER} 중 하나로 변경해${ADVICE_DIALOGUE_END1_PLACEHOLDER}.`,
+    name: `선택한 효과의 단계를 ${Placeholders.OPTION} 중 하나로 변경해${Placeholders[I.주겠네]}.`,
     type: 'util',
     effect:
       ({ n }) =>
@@ -128,7 +123,7 @@ export const ADVICES: Advice[] = [
     odds: 1,
   },
   {
-    name: `${OPTION_NAME_PLACEHOLDER} 효과의 단계를 +1 올려${ADVICE_DIALOGUE_END1_PLACEHOLDER}. 대신...`,
+    name: `${Placeholders.OPTION} 효과의 단계를 +1 올려${Placeholders[I.주겠네]}. 대신...`,
     type: 'util',
     effect:
       ({ optionIndex }) =>
@@ -140,7 +135,7 @@ export const ADVICES: Advice[] = [
     odds: 1,
   },
   {
-    name: `최고 단계 효과를 +1 올려${ADVICE_DIALOGUE_END1_PLACEHOLDER}.`,
+    name: `최고 단계 효과를 +1 올려${Placeholders[I.주겠네]}.`,
     type: 'util',
     effect: () => (beforeElixirs) => {
       const result = [...beforeElixirs];
@@ -156,7 +151,7 @@ export const ADVICES: Advice[] = [
     odds: 1,
   },
   {
-    name: `최하 단계 효과를 +1 올려${ADVICE_DIALOGUE_END1_PLACEHOLDER}.`,
+    name: `최하 단계 효과를 +1 올려${Placeholders[I.주겠네]}.`,
     type: 'util',
     effect: () => (beforeElixirs) => {
       const result = [...beforeElixirs];
@@ -172,7 +167,7 @@ export const ADVICES: Advice[] = [
     odds: 1,
   },
   {
-    name: `2, 4 슬롯의 효과를 +1 올려${ADVICE_DIALOGUE_END1_PLACEHOLDER}. 대신...`,
+    name: `2, 4 슬롯의 효과를 +1 올려${Placeholders[I.주겠네]}. 대신...`,
     type: 'util',
     effect: () => (beforeElixirs) => {
       const result = [...beforeElixirs];
@@ -183,7 +178,7 @@ export const ADVICES: Advice[] = [
     odds: 1,
   },
   {
-    name: `임의 효과를 +1 올려${ADVICE_DIALOGUE_END1_PLACEHOLDER}. 대신 ...`,
+    name: `임의 효과를 +1 올려${Placeholders[I.주겠네]}. 대신 ...`,
     type: 'util',
     effect: () => (beforeElixirs) => {
       const result = [...beforeElixirs];
@@ -210,7 +205,7 @@ export const ADVICES: Advice[] = [
   //   odds: 1,
   // },
   {
-    name: `연성되지 않은 모든 효과를 +1 올려${ADVICE_DIALOGUE_END1_PLACEHOLDER}.`,
+    name: `연성되지 않은 모든 효과를 +1 올려${Placeholders[I.주겠네]}.`,
     type: 'util',
     effect: () => (beforeElixirs) => {
       const result = [...beforeElixirs];
@@ -224,7 +219,7 @@ export const ADVICES: Advice[] = [
   },
   {
     ...amplifyHitRateAdviceTemplate(100, 1),
-    name: `이번 연성에서 ${OPTION_NAME_PLACEHOLDER} 효과를 연성해${ADVICE_DIALOGUE_END1_PLACEHOLDER}.`,
+    name: `이번 연성에서 ${Placeholders.OPTION} 효과를 연성해${Placeholders[I.주겠네]}.`,
   },
   amplifyHitRateTemporarilyAdviceTemplate(70, 1),
   amplifyHitRateTemporarilyAdviceTemplate(30, 1),
@@ -297,7 +292,7 @@ export const ADVICES: Advice[] = [
 
 function amplifyHitRateTemporarilyAdviceTemplate(n: number, odds: number): Advice {
   return {
-    name: `이번 연성에서 ${OPTION_NAME_PLACEHOLDER} 효과의 연성 확률을 ${Math.abs(n)}% ${n >= 0 ? '높여' : '낮춰'}${ADVICE_DIALOGUE_END1_PLACEHOLDER}.`,
+    name: `이번 연성에서 ${Placeholders.OPTION} 효과의 연성 확률을 ${Math.abs(n)}% ${n >= 0 ? '높여' : '낮춰'}${Placeholders[I.주겠네]}.`,
     type: 'util',
     effect:
       ({ optionIndex }) =>
@@ -318,7 +313,7 @@ function amplifyHitRateTemporarilyAdviceTemplate(n: number, odds: number): Advic
 
 function amplifyHitRateAdviceTemplate(n: number, odds: number): Advice {
   return {
-    name: `남은 연성에서 ${OPTION_NAME_PLACEHOLDER} 효과의 연성 확률을 ${Math.abs(n)}% ${n >= 0 ? '높여' : '낮춰'}${ADVICE_DIALOGUE_END1_PLACEHOLDER}.`,
+    name: `남은 연성에서 ${Placeholders.OPTION} 효과의 연성 확률을 ${Math.abs(n)}% ${n >= 0 ? '높여' : '낮춰'}${Placeholders[I.주겠네]}.`,
     type: 'util',
     effect:
       ({ optionIndex }) =>
@@ -339,7 +334,7 @@ function amplifyHitRateAdviceTemplate(n: number, odds: number): Advice {
 
 function amplifySelectedHitRateAdviceTemplate(n: number, odds: number): Advice {
   return {
-    name: `남은 연성에서 선택한 효과의 연성 확률을 ${Math.abs(n)}% ${n >= 0 ? '높여' : '낮춰'}${ADVICE_DIALOGUE_END1_PLACEHOLDER}.`,
+    name: `남은 연성에서 선택한 효과의 연성 확률을 ${Math.abs(n)}% ${n >= 0 ? '높여' : '낮춰'}${Placeholders[I.주겠네]}.`,
     type: 'util',
     effect: () => (beforeElixirs: ElixirInstance[], optionIndex) => {
       const result = [...beforeElixirs];
@@ -359,7 +354,7 @@ function amplifySelectedHitRateAdviceTemplate(n: number, odds: number): Advice {
 
 function amplifyBigHitRateAdviceTemplate(n: number, odds: number): Advice {
   return {
-    name: `남은 연성에서 ${OPTION_NAME_PLACEHOLDER} 효과의 대성공 확률을 ${Math.abs(n)}% ${n >= 0 ? '높여' : '낮춰'}${ADVICE_DIALOGUE_END1_PLACEHOLDER}.`,
+    name: `남은 연성에서 ${Placeholders.OPTION} 효과의 대성공 확률을 ${Math.abs(n)}% ${n >= 0 ? '높여' : '낮춰'}${Placeholders[I.주겠네]}.`,
     type: 'util',
     effect:
       ({ optionIndex }) =>
@@ -379,7 +374,7 @@ function amplifyBigHitRateAdviceTemplate(n: number, odds: number): Advice {
 
 function amplifyBigHitRateTemporarilyAdviceTemplate(n: number, odds: number): Advice {
   return {
-    name: `이번 연성에서 ${OPTION_NAME_PLACEHOLDER} 효과의 대성공 확률을 ${Math.abs(n)}% ${n >= 0 ? '높여' : '낮춰'}${ADVICE_DIALOGUE_END1_PLACEHOLDER}.`,
+    name: `이번 연성에서 ${Placeholders.OPTION} 효과의 대성공 확률을 ${Math.abs(n)}% ${n >= 0 ? '높여' : '낮춰'}${Placeholders[I.주겠네]}.`,
     type: 'util',
     effect:
       ({ optionIndex }) =>
