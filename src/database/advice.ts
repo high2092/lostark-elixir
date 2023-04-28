@@ -221,6 +221,10 @@ export const ADVICES: Advice[] = [
     },
     odds: 1,
   },
+  {
+    ...amplifyHitRateAdviceTemplate(100, 1),
+    name: `이번 연성에서 ${OPTION_NAME_PLACEHOLDER} 효과를 연성해${ADVICE_DIALOGUE_END1_PLACEHOLDER}.`,
+  },
   amplifyHitRateTemporarilyAdviceTemplate(70, 1),
   amplifyHitRateTemporarilyAdviceTemplate(30, 1),
   amplifyHitRateTemporarilyAdviceTemplate(-20, 1),
