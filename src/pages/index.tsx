@@ -8,8 +8,8 @@ import { alchemyService } from '../AlchemyService';
 import { Activation } from '../components/Activation';
 import { getStackForDisplaying, isFullStack, playClickSound } from '../util';
 import { Sage } from '../domain/Sage';
-import { SageKeys, SageTemplates } from '../database/sage';
-import { SageInstance } from '../type/sage';
+import { SageTemplates } from '../database/sage';
+import { SageInstance, SageKeys } from '../type/sage';
 import { SageTypeStackCounter } from '../components/SageTypeStackCounter';
 
 const AlchemyStatus = {
@@ -61,7 +61,11 @@ const AdviceDialogue = ({ sage }: AdviceDialogueProps) => {
   const { advice } = sage;
   if (!advice) return <></>;
 
-  return <div>{advice.name.replace(Placeholders[I.주겠네], sage.dialogueEnds[I.주겠네])}</div>;
+  const name = Object.values(I).reduce((acc, cur) => {
+    return acc.replace(Placeholders[cur], sage.dialogueEnds[cur]);
+  }, advice.name);
+
+  return <div>{name}</div>;
 };
 
 const Gold = ({ amount }: { amount: number }) => {

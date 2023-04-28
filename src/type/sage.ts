@@ -22,3 +22,11 @@ export interface SageInstance extends Sage {
   stack: number;
   advice: IAdviceInstance;
 }
+
+export const SageKeys = {
+  L: '루베도',
+  B: '비르디타스',
+  C: '치트리니',
+} as const;
+
+export type SageKey = (typeof SageKeys)[keyof typeof SageKeys];

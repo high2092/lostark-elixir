@@ -1,11 +1,5 @@
-import { DIALOGUE_END_INDEX } from '../constants';
-import { SageTemplate } from '../type/sage';
-
-export const SageKeys = {
-  L: '루베도',
-  B: '비르디타스',
-  C: '치트리니',
-} as const;
+import { DIALOGUE_END_INDEX as I } from '../constants';
+import { SageKeys, SageTemplate } from '../type/sage';
 
 export const SageTemplates: {
   [key: string]: SageTemplate;
@@ -13,24 +7,39 @@ export const SageTemplates: {
   [SageKeys.L]: {
     name: '루베도',
     dialogueEnds: {
-      [DIALOGUE_END_INDEX.어떤가]: '어때',
-      [DIALOGUE_END_INDEX.주겠네]: '주지',
+      [I.어떤가]: '어때',
+      [I.주겠네]: '주지',
+      [I.올릴걸세]: '올려주지',
+      [I.내]: '내',
+      [I.하겠네]: '하겠다',
+      [I.자네]: '네',
+      [I.선택한]: '고르는',
     },
   },
 
   [SageKeys.B]: {
     name: '비르디타스',
     dialogueEnds: {
-      [DIALOGUE_END_INDEX.어떤가]: '어떤가',
-      [DIALOGUE_END_INDEX.주겠네]: '주겠네',
+      [I.어떤가]: '어떤가',
+      [I.주겠네]: '주겠네',
+      [I.올릴걸세]: '올릴걸세',
+      [I.내]: '내',
+      [I.하겠네]: '하겠네',
+      [I.자네]: '자네',
+      [I.선택한]: '선택한',
     },
   },
 
   [SageKeys.C]: {
     name: '치트리니',
     dialogueEnds: {
-      [DIALOGUE_END_INDEX.어떤가]: '어때요',
-      [DIALOGUE_END_INDEX.주겠네]: '드리죠',
+      [I.어떤가]: '어때요',
+      [I.주겠네]: '드리죠',
+      [I.올릴걸세]: '올려드리죠',
+      [I.내]: '제',
+      [I.하겠네]: '하겠어요',
+      [I.자네]: '당신이',
+      [I.선택한]: '택한',
     },
   },
 };

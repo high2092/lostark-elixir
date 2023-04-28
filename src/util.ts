@@ -1,4 +1,4 @@
-import { OPTION_COUNT, SageTypes } from './constants';
+import { MAX_ACTIVE, OPTION_COUNT, SageTypes } from './constants';
 import { SageInstance, SageTypesType, SageTypesTypes } from './type/sage';
 
 export const gacha = <T>(arr: T[], oddsKey: 'odds' | 'hitRate') => {
@@ -45,3 +45,8 @@ export const isFullStack = (type: SageTypesType, stack: number) => {
 export const playRefineSuccessSound = () => new Audio('/sound/refine-success.mp3').play();
 export const playRefineFailureSound = () => new Audio('/sound/refine-failure.mp3').play();
 export const playClickSound = () => new Audio('sound/click.mp3').play();
+export const convertToSignedString = (n: number) => {
+  if (n > 0) return `+${n}`;
+  else if (n < 0) return `-${n}`;
+  return `${n}`;
+};

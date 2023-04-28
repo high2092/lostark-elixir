@@ -1,5 +1,6 @@
 import { DIALOGUE_END_INDEX as I, MAX_ACTIVE, OPTION_COUNT, Placeholders } from '../constants';
-import { validateOptionIndex } from '../util';
+import { SageKey, SageKeys, SageTypesType, SageTypesTypes } from '../type/sage';
+import { convertToSignedString, validateOptionIndex } from '../util';
 
 export const ADVICES: Advice[] = [
   potentialAlchemyAdviceTemplate(25, 1),
@@ -131,10 +132,7 @@ export const ADVICES: Advice[] = [
     },
     odds: 1,
   },
-  {
-    ...amplifyHitRateTemporarilyAdviceTemplate(100, 1),
-    name: `이번 연성에서 ${Placeholders.OPTION} 효과를 연성해${Placeholders[I.주겠네]}.`,
-  },
+  { ...amplifyHitRateTemporarilyAdviceTemplate(100, 1), name: `이번 연성에서 ${Placeholders.OPTION} 효과를 연성해${Placeholders[I.주겠네]}.` },
   amplifyHitRateTemporarilyAdviceTemplate(70, 1),
   amplifyHitRateTemporarilyAdviceTemplate(30, 1),
   amplifyHitRateTemporarilyAdviceTemplate(-20, 1),
@@ -144,64 +142,12 @@ export const ADVICES: Advice[] = [
   amplifyBigHitRateAdviceTemplate(7, 1),
   amplifyBigHitRateAdviceTemplate(15, 1),
   amplifyBigHitRateTemporarilyAdviceTemplate(100, 1),
-  // TODO: 템플릿 만들기
-  {
-    name: `내 힘을 모두 소진하겠다. 대신 네가 고르는 효과의 단계를 [0~+4] 중 하나만큼 올려주지.`,
-    special: 'chaos',
-    sage: '루베도',
-    type: 'potential',
-    effect: () => (beforeElixirs, optionIndex) => {
-      const result = [...beforeElixirs];
-      const diff = Math.floor(Math.random() * 5);
-      result[optionIndex].level += diff;
-      result[optionIndex].level = Math.max(Math.min(result[optionIndex].level, 100), 0);
-      return result;
-    },
-    odds: 1,
-  },
-  {
-    name: `내 힘을 모두 소진하겠네. 대신 자네가 선택한 효과의 단계를 [+2~+3] 중 하나만큼 올릴걸세.`,
-    special: 'chaos',
-    sage: '비르디타스',
-    type: 'potential',
-    effect: () => (beforeElixirs, optionIndex) => {
-      const result = [...beforeElixirs];
-      const diff = Math.floor(Math.random() * 5);
-      result[optionIndex].level += diff;
-      result[optionIndex].level = Math.max(Math.min(result[optionIndex].level, 100), 0);
-      return result;
-    },
-    odds: 1,
-  },
-  {
-    name: `제 힘을 모두 소진하겠어요. 대신, 당신이 택한 효과의 단계를 [-4~+5] 중 하나만큼 올려드리죠.`,
-    special: 'chaos',
-    sage: '치트리니',
-    type: 'potential',
-    effect: () => (beforeElixirs, optionIndex) => {
-      const result = [...beforeElixirs];
-      const diff = Math.floor(Math.random() * 10) - 4;
-      result[optionIndex].level += diff;
-      result[optionIndex].level = Math.max(Math.min(result[optionIndex].level, 100), 0);
-      return result;
-    },
-    odds: 1,
-  },
-  {
-    ...amplifySelectedHitRateAdviceTemplate(15, 1),
-    special: 'order',
-    sage: '루베도',
-  },
-  {
-    ...amplifySelectedHitRateAdviceTemplate(15, 1),
-    special: 'order',
-    sage: '비르디타스',
-  },
-  {
-    ...amplifySelectedHitRateAdviceTemplate(15, 1),
-    special: 'order',
-    sage: '치트리니',
-  },
+  changeSelectedPotentialLevelAdviceTemplate(0, 4, 1, { special: SageTypesTypes.CHAOS, sage: SageKeys.L }),
+  changeSelectedPotentialLevelAdviceTemplate(-2, 3, 1, { special: SageTypesTypes.CHAOS, sage: SageKeys.B }),
+  changeSelectedPotentialLevelAdviceTemplate(4, 5, 1, { special: SageTypesTypes.CHAOS, sage: SageKeys.C }),
+  amplifySelectedHitRateAdviceTemplate(15, 1, { special: SageTypesTypes.ORDER, sage: SageKeys.L }),
+  amplifySelectedHitRateAdviceTemplate(15, 1, { special: SageTypesTypes.ORDER, sage: SageKeys.B }),
+  amplifySelectedHitRateAdviceTemplate(15, 1, { special: SageTypesTypes.ORDER, sage: SageKeys.C }),
 ];
 
 function potentialAlchemyAdviceTemplate(percentage: number, odds: number): Advice {
@@ -248,13 +194,34 @@ function changePotentialLevelAdviceTemplate(maxRisk: number, maxReturn: number, 
   };
 }
 
-function changeSelectedPotentialLevelAdviceTemplate(maxRisk: number, maxReturn: number, odds: number): Advice {
+interface AdviceTemplateProps {
+  special?: SageTypesType;
+  sage?: SageKey;
+}
+
+/**
+ *
+ * @param maxRisk 0 이상의 정수
+ * @param maxReturn -maxRisk 이상의 정수
+ * @param odds 조언 등장 확률
+ * @param props 풀스택 또는 특정 현자인 경우
+ * @returns
+ */
+function changeSelectedPotentialLevelAdviceTemplate(maxRisk: number, maxReturn: number, odds: number, props?: AdviceTemplateProps): Advice {
+  props ??= {};
+  const { special, sage } = props;
   return {
-    name: `선택한 효과를 -${maxRisk} ~ +${maxReturn} 단계 올려${Placeholders[I.주겠네]}.`,
+    name: special
+      ? `${Placeholders[I.내]} 힘을 모두 소진${Placeholders[I.하겠네]}. 대신 ${Placeholders[I.자네]}가 ${Placeholders[I.선택한]} 효과의 단계를 [${convertToSignedString(-maxRisk)}~${convertToSignedString(maxReturn)}] 중 하나만큼 ${
+          Placeholders[I.올릴걸세]
+        }.`
+      : `선택한 효과를 [${convertToSignedString(-maxRisk)}~${convertToSignedString(maxReturn)}] 중 하나만큼 올려${Placeholders[I.주겠네]}.`,
     type: 'potential',
+    special,
+    sage,
     effect: () => (beforeElixirs, optionIndex) => {
       const result = [...beforeElixirs];
-      const diff = Math.floor(Math.random() * maxReturn - maxRisk + 1) - maxRisk;
+      const diff = Math.floor(Math.random() * (maxReturn - maxRisk + 1)) - maxRisk;
       result[optionIndex].level = Math.max(result[optionIndex].level + diff, 0);
       return result;
     },
@@ -304,10 +271,14 @@ function amplifyHitRateAdviceTemplate(n: number, odds: number): Advice {
   };
 }
 
-function amplifySelectedHitRateAdviceTemplate(n: number, odds: number): Advice {
+function amplifySelectedHitRateAdviceTemplate(n: number, odds: number, props?: AdviceTemplateProps): Advice {
+  props ??= {};
+  const { special, sage } = props;
   return {
     name: `남은 연성에서 선택한 효과의 연성 확률을 ${Math.abs(n)}% ${n >= 0 ? '높여' : '낮춰'}${Placeholders[I.주겠네]}.`,
     type: 'util',
+    special,
+    sage,
     effect: () => (beforeElixirs: ElixirInstance[], optionIndex) => {
       const result = [...beforeElixirs];
       validateOptionIndex(optionIndex);
