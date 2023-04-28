@@ -221,14 +221,17 @@ export const ADVICES: Advice[] = [
     },
     odds: 1,
   },
-  amplifyHitRateAdviceTemplate(70, 1),
-  amplifyHitRateAdviceTemplate(30, 1),
-  amplifyHitRateAdviceTemplate(20, 1),
+  amplifyHitRateTemporarilyAdviceTemplate(70, 1),
+  amplifyHitRateTemporarilyAdviceTemplate(30, 1),
+  amplifyHitRateTemporarilyAdviceTemplate(-20, 1),
+  amplifyHitRateAdviceTemplate(5, 1),
+  amplifyHitRateAdviceTemplate(10, 1),
+  amplifyHitRateAdviceTemplate(-5, 1),
 ];
 
-function amplifyHitRateAdviceTemplate(n: number, odds: number): Advice {
+function amplifyHitRateTemporarilyAdviceTemplate(n: number, odds: number): Advice {
   return {
-    name: `이번 연성에서 ${OPTION_NAME_PLACEHOLDER} 효과의 연성 확률을 +${n}% 높여${ADVICE_DIALOGUE_END1_PLACEHOLDER}.`,
+    name: `이번 연성에서 ${OPTION_NAME_PLACEHOLDER} 효과의 연성 확률을 ${Math.abs(n)}% ${n >= 0 ? '높여' : '낮춰'}${ADVICE_DIALOGUE_END1_PLACEHOLDER}.`,
     type: 'util',
     effect:
       ({ optionIndex }) =>
@@ -239,10 +242,33 @@ function amplifyHitRateAdviceTemplate(n: number, odds: number): Advice {
           option.nextHitRate = option.hitRate;
           option.nextBigHitRate = option.bigHitRate;
 
-          if (optionIndex === idx) option.hitRate = Math.min(option.hitRate + n, 100);
-          else option.hitRate = Math.max(option.hitRate - n / (OPTION_COUNT - 1), 0);
+          if (optionIndex === idx) option.hitRate += n;
+          else option.hitRate -= n / (OPTION_COUNT - 1);
+          option.hitRate = Math.max(Math.min(option.hitRate, 100), 0);
         });
+        return result;
+      },
+    odds,
+  };
+}
+
+function amplifyHitRateAdviceTemplate(n: number, odds: number): Advice {
+  return {
+    name: `남은 연성에서 ${OPTION_NAME_PLACEHOLDER} 효과의 연성 확률을 ${Math.abs(n)}% ${n >= 0 ? '높여' : '낮춰'}${ADVICE_DIALOGUE_END1_PLACEHOLDER}.`,
+    type: 'util',
+    effect:
+      ({ optionIndex }) =>
+      (beforeElixirs: ElixirInstance[]) => {
+        const result = [...beforeElixirs];
         console.log(result.map((e) => e.hitRate));
+        result.forEach((option, idx) => {
+          if (optionIndex === idx) option.hitRate += n;
+          else option.hitRate -= n / (OPTION_COUNT - 1);
+          option.hitRate = Math.max(Math.min(option.hitRate, 100), 0);
+
+          option.nextHitRate = option.hitRate;
+          option.nextBigHitRate = option.bigHitRate;
+        });
         return result;
       },
     odds,
