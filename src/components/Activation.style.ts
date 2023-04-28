@@ -41,11 +41,11 @@ export const Activation = styled.div<{ percentage: number }>`
     ${CENTERED_FLEX_STYLE};
   }
 
-  div:nth-child(1) {
+  div:nth-of-type(1) {
     border-left: solid ${BORDER_WIDTH_PX}px black;
   }
 
-  div:nth-last-child(1) {
+  div:nth-last-of-type(1) {
     border-right: solid ${BORDER_WIDTH_PX}px black;
   }
 `;

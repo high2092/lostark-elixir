@@ -7,7 +7,7 @@ export const Activation = ({ percentage }) => {
   return (
     <S.Activation percentage={percentage}>
       {Array.from({ length: MAX_ACTIVE }).map((_, idx) => (
-        <div>{LEVEL[idx]}</div>
+        <div key={`activation-${idx}`}>{LEVEL[idx]}</div>
       ))}
     </S.Activation>
   );

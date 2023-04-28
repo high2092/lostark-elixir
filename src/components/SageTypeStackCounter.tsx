@@ -21,11 +21,11 @@ export const SageTypeStackCounter = ({ type, stack: _stack }: SageTypeStackCount
 
   return (
     <S.SageTypeStackCounter>
-      {Array.from({ length: stack }).map((_) => (
-        <ActiveStackIcon />
+      {Array.from({ length: stack }).map((_, idx) => (
+        <ActiveStackIcon key={`activeStackIcon-${idx}`} />
       ))}
-      {Array.from({ length: maxStack - stack }).map((_) => (
-        <InactiveStackIcon />
+      {Array.from({ length: maxStack - stack }).map((_, idx) => (
+        <InactiveStackIcon key={`inactiveStackIcon-${idx}`} />
       ))}
     </S.SageTypeStackCounter>
   );

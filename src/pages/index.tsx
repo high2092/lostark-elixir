@@ -198,7 +198,7 @@ const Home = () => {
       <S.MainSection>
         <S.ElixirOptionSection>
           {selectedOptions.map(({ name, part, level, hitRate, bigHitRate, statusText }, idx) => (
-            <S.ElixirOption onClick={(e) => handleElixirOptionClick(e, idx)} selected={selectedOptionIndex === idx}>
+            <S.ElixirOption key={`elixirOption-${idx}`} onClick={(e) => handleElixirOptionClick(e, idx)} selected={selectedOptionIndex === idx}>
               <div css={[CENTERED_FLEX_STYLE, { flex: 2 }]}>{`${hitRate}%`}</div>
               <div css={{ flex: 7, paddingRight: '1rem', display: 'flex', justifyContent: 'center', flexDirection: 'column' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -213,8 +213,8 @@ const Home = () => {
               </div>
             </S.ElixirOption>
           ))}
-          {Array.from({ length: OPTION_COUNT - selectedOptions.length }).map((_) => (
-            <S.ElixirOption />
+          {Array.from({ length: OPTION_COUNT - selectedOptions.length }).map((_, idx) => (
+            <S.ElixirOption key={`elixirOptionEmpty-${idx}`} />
           ))}
         </S.ElixirOptionSection>
         <S.AdviceSection>
@@ -224,7 +224,7 @@ const Home = () => {
 
             const special = alchemyStatus === AlchemyStatus.ADVICE && isFullStack(sage.type, stack) ? sage.type : null;
             return (
-              <S.Advice onClick={(e) => handleAdviceClick(e, idx)}>
+              <S.Advice key={`advice-${idx}`} onClick={(e) => handleAdviceClick(e, idx)}>
                 <div style={{ height: STACK_COUNTER_EXPECTED_HEIGHT }}>
                   <SageTypeStackCounter type={sage.type} stack={sage.stack} />
                 </div>
