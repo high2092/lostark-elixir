@@ -4,6 +4,8 @@ import { SageKey, SageKeys, SageTypesType, SageTypesTypes } from '../type/sage';
 import { applyAdvice, convertToSignedString, gacha, getLockedCount, validateOptionIndex } from '../util';
 
 const NO_OPTION_SELECTED_ERROR_MESSAGE = '옵션을 선택해주세요.';
+const getExtraAlchemyText = (extraAlchemy: number) => `이번에 연성되는 효과는 ${1 + extraAlchemy}단계 연성해${Placeholders[I.주겠네]}.`;
+const getExtraTargetText = (extraTarget: number) => `이번 연성에서 ${extraTarget + 1}개의 효과를 동시에 연성해${Placeholders[I.주겠네]}.`;
 
 /** TODO: 봉인된 옵션에 대한 처리 방식 조사하기
  * 1. 단계 위/아래로 한칸씩 이동
@@ -97,12 +99,15 @@ export const ADVICES: Advice[] = [
   moveDownLevelAdviceTemplate(2, { special: SageTypesTypes.CHAOS }),
   lockAdviceTemplate(2 * INF, { extraChanceConsume: 0, remainChanceUpperBound: 3 }),
   lockSelectedOptionAdviceTemplate(INF, { saveChance: true, special: SageTypesTypes.ORDER, remainChanceUpperBound: 3 }),
+  lockSelectedOptionAdviceTemplate(INF, { extraTarget: 1, special: SageTypesTypes.ORDER, remainChanceUpperBound: 3 }),
+  lockSelectedOptionAdviceTemplate(INF, { extraAlchemy: 1, special: SageTypesTypes.ORDER, remainChanceUpperBound: 3 }),
   lockSelectedOptionAdviceTemplate(3 * INF, { remainChanceUpperBound: 3 }),
   redistributeAdviceTemplate(2, { special: SageTypesTypes.CHAOS }),
-  exchangeOddEvenAdvice(1, { odd: true, n: 1 }),
-  exchangeOddEvenAdvice(1, { odd: false, n: 1 }),
-  exchangeOneLevelBetweenRandomTwoOptionsAdvice(1, { n: 1 }),
-  exchangeOneLevelBetweenRandomTwoOptionsAdvice(1, { n: 2 }),
+  exchangeOddEvenAdviceTemplate(1, { odd: true, n: 1 }),
+  exchangeOddEvenAdviceTemplate(1, { odd: false, n: 1 }),
+  exchangeOneLevelBetweenRandomTwoOptionsAdviceTemplate(1, { n: 1 }),
+  exchangeOneLevelBetweenRandomTwoOptionsAdviceTemplate(1, { n: 2 }),
+  extraAlchemyAdviceTemplate(1, { extraAlchemy: 2, extraChanceConsume: 1 }),
 ];
 
 function potentialAlchemyAdviceTemplate(odds: number, params: AdviceTemplateProps): Advice {
@@ -168,6 +173,7 @@ interface AdviceTemplateProps {
   maxRisk?: number;
   maxReturn?: number;
   extraTarget?: number;
+  extraAlchemy?: number;
   extraChanceConsume?: number;
 
   enterMeditation?: boolean;
@@ -405,9 +411,13 @@ function lockAdviceTemplate(odds: number, params: AdviceTemplateProps): Advice {
 }
 
 function lockSelectedOptionAdviceTemplate(odds: number, params: AdviceTemplateProps): Advice {
-  const { extraChanceConsume, saveChance, special, remainChanceUpperBound } = params;
+  const { extraChanceConsume, saveChance, special, remainChanceUpperBound, extraAlchemy, extraTarget } = params;
   return {
-    name: `선택한 효과 하나를 봉인${Placeholders[I.하겠네]}.${extraChanceConsume ? ` 다만, 기회를 ${1 + extraChanceConsume}번 소모${Placeholders[I.할걸세]}.` : ''}${saveChance ? ` 이번 연성은 기회를 소모하지 ${Placeholders[I.않을걸세]}.` : ''}`,
+    name: `선택한 효과 하나를 봉인${Placeholders[I.하겠네]}.
+    ${extraChanceConsume ? ` 다만, 기회를 ${1 + extraChanceConsume}번 소모${Placeholders[I.할걸세]}.` : ''}
+    ${saveChance ? ` 이번 연성은 기회를 소모하지 ${Placeholders[I.않을걸세]}.` : ''}
+    ${extraAlchemy ? ` ${getExtraAlchemyText(extraAlchemy)}` : ''}
+    ${extraTarget ? ` ${getExtraTargetText(extraTarget)}` : ''}`,
     type: 'util',
     special,
     remainChanceUpperBound,
@@ -422,7 +432,7 @@ function lockSelectedOptionAdviceTemplate(odds: number, params: AdviceTemplatePr
         }
       }
 
-      return { elixirs: result, saveChance, extraChanceConsume };
+      return { elixirs: result, saveChance, extraChanceConsume, extraAlchemy, extraTarget };
     },
     odds,
   };
@@ -516,7 +526,7 @@ function changeSelectedOptionToFixedLevelAdviceTemplate(odds: number, params: Ad
   };
 }
 
-function exchangeOddEvenAdvice(odds: number, params: AdviceTemplateProps): Advice {
+function exchangeOddEvenAdviceTemplate(odds: number, params: AdviceTemplateProps): Advice {
   const { odd } = params;
   const str = ['2, 4', '1, 3, 5'];
   return {
@@ -537,7 +547,7 @@ function exchangeOddEvenAdvice(odds: number, params: AdviceTemplateProps): Advic
   };
 }
 
-function exchangeOneLevelBetweenRandomTwoOptionsAdvice(odds: number, params: AdviceTemplateProps): Advice {
+function exchangeOneLevelBetweenRandomTwoOptionsAdviceTemplate(odds: number, params: AdviceTemplateProps): Advice {
   const { n } = params;
   return {
     name: `${Placeholders.OPTION} 효과의 단계를 +1 올려${Placeholders[I.주겠네]}. 대신 ${Placeholders.SUB_OPTION} 효과의 단계가 ${n} 감소${Placeholders[I.할걸세]}.`,
@@ -550,6 +560,18 @@ function exchangeOneLevelBetweenRandomTwoOptionsAdvice(odds: number, params: Adv
         applyAdvice(result[subIndex], { level: result[subIndex].level - n });
         return { elixirs: result };
       },
+    odds,
+  };
+}
+
+function extraAlchemyAdviceTemplate(odds: number, params: AdviceTemplateProps): Advice {
+  const { extraAlchemy, extraChanceConsume } = params;
+  return {
+    name: `${getExtraAlchemyText(extraAlchemy)}.${extraChanceConsume ? ` 다만, 기회를 ${extraChanceConsume + 1}번 소모${Placeholders[I.할걸세]}.` : ''}`,
+    type: 'util',
+    effect: () => (beforeElixirs) => {
+      return { elixirs: beforeElixirs, extraAlchemy, extraChanceConsume };
+    },
     odds,
   };
 }
