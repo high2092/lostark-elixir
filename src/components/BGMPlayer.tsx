@@ -27,7 +27,7 @@ export const BGMPlayer = ({ outline }) => {
     } else youtubePlayerRef.current.pauseVideo();
   }, [playing]);
   return (
-    <S.BGMPlayer outline={outline}>
+    <S.BGMPlayer outline={outline} onClick={handlePlayButtonClick}>
       <S.YouTube>
         <YouTube
           videoId="Qz99BEtXOtk"
@@ -39,7 +39,7 @@ export const BGMPlayer = ({ outline }) => {
         />
       </S.YouTube>
       <span>BGM</span>
-      <S.PlayButton onClick={handlePlayButtonClick}>
+      <S.PlayButton>
         <div>{playing ? <PauseIcon /> : <PlayIcon />}</div>
       </S.PlayButton>
     </S.BGMPlayer>

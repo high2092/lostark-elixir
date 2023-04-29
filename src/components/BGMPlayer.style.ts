@@ -24,4 +24,5 @@ export const YouTube = styled.div`
 
 export const PlayButton = styled.div`
   padding: 0rem 0.2rem;
+  cursor: pointer;
 `;
