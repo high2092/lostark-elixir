@@ -67,19 +67,7 @@ export const ADVICES: Advice[] = [
     odds: 1,
   },
   {
-    name: `2, 4 슬롯의 효과를 +1 올려${Placeholders[I.주겠네]}. 대신...`,
-    type: 'util',
-    effect: () => (beforeElixirs) => {
-      const result = [...beforeElixirs];
-
-      applyAdvice(result[1], { level: result[1].level + 1 });
-      applyAdvice(result[3], { level: result[3].level + 1 });
-      return { elixirs: result };
-    },
-    odds: 1,
-  },
-  {
-    name: `임의 효과를 +1 올려${Placeholders[I.주겠네]}. 대신 ...`,
+    name: `임의 효과를 +1 올려${Placeholders[I.주겠네]}.`,
     type: 'util',
     effect: () => (beforeElixirs) => {
       const result = [...beforeElixirs];
@@ -123,6 +111,8 @@ export const ADVICES: Advice[] = [
   lockSelectedOptionAdviceTemplate(INF, { saveChance: true, special: SageTypesTypes.ORDER, remainChanceUpperBound: 3 }),
   lockSelectedOptionAdviceTemplate(3 * INF, { remainChanceUpperBound: 3 }),
   redistributeAdviceTemplate(2, { special: SageTypesTypes.CHAOS }),
+  exchangeOddEvenAdvice(1, { odd: true, n: 1 }),
+  exchangeOddEvenAdvice(1, { odd: false, n: 1 }),
 ];
 
 function potentialAlchemyAdviceTemplate(odds: number, params: AdviceTemplateProps): Advice {
@@ -191,6 +181,8 @@ interface AdviceTemplateProps {
   extraChanceConsume?: number;
 
   enterMeditation?: boolean;
+
+  odd?: boolean; // exchange 1 level between 1, 3, 5 <-> 2, 4
 }
 
 /**
@@ -528,6 +520,27 @@ function changeSelectedOptionToFixedLevelAdviceTemplate(odds: number, params: Ad
     effect: () => (beforeElixirs, optionIndex) => {
       const result = [...beforeElixirs];
       applyAdvice(result[optionIndex], { level: n + Math.floor(Math.random() * 2) });
+      return { elixirs: result };
+    },
+    odds,
+  };
+}
+
+function exchangeOddEvenAdvice(odds: number, params: AdviceTemplateProps): Advice {
+  const { odd } = params;
+  const str = ['2, 4', '1, 3, 5'];
+  return {
+    name: `${str[Number(odd)]} 슬롯의 효과를 +1 올려${Placeholders[I.주겠네]}. 대신 ${str[Number(!odd)]} 슬롯의 효과가 1 감소${Placeholders[I.할걸세]}.`,
+    type: 'util',
+    effect: () => (beforeElixirs) => {
+      const result = [...beforeElixirs];
+
+      for (let i = 0; i < result.length; i++) {
+        const option = result[i];
+        if ((i % 2 === 0) === odd) applyAdvice(option, { level: option.level + 1 });
+        else applyAdvice(option, { level: option.level - 1 });
+      }
+
       return { elixirs: result };
     },
     odds,
