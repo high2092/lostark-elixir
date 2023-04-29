@@ -11,6 +11,8 @@ const NO_OPTION_SELECTED_ERROR_MESSAGE = '옵션을 선택해주세요.';
  * 3. 뒤섞기
  */
 
+const INF = 2147483647;
+
 export const ADVICES: Advice[] = [
   potentialAlchemyAdviceTemplate(1, { percentage: 25 }),
   potentialAlchemyAdviceTemplate(1, { percentage: 50 }),
@@ -160,9 +162,11 @@ export const ADVICES: Advice[] = [
   addRerollChanceAdviceTemplate(1, { addRerollChance: 2, special: SageTypesTypes.ORDER }),
   moveUpLevelAdviceTemplate(1, { special: SageTypesTypes.CHAOS }),
   moveDownLevelAdviceTemplate(1, { special: SageTypesTypes.CHAOS }),
-  lockAdviceTemplate(Infinity, { extraChanceConsume: 0, remainChanceUpperBound: 3 }),
-  lockAdviceTemplate(Infinity, { extraChanceConsume: 1, remainChanceUpperBound: 3 }),
-  lockAdviceTemplate(Infinity, { saveChance: true, special: SageTypesTypes.ORDER, remainChanceUpperBound: 3 }),
+  lockAdviceTemplate(INF, { extraChanceConsume: 0, remainChanceUpperBound: 3 }),
+  lockAdviceTemplate(INF, { extraChanceConsume: 1, remainChanceUpperBound: 3 }),
+  lockAdviceTemplate(INF, { saveChance: true, special: SageTypesTypes.ORDER, remainChanceUpperBound: 3 }),
+  lockSelectedOptionAdviceTemplate(INF, { remainChanceUpperBound: 3 }),
+  redistributeAdviceTemplate(1, { special: SageTypesTypes.CHAOS }),
 ];
 
 function potentialAlchemyAdviceTemplate(odds: number, params: AdviceTemplateProps): Advice {
@@ -205,7 +209,7 @@ function changePotentialLevelAdviceTemplate(odds: number, params: AdviceTemplate
       ({ optionIndex }) =>
       (beforeElixirs) => {
         const result = [...beforeElixirs];
-        const diff = Math.floor(Math.random() * maxReturn - maxRisk + 1) - maxRisk;
+        const diff = Math.floor(Math.random() * maxReturn + maxRisk + 1) - maxRisk;
         applyAdvice(result[optionIndex], { level: result[optionIndex].level + diff });
         return { elixirs: result };
       },
@@ -252,7 +256,7 @@ function changeSelectedPotentialLevelAdviceTemplate(odds: number, props?: Advice
     sage,
     effect: () => (beforeElixirs, optionIndex) => {
       const result = [...beforeElixirs];
-      const diff = Math.floor(Math.random() * (maxReturn - maxRisk + 1)) - maxRisk;
+      const diff = Math.floor(Math.random() * (maxReturn + maxRisk + 1)) - maxRisk;
       applyAdvice(result[optionIndex], { level: result[optionIndex].level + diff });
       return { elixirs: result };
     },
@@ -454,6 +458,65 @@ function lockAdviceTemplate(odds: number, params: AdviceTemplateProps): Advice {
       }
 
       return { elixirs: result, saveChance, extraChanceConsume };
+    },
+    odds,
+  };
+}
+
+function lockSelectedOptionAdviceTemplate(odds: number, params: AdviceTemplateProps): Advice {
+  const { extraChanceConsume, saveChance, special, remainChanceUpperBound } = params;
+  return {
+    name: `선택한 효과 하나를 봉인${Placeholders[I.하겠네]}.${extraChanceConsume ? ` 다만, 기회를 ${1 + extraChanceConsume}번 소모${Placeholders[I.할걸세]}.` : ''}${saveChance ? ` 이번 연성은 기회를 소모하지 ${Placeholders[I.않을걸세]}.` : ''}`,
+    type: 'util',
+    special,
+    remainChanceUpperBound,
+    effect: () => (beforeElixirs, optionIndex) => {
+      const result = [...beforeElixirs];
+      result[optionIndex].locked = true;
+      const lockedCount = result.reduce((acc, cur) => acc + Number(cur.locked), 0);
+      for (let i = 0; i < OPTION_COUNT; i++) {
+        if (!result[i].locked) {
+          applyAdvice(result[i], { hitRate: result[i].hitRate + result[optionIndex].hitRate / (OPTION_COUNT - lockedCount) });
+          result[i].nextHitRate = result[i].hitRate;
+        }
+      }
+
+      return { elixirs: result, saveChance, extraChanceConsume };
+    },
+    odds,
+  };
+}
+
+function redistributeAdviceTemplate(odds: number, params: AdviceTemplateProps): Advice {
+  const { special } = params;
+
+  return {
+    name: `모든 효과의 단계를 재분배${Placeholders[I.하겠네]}.`,
+    type: 'util',
+    special,
+    effect: () => (beforeElixirs) => {
+      const result = [...beforeElixirs];
+
+      const lockedCount = getLockedCount(result);
+      let levelSum = result.reduce((acc, cur) => {
+        if (!cur.locked) acc += cur.level;
+        return acc;
+      }, 0);
+      const shares = Array.from({ length: OPTION_COUNT - lockedCount }).map((_) => 0);
+
+      while (levelSum) {
+        const idx = Math.floor(Math.random() * (OPTION_COUNT - lockedCount));
+        shares[idx]++;
+        levelSum--;
+      }
+
+      let i = 0;
+      for (const option of result) {
+        if (option.locked) continue;
+        applyAdvice(option, { level: shares[i++] });
+      }
+
+      return { elixirs: result };
     },
     odds,
   };
