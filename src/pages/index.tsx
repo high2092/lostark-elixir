@@ -104,8 +104,9 @@ const Home = () => {
 
   useEffect(() => {
     if (!adviceEffectResult) return;
-    const { elixirs } = adviceEffectResult;
+    const { elixirs, addRerollChance } = adviceEffectResult;
     setSelectedOptions(elixirs);
+    if (addRerollChance) setAdviceRerollChance(adviceRerollChance + addRerollChance);
   }, [adviceEffectResult]);
 
   useEffect(() => {
