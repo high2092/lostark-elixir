@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import * as S from '../style/index.style';
 import { cpu } from '../CPU';
-import { ADVICE_COUNT, ALCHEMY_CHANCE, CENTERED_FLEX_STYLE, DEFAULT_ADVICE_REROLL_CHANCE, DIALOGUE_END_INDEX as I, MAX_ACTIVE, Placeholders, STACK_COUNTER_EXPECTED_HEIGHT, SageTypes } from '../constants';
+import { ADVICE_COUNT, ALCHEMY_CHANCE, AUDIO_RESOURCE_URL_LIST, CENTERED_FLEX_STYLE, DEFAULT_ADVICE_REROLL_CHANCE, DIALOGUE_END_INDEX as I, MAX_ACTIVE, Placeholders, STACK_COUNTER_EXPECTED_HEIGHT, SageTypes } from '../constants';
 import { adviceService } from '../AdviceService';
 import { alchemyService } from '../AlchemyService';
 import { Activation } from '../components/Activation';
@@ -15,6 +15,7 @@ import { AdviceInstance } from '../domain/AdviceInstance';
 import { ElixirInstance } from '../type/elixir';
 import { AdviceEffectResult } from '../type/advice';
 import { BGMPlayer } from '../components/BGMPlayer';
+import { Loading } from '../components/Loading';
 
 const AlchemyStatus = {
   REFINE: 'refine', // 정제
@@ -100,6 +101,32 @@ const Home = () => {
   const [sages, setSages] = useState<Sage[]>(initialSages);
   const [adviceEffectResult, setAdviceEffectResult] = useState<AdviceEffectResult>();
   const [adviceRerollChance, setAdviceRerollChance] = useState(DEFAULT_ADVICE_REROLL_CHANCE);
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    const promises: Promise<void>[] = [];
+    promises.concat(
+      AUDIO_RESOURCE_URL_LIST.map(
+        (url) =>
+          new Promise((resolve) => {
+            const audio = new Audio(url);
+            audio.onload = () => resolve();
+          })
+      )
+    );
+    promises.concat(
+      AUDIO_RESOURCE_URL_LIST.map(
+        (url) =>
+          new Promise((resolve) => {
+            const image = new Image();
+            image.src = url;
+            image.onload = () => resolve();
+          })
+      )
+    );
+
+    Promise.all(promises).then(() => setLoaded(true));
+  });
 
   const drawAdvices = () => {
     setSages(adviceService.drawAdvices(selectedOptions, sages, alchemyChance));
@@ -135,6 +162,8 @@ const Home = () => {
     setElixirOptions(cpu.drawOptions());
     if (selectOptionChance === 0) setAlchemyStatus(AlchemyStatus.ADVICE);
   }, [selectOptionChance]);
+
+  if (!loaded) return <Loading />;
 
   const handleRefineButtonClick = () => {
     if (alchemyChance <= 0) return;
