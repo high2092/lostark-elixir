@@ -1,7 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { useEffect, useRef, useState } from 'react';
 import * as S from '../style/index.style';
-import { cpu } from '../CPU';
 import {
   ADVICE_COUNT,
   ALCHEMY_CHANCE,
@@ -13,18 +12,17 @@ import {
   MAX_ACTIVE,
   Placeholders,
   STACK_COUNTER_EXPECTED_HEIGHT,
-  SageTypes,
   VISITED_COOKIE_KEY,
 } from '../constants';
-import { adviceService } from '../AdviceService';
-import { alchemyService } from '../AlchemyService';
+import { elixirService } from '../service/ElixirService';
+import { adviceService } from '../service/AdviceService';
+import { alchemyService } from '../service/AlchemyService';
 import { Activation } from '../components/Activation';
-import { getAdviceRerollButtonText, getStackForDisplaying, isFullStack, playClickSound } from '../util';
+import { getAdviceRerollButtonText, isFullStack, playClickSound } from '../util';
 import { SageTemplates } from '../database/sage';
 import { SageKeys } from '../type/sage';
 import { SageTypeStackCounter } from '../components/SageTypeStackCounter';
 import { Sage } from '../domain/Sage';
-import { AdviceInstance } from '../domain/AdviceInstance';
 import { ElixirInstance } from '../type/elixir';
 import { AdviceEffectResult } from '../type/advice';
 import { BGMPlayer } from '../components/BGMPlayer';
@@ -171,7 +169,7 @@ const Home = () => {
   useEffect(() => {
     switch (alchemyStatus) {
       case AlchemyStatus.REFINE: {
-        setElixirOptions(cpu.drawOptions());
+        setElixirOptions(elixirService.drawOptions());
         break;
       }
       case AlchemyStatus.ADVICE: {
@@ -182,13 +180,13 @@ const Home = () => {
   }, [alchemyStatus]);
 
   useEffect(() => {
-    cpu.init();
+    elixirService.init();
     setAlchemyStatus(AlchemyStatus.REFINE);
   }, []);
 
   useEffect(() => {
     if (selectOptionChance === OPTION_COUNT) return;
-    setElixirOptions(cpu.drawOptions());
+    setElixirOptions(elixirService.drawOptions());
     if (selectOptionChance === 0) setAlchemyStatus(AlchemyStatus.ADVICE);
   }, [selectOptionChance]);
 
@@ -204,7 +202,7 @@ const Home = () => {
     switch (alchemyStatus) {
       case AlchemyStatus.REFINE: {
         const id = elixirOptions[selectedAdviceIndex].id;
-        const option = cpu.pickOption(id);
+        const option = elixirService.pickOption(id);
         setSelectedOptions((selectedOptions) => selectedOptions.concat(option));
         setSelectOptionChance(selectOptionChance - 1);
         break;

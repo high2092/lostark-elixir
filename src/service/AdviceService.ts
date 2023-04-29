@@ -1,10 +1,10 @@
-import { OPTION_COUNT, Placeholders, SageTypes } from './constants';
-import { ADVICES } from './database/advice';
-import { AdviceInstance } from './domain/AdviceInstance';
-import { Sage } from './domain/Sage';
-import { Advice, AdviceEffectResult } from './type/advice';
-import { ElixirInstance } from './type/elixir';
-import { calculateOddsSum, gacha, isFullStack, playRefineFailureSound, playRefineSuccessSound } from './util';
+import { OPTION_COUNT } from '../constants';
+import { ADVICES } from '../database/advice';
+import { AdviceInstance } from '../domain/AdviceInstance';
+import { Sage } from '../domain/Sage';
+import { Advice, AdviceEffectResult } from '../type/advice';
+import { ElixirInstance } from '../type/elixir';
+import { calculateOddsSum, gacha, isFullStack, playRefineFailureSound, playRefineSuccessSound } from '../util';
 
 class AdviceService {
   oddsSum = ADVICES.reduce((acc, { odds }) => {

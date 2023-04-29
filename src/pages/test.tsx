@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { elixirLengthTest, elixirOddsSumTest } from '../test/elixer';
+import { elixirLengthTest, elixirOddsSumTest } from '../test/elixir';
 
 const Test = () => {
   useEffect(() => {

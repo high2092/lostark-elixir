@@ -1,10 +1,10 @@
-import { ADVICE_COUNT, OPTION_COUNT } from './constants';
-import { ELIXIRS } from './database/elixir';
-import { ElixirInstance } from './type/elixir';
+import { ADVICE_COUNT, OPTION_COUNT } from '../constants';
+import { ELIXIRS } from '../database/elixir';
+import { ElixirInstance } from '../type/elixir';
 
 const DEFAULT_BIG_HIT_RATE_PERCENT = 10;
 
-class CPU {
+class ElixirService {
   elixirs: ElixirInstance[];
   oddsSum = ELIXIRS.reduce((acc, { odds }) => {
     return acc + odds;
@@ -50,4 +50,4 @@ class CPU {
   }
 }
 
-export const cpu = new CPU();
+export const elixirService = new ElixirService();

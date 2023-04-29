@@ -1,7 +1,7 @@
-import { MAX_ACTIVE, OPTION_COUNT } from './constants';
-import { AdviceEffectResult } from './type/advice';
-import { ElixirInstance } from './type/elixir';
-import { applyAdvice, gacha, playRefineSuccessSound } from './util';
+import { MAX_ACTIVE, OPTION_COUNT } from '../constants';
+import { AdviceEffectResult } from '../type/advice';
+import { ElixirInstance } from '../type/elixir';
+import { applyAdvice, gacha, playRefineSuccessSound } from '../util';
 
 class AlchemyService {
   private clean(elixirs: ElixirInstance[]) {
