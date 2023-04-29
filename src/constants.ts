@@ -17,7 +17,7 @@ export const DEFAULT_BORDER_RADIUS_PX = 2;
 export const SageTypes = {
   [SageTypesTypes.CHAOS]: {
     displayName: '혼돈',
-    fullStack: 2,
+    fullStack: 6,
     color: 'purple',
   },
   [SageTypesTypes.ORDER]: {

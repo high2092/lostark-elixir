@@ -1,6 +1,7 @@
 import { MAX_ACTIVE, OPTION_COUNT, SageTypes } from './constants';
+import { Sage } from './domain/Sage';
 import { ElixirInstance } from './type/elixir';
-import { SageInstance, SageTypesType, SageTypesTypes } from './type/sage';
+import { SageTypesType, SageTypesTypes } from './type/sage';
 
 interface GachaProps {
   oddsKey?: 'odds' | 'hitRate';
@@ -25,7 +26,7 @@ export const gacha = (arr: Record<string, any>[], props?: GachaProps) => {
   for (let i = 0; i < count; i++) {
     const idx = gachaInternal(_arr);
     result.push(idx);
-    _arr.splice(idx, 1, { ..._arr[idx], [oddsKey]: 0 });
+    _arr.splice(idx, 1, { ..._arr[idx], odds: 0 });
   }
 
   return result;
@@ -68,7 +69,7 @@ export const validateOptionIndex = (idx: number) => {
   if (idx < 0 || idx >= OPTION_COUNT) throw new Error();
 };
 
-export const isFullStack = (sage: SageInstance) => {
+export const isFullStack = (sage: Sage) => {
   return sage.stack === SageTypes[sage.type]?.fullStack;
 };
 
