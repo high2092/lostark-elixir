@@ -2,7 +2,20 @@
 import { useEffect, useRef, useState } from 'react';
 import * as S from '../style/index.style';
 import { cpu } from '../CPU';
-import { ADVICE_COUNT, ALCHEMY_CHANCE, AUDIO_RESOURCE_URL_LIST, CENTERED_FLEX_STYLE, DEFAULT_ADVICE_REROLL_CHANCE, DIALOGUE_END_INDEX as I, MAX_ACTIVE, Placeholders, STACK_COUNTER_EXPECTED_HEIGHT, SageTypes } from '../constants';
+import {
+  ADVICE_COUNT,
+  ALCHEMY_CHANCE,
+  AUDIO_RESOURCE_URL_LIST,
+  CENTERED_FLEX_STYLE,
+  DEFAULT_ADVICE_REROLL_CHANCE,
+  FIRST_VISIT_HELP_TEXT,
+  DIALOGUE_END_INDEX as I,
+  MAX_ACTIVE,
+  Placeholders,
+  STACK_COUNTER_EXPECTED_HEIGHT,
+  SageTypes,
+  VISITED_COOKIE_KEY,
+} from '../constants';
 import { adviceService } from '../AdviceService';
 import { alchemyService } from '../AlchemyService';
 import { Activation } from '../components/Activation';
@@ -16,6 +29,7 @@ import { ElixirInstance } from '../type/elixir';
 import { AdviceEffectResult } from '../type/advice';
 import { BGMPlayer } from '../components/BGMPlayer';
 import { Loading } from '../components/Loading';
+import { useCookies } from 'react-cookie';
 
 const AlchemyStatus = {
   REFINE: 'refine', // 정제
@@ -102,6 +116,21 @@ const Home = () => {
   const [adviceEffectResult, setAdviceEffectResult] = useState<AdviceEffectResult>();
   const [adviceRerollChance, setAdviceRerollChance] = useState(DEFAULT_ADVICE_REROLL_CHANCE);
   const [loaded, setLoaded] = useState(false);
+  const [isFirstVisit, setIsFirstVisit] = useState(false);
+  const [cookies, setCookie] = useCookies();
+
+  useEffect(() => {
+    const handleWindowClick = () => {
+      setIsFirstVisit(false);
+    };
+    if (!cookies[VISITED_COOKIE_KEY]) {
+      setIsFirstVisit(true);
+      setCookie(VISITED_COOKIE_KEY, true, { expires: new Date('2030-09-02') });
+    }
+
+    window.addEventListener('click', handleWindowClick);
+    return () => window.removeEventListener('click', handleWindowClick);
+  }, []);
 
   useEffect(() => {
     const promises: Promise<void>[] = [];
@@ -321,7 +350,8 @@ const Home = () => {
           {ButtonTexts[alchemyStatus]}
         </S.RefineButton>
       </S.DescriptionSection>
-      <BGMPlayer />
+      <BGMPlayer outline={isFirstVisit} />
+      {isFirstVisit && <S.FirstVisitHelpText>{FIRST_VISIT_HELP_TEXT}</S.FirstVisitHelpText>}
     </S.Home>
   );
 };

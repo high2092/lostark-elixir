@@ -1,10 +1,13 @@
 import styled from '@emotion/styled';
 
-export const BGMPlayer = styled.div`
+export const BGMPlayer = styled.div<{ outline: boolean }>`
   position: fixed;
 
   height: 1rem;
-  padding: 0.5rem;
+  padding: 0.3rem;
+  margin: 0.2rem;
+
+  ${({ outline }) => (outline ? 'outline: 3px solid red;' : '')}
 
   color: white;
   fill: white;

@@ -6,7 +6,11 @@ import { PlayIcon } from './PlayIcon';
 
 const DEFAULT_BGM_VOLUME = 5;
 
-export const BGMPlayer = () => {
+interface BGMPlayerProps {
+  outline: boolean;
+}
+
+export const BGMPlayer = ({ outline }) => {
   const [playing, setPlaying] = useState(false);
   const youtubePlayerRef = useRef<YouTubePlayer>();
   const [volume, setVolume] = useState(DEFAULT_BGM_VOLUME);
@@ -23,7 +27,7 @@ export const BGMPlayer = () => {
     } else youtubePlayerRef.current.pauseVideo();
   }, [playing]);
   return (
-    <S.BGMPlayer>
+    <S.BGMPlayer outline={outline}>
       <S.YouTube>
         <YouTube
           videoId="Qz99BEtXOtk"

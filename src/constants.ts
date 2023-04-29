@@ -61,3 +61,7 @@ export const PLAY_PAUSE_ICON_SIZE = '1rem';
 
 export const AUDIO_RESOURCE_URL_LIST = ['/sound/refine-success.mp3', '/sound/refine-failure.mp3', '/sound/click.mp3'];
 export const IMAGE_RESOURCE_URL_LIST = ['/image/background.png', '/image/gold', '/image/material.png'];
+
+export const VISITED_COOKIE_KEY = 'LOSTARK_ELIXIR_VISITED';
+
+export const FIRST_VISIT_HELP_TEXT = '좌측 상단의 버튼을 클릭해 BGM을 켜거나 끌 수 있어요.';
