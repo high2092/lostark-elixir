@@ -34,6 +34,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/react", "npm:18.2.0"],\
             ["next", "virtual:f72184d88f6f99d4574aad8a074bd84266784d1e9f4dedb5e47b294dcafd6c1f1918580966e642ee50ceb880a10ab12fdcdaed4a84049c963de0b13f14eed70e#npm:13.3.1"],\
             ["react", "npm:18.2.0"],\
+            ["react-cookie", "virtual:f72184d88f6f99d4574aad8a074bd84266784d1e9f4dedb5e47b294dcafd6c1f1918580966e642ee50ceb880a10ab12fdcdaed4a84049c963de0b13f14eed70e#npm:4.1.1"],\
             ["react-dom", "virtual:f72184d88f6f99d4574aad8a074bd84266784d1e9f4dedb5e47b294dcafd6c1f1918580966e642ee50ceb880a10ab12fdcdaed4a84049c963de0b13f14eed70e#npm:18.2.0"],\
             ["react-youtube", "virtual:f72184d88f6f99d4574aad8a074bd84266784d1e9f4dedb5e47b294dcafd6c1f1918580966e642ee50ceb880a10ab12fdcdaed4a84049c963de0b13f14eed70e#npm:10.1.0"],\
             ["terser-webpack-plugin", "virtual:f72184d88f6f99d4574aad8a074bd84266784d1e9f4dedb5e47b294dcafd6c1f1918580966e642ee50ceb880a10ab12fdcdaed4a84049c963de0b13f14eed70e#npm:5.3.7"],\
@@ -478,6 +479,26 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["@types/cookie", [\
+        ["npm:0.3.3", {\
+          "packageLocation": "./.yarn/cache/@types-cookie-npm-0.3.3-a5ddc16db3-450c930d79.zip/node_modules/@types/cookie/",\
+          "packageDependencies": [\
+            ["@types/cookie", "npm:0.3.3"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["@types/hoist-non-react-statics", [\
+        ["npm:3.3.1", {\
+          "packageLocation": "./.yarn/cache/@types-hoist-non-react-statics-npm-3.3.1-c0081332b2-2c0778570d.zip/node_modules/@types/hoist-non-react-statics/",\
+          "packageDependencies": [\
+            ["@types/hoist-non-react-statics", "npm:3.3.1"],\
+            ["@types/react", "npm:18.2.0"],\
+            ["hoist-non-react-statics", "npm:3.3.2"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["@types/json-schema", [\
         ["npm:7.0.11", {\
           "packageLocation": "./.yarn/cache/@types-json-schema-npm-7.0.11-79462ae5ca-527bddfe62.zip/node_modules/@types/json-schema/",\
@@ -699,6 +720,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/convert-source-map-npm-1.9.0-e294555f4b-dc55a1f28d.zip/node_modules/convert-source-map/",\
           "packageDependencies": [\
             ["convert-source-map", "npm:1.9.0"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["cookie", [\
+        ["npm:0.4.2", {\
+          "packageLocation": "./.yarn/cache/cookie-npm-0.4.2-7761894d5f-a00833c998.zip/node_modules/cookie/",\
+          "packageDependencies": [\
+            ["cookie", "npm:0.4.2"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -955,6 +985,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/react", "npm:18.2.0"],\
             ["next", "virtual:f72184d88f6f99d4574aad8a074bd84266784d1e9f4dedb5e47b294dcafd6c1f1918580966e642ee50ceb880a10ab12fdcdaed4a84049c963de0b13f14eed70e#npm:13.3.1"],\
             ["react", "npm:18.2.0"],\
+            ["react-cookie", "virtual:f72184d88f6f99d4574aad8a074bd84266784d1e9f4dedb5e47b294dcafd6c1f1918580966e642ee50ceb880a10ab12fdcdaed4a84049c963de0b13f14eed70e#npm:4.1.1"],\
             ["react-dom", "virtual:f72184d88f6f99d4574aad8a074bd84266784d1e9f4dedb5e47b294dcafd6c1f1918580966e642ee50ceb880a10ab12fdcdaed4a84049c963de0b13f14eed70e#npm:18.2.0"],\
             ["react-youtube", "virtual:f72184d88f6f99d4574aad8a074bd84266784d1e9f4dedb5e47b294dcafd6c1f1918580966e642ee50ceb880a10ab12fdcdaed4a84049c963de0b13f14eed70e#npm:10.1.0"],\
             ["terser-webpack-plugin", "virtual:f72184d88f6f99d4574aad8a074bd84266784d1e9f4dedb5e47b294dcafd6c1f1918580966e642ee50ceb880a10ab12fdcdaed4a84049c963de0b13f14eed70e#npm:5.3.7"],\
@@ -1155,6 +1186,31 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["react", "npm:18.2.0"],\
             ["loose-envify", "npm:1.4.0"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["react-cookie", [\
+        ["npm:4.1.1", {\
+          "packageLocation": "./.yarn/cache/react-cookie-npm-4.1.1-90d4f0fcb5-b734dcad35.zip/node_modules/react-cookie/",\
+          "packageDependencies": [\
+            ["react-cookie", "npm:4.1.1"]\
+          ],\
+          "linkType": "SOFT"\
+        }],\
+        ["virtual:f72184d88f6f99d4574aad8a074bd84266784d1e9f4dedb5e47b294dcafd6c1f1918580966e642ee50ceb880a10ab12fdcdaed4a84049c963de0b13f14eed70e#npm:4.1.1", {\
+          "packageLocation": "./.yarn/__virtual__/react-cookie-virtual-873c8e63ab/0/cache/react-cookie-npm-4.1.1-90d4f0fcb5-b734dcad35.zip/node_modules/react-cookie/",\
+          "packageDependencies": [\
+            ["react-cookie", "virtual:f72184d88f6f99d4574aad8a074bd84266784d1e9f4dedb5e47b294dcafd6c1f1918580966e642ee50ceb880a10ab12fdcdaed4a84049c963de0b13f14eed70e#npm:4.1.1"],\
+            ["@types/hoist-non-react-statics", "npm:3.3.1"],\
+            ["@types/react", "npm:18.2.0"],\
+            ["hoist-non-react-statics", "npm:3.3.2"],\
+            ["react", "npm:18.2.0"],\
+            ["universal-cookie", "npm:4.0.4"]\
+          ],\
+          "packagePeers": [\
+            "@types/react",\
+            "react"\
           ],\
           "linkType": "HARD"\
         }]\
@@ -1484,6 +1540,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/typescript-patch-260000abbe-bb309d320c.zip/node_modules/typescript/",\
           "packageDependencies": [\
             ["typescript", "patch:typescript@npm%3A5.0.4#~builtin<compat/typescript>::version=5.0.4&hash=85af82"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["universal-cookie", [\
+        ["npm:4.0.4", {\
+          "packageLocation": "./.yarn/cache/universal-cookie-npm-4.0.4-aa9b4bcfbf-bb2bafa7eb.zip/node_modules/universal-cookie/",\
+          "packageDependencies": [\
+            ["universal-cookie", "npm:4.0.4"],\
+            ["@types/cookie", "npm:0.3.3"],\
+            ["cookie", "npm:0.4.2"]\
           ],\
           "linkType": "HARD"\
         }]\
