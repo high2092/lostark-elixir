@@ -24,10 +24,10 @@ export const ADVICES: Advice[] = [
     name: `${Placeholders.OPTION} 효과의 단계를 ${Placeholders.N_NPLUS_1} 중 하나로 변경해${Placeholders[I.주겠네]}.`,
     type: 'util',
     effect:
-      ({ optionIndex, n }) =>
+      ({ optionIndex, nPlus1 }) =>
       (beforeElixirs) => {
         const result = [...beforeElixirs];
-        applyAdvice(result[optionIndex], { level: n + Math.floor(Math.random() * 2) });
+        applyAdvice(result[optionIndex], { level: nPlus1 - Math.floor(Math.random() * 2) });
         return { elixirs: result };
       },
     odds: 1,
@@ -36,10 +36,10 @@ export const ADVICES: Advice[] = [
     name: `선택한 효과의 단계를 ${Placeholders.N_NPLUS_1} 중 하나로 변경해${Placeholders[I.주겠네]}.`,
     type: 'util',
     effect:
-      ({ n }) =>
+      ({ nPlus1 }) =>
       (beforeElixirs, optionIndex) => {
         const result = [...beforeElixirs];
-        applyAdvice(result[optionIndex], { level: n + Math.floor(Math.random() * 2) });
+        applyAdvice(result[optionIndex], { level: nPlus1 - Math.floor(Math.random() * 2) });
         return { elixirs: result };
       },
     odds: 1,
@@ -112,22 +112,22 @@ export const ADVICES: Advice[] = [
     },
     odds: 1,
   },
-  // {
-  //   name: `${N_PLACEHOLDER}단계 이하의 모든 효과를 +1 올려${ADVICE_DIALOGUE_END1_PLACEHOLDER}.`,
-
-  //   // TODO: n 매개변수 의미 분리 (N_TABLE, N_PLACEHOLDER) 즉 새로운 매개변수 만들기
-  //   effect:
-  //     ({ n }) =>
-  //     (beforeElixirs) => {
-  //       const result = [...beforeElixirs];
-  //       const candidate = result.filter((elixir) => elixir.level <= n);
-  //       for (const option of candidate) {
-  //         option.level = Math.min(option.level + 1, MAX_ACTIVE);
-  //       }
-  //       return result;
-  //     },
-  //   odds: 1,
-  // },
+  {
+    name: `${Placeholders.N}단계 이하의 모든 효과를 +1 올려${Placeholders[I.주겠네]}.`,
+    type: 'util',
+    // TODO: n 매개변수 의미 분리 (N_TABLE, N_PLACEHOLDER) 즉 새로운 매개변수 만들기
+    effect:
+      ({ n }) =>
+      (beforeElixirs) => {
+        const result = [...beforeElixirs];
+        const candidate = result.filter((elixir) => elixir.level <= n);
+        for (const option of candidate) {
+          option.level = Math.min(option.level + 1, MAX_ACTIVE);
+        }
+        return { elixirs: result };
+      },
+    odds: 1,
+  },
   {
     name: `연성되지 않은 모든 효과를 +1 올려${Placeholders[I.주겠네]}.`,
     type: 'util',
@@ -158,11 +158,11 @@ export const ADVICES: Advice[] = [
   extraTargetAdviceTemplate(1, { extraTarget: 1, extraChanceConsume: 1 }),
   addRerollChanceAdviceTemplate(1, { addRerollChance: 1, special: SageTypesTypes.ORDER }),
   addRerollChanceAdviceTemplate(1, { addRerollChance: 2, special: SageTypesTypes.ORDER }),
-  moveUpLevelAdviceTemplate(11111, { special: SageTypesTypes.CHAOS }),
+  moveUpLevelAdviceTemplate(1, { special: SageTypesTypes.CHAOS }),
   moveDownLevelAdviceTemplate(1, { special: SageTypesTypes.CHAOS }),
-  lockAdviceTemplate(111, { extraChanceConsume: 0 }),
-  lockAdviceTemplate(1, { extraChanceConsume: 1 }),
-  lockAdviceTemplate(1, { saveChance: true, special: SageTypesTypes.ORDER }),
+  lockAdviceTemplate(Infinity, { extraChanceConsume: 0, remainChanceUpperBound: 3 }),
+  lockAdviceTemplate(Infinity, { extraChanceConsume: 1, remainChanceUpperBound: 3 }),
+  lockAdviceTemplate(Infinity, { saveChance: true, special: SageTypesTypes.ORDER, remainChanceUpperBound: 3 }),
 ];
 
 function potentialAlchemyAdviceTemplate(odds: number, params: AdviceTemplateProps): Advice {
@@ -215,9 +215,13 @@ function changePotentialLevelAdviceTemplate(odds: number, params: AdviceTemplate
 
 interface AdviceTemplateProps {
   name?: string;
-  percentage?: number;
+
   special?: SageTypesType;
   sage?: SageKey;
+  remainChanceLowerBound?: number;
+  remainChanceUpperBound?: number;
+
+  percentage?: number;
   addRerollChance?: number;
   saveChance?: boolean;
   maxRisk?: number;
@@ -431,11 +435,12 @@ function moveDownLevelAdviceTemplate(odds: number, params: AdviceTemplateProps):
 }
 
 function lockAdviceTemplate(odds: number, params: AdviceTemplateProps): Advice {
-  const { extraChanceConsume, saveChance, special } = params;
+  const { extraChanceConsume, saveChance, special, remainChanceUpperBound } = params;
   return {
     name: `임의의 효과 하나를 봉인${Placeholders[I.하겠네]}.${extraChanceConsume ? ` 다만, 기회를 ${1 + extraChanceConsume}번 소모${Placeholders[I.할걸세]}.` : ''}${saveChance ? ` 이번 연성은 기회를 소모하지 ${Placeholders[I.않을걸세]}.` : ''}`,
     type: 'util',
     special,
+    remainChanceUpperBound,
     effect: () => (beforeElixirs) => {
       const result = [...beforeElixirs];
       const [idx] = gacha(result);

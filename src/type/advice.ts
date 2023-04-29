@@ -5,6 +5,9 @@ export interface Advice {
   type: AdviceType;
   special?: SageTypesType;
   sage?: SageKey;
+  remainChanceLowerBound?: number;
+  remainChanceUpperBound?: number;
+  oddsAmplification?: number;
   name: string;
   effect: (param?: AdviceParam) => AdviceEffect;
   odds: number;
@@ -25,6 +28,7 @@ export type AdviceEffect = (beforeElixirs: ElixirInstance[], optionIdx?: number)
 export interface AdviceParam {
   optionIndex?: number;
   n?: number;
+  nPlus1?: number;
 }
 
 export type AdviceType = 'potential' | 'util';

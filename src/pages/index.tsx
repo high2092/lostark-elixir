@@ -91,17 +91,15 @@ const Home = () => {
   const [selectOptionChance, setSelectOptionChance] = useState(OPTION_COUNT);
   const [selectedOptions, setSelectedOptions] = useState<ElixirInstance[]>([]);
   const [alchemyChance, setAlchemyChance] = useState(ALCHEMY_CHANCE);
-  const [adviceOptions, setAdviceOptions] = useState<AdviceInstance[]>([]);
   const [selectedOptionIndex, setSelectedOptionIndex] = useState<number>(null);
   const [alchemyStatus, setAlchemyStatus] = useState<AlchemyStatus>();
   const statusTextTimeoutRef = useRef<NodeJS.Timeout>();
-  const [turn, setTurn] = useState(0);
   const [sages, setSages] = useState<SageInstance[]>(initialSages);
   const [adviceEffectResult, setAdviceEffectResult] = useState<AdviceEffectResult>();
   const [adviceRerollChance, setAdviceRerollChance] = useState(DEFAULT_ADVICE_REROLL_CHANCE);
 
-  const rerollAdvice = () => {
-    setSages(adviceService.drawAdvices(selectedOptions, sages, turn));
+  const drawAdvices = () => {
+    setSages(adviceService.drawAdvices(selectedOptions, sages, alchemyChance));
   };
 
   useEffect(() => {
@@ -117,7 +115,7 @@ const Home = () => {
         break;
       }
       case AlchemyStatus.ADVICE: {
-        rerollAdvice();
+        drawAdvices();
         break;
       }
     }
@@ -167,7 +165,6 @@ const Home = () => {
       case AlchemyStatus.ALCHEMY: {
         setSelectedOptions(alchemyService.alchemy(adviceEffectResult));
         if (!adviceEffectResult.saveChance) setAlchemyChance(alchemyChance - (1 + (adviceEffectResult.extraChanceConsume ?? 0)));
-        setTurn(turn + 1);
         setAlchemyStatus(AlchemyStatus.ADVICE);
         break;
       }
@@ -187,7 +184,7 @@ const Home = () => {
 
   const handleRerollButtonClick = () => {
     if (adviceRerollChance <= 0 || alchemyStatus !== AlchemyStatus.ADVICE) return;
-    rerollAdvice();
+    drawAdvices();
     setAdviceRerollChance(adviceRerollChance - 1);
     playClickSound();
   };

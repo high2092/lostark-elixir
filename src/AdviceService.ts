@@ -7,16 +7,14 @@ import { ElixirInstance } from './type/elixir';
 import { SageInstance } from './type/sage';
 import { calculateOddsSum, gacha, isFullStack, playRefineFailureSound, playRefineSuccessSound } from './util';
 
-const N_TABLE = [1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 5, 5];
-
 class AdviceService {
   oddsSum = ADVICES.reduce((acc, { odds }) => {
     return acc + odds;
   }, 0);
 
-  createAdviceInstance(advice: Advice, beforeElixirs: ElixirInstance[], turn: number) {
+  createAdviceInstance(advice: Advice, beforeElixirs: ElixirInstance[], remainChance: number) {
     const [idx] = gacha(beforeElixirs);
-    return new AdviceInstance(advice, beforeElixirs[idx].name, idx, turn);
+    return new AdviceInstance(advice, beforeElixirs[idx].name, idx, remainChance);
   }
 
   private getAdvices(sage: SageInstance) {
@@ -26,16 +24,16 @@ class AdviceService {
     return ADVICES.filter((advice) => !advice.special);
   }
 
-  drawAdvices(beforeElixirs: ElixirInstance[], sages: SageInstance[], turn: number): SageInstance[] {
+  drawAdvices(beforeElixirs: ElixirInstance[], sages: SageInstance[], remainChance: number): SageInstance[] {
     const _sages = [...sages];
 
     for (const sage of _sages) {
-      const advices = this.getAdvices(sage);
+      const advices = this.getAdvices(sage).filter((advice) => (!advice.remainChanceLowerBound || remainChance >= advice.remainChanceLowerBound) && (!advice.remainChanceUpperBound || remainChance <= advice.remainChanceUpperBound));
       const randomNumber = Math.random() * calculateOddsSum(advices, 'odds');
       let oddsAcc = 0;
       for (const advice of advices) {
         if (randomNumber <= (oddsAcc += advice.odds)) {
-          sage.advice = this.createAdviceInstance(advice, beforeElixirs, turn);
+          sage.advice = this.createAdviceInstance(advice, beforeElixirs, remainChance);
           break;
         }
       }
