@@ -1,5 +1,6 @@
 import { Placeholders } from '../constants';
 import { Advice, AdviceEffect, AdviceParam, AdviceType } from '../type/advice';
+import { ElixirInstance } from '../type/elixir';
 
 export class AdviceInstance implements Advice {
   name: string;
@@ -8,9 +9,11 @@ export class AdviceInstance implements Advice {
   execute: AdviceEffect;
   odds: number;
 
-  constructor(advice: Advice, name: string, optionIndex: number) {
-    this.name = advice.name.replace(Placeholders.OPTION, name);
+  constructor(advice: Advice, elixirs: ElixirInstance[], optionIndex: number, subIndex: number) {
+    const name = elixirs[optionIndex].name;
+    const subName = elixirs[subIndex].name;
+    this.name = advice.name.replace(Placeholders.OPTION, name).replace(Placeholders.SUB_OPTION, subName);
     this.type = advice.type;
-    this.execute = advice.effect({ optionIndex });
+    this.execute = advice.effect({ optionIndex, subIndex });
   }
 }

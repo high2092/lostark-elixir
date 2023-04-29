@@ -23,18 +23,6 @@ export const ADVICES: Advice[] = [
   changeSelectedPotentialLevelAdviceTemplate(1, { maxRisk: 2, maxReturn: 2 }),
   changeSelectedPotentialLevelAdviceTemplate(1, { maxRisk: 1, maxReturn: 2 }),
   {
-    name: `${Placeholders.OPTION} 효과의 단계를 +1 올려${Placeholders[I.주겠네]}. 대신...`,
-    type: 'util',
-    effect:
-      ({ optionIndex }) =>
-      (beforeElixirs) => {
-        const result = [...beforeElixirs];
-        applyAdvice(result[optionIndex], { level: result[optionIndex].level + 1 });
-        return { elixirs: result };
-      },
-    odds: 1,
-  },
-  {
     name: `최고 단계 효과를 +1 올려${Placeholders[I.주겠네]}. 대신...`,
     type: 'util',
     effect: () => (beforeElixirs) => {
@@ -113,6 +101,8 @@ export const ADVICES: Advice[] = [
   redistributeAdviceTemplate(2, { special: SageTypesTypes.CHAOS }),
   exchangeOddEvenAdvice(1, { odd: true, n: 1 }),
   exchangeOddEvenAdvice(1, { odd: false, n: 1 }),
+  exchangeOneLevelBetweenRandomTwoOptionsAdvice(1, { n: 1 }),
+  exchangeOneLevelBetweenRandomTwoOptionsAdvice(1, { n: 2 }),
 ];
 
 function potentialAlchemyAdviceTemplate(odds: number, params: AdviceTemplateProps): Advice {
@@ -543,6 +533,23 @@ function exchangeOddEvenAdvice(odds: number, params: AdviceTemplateProps): Advic
 
       return { elixirs: result };
     },
+    odds,
+  };
+}
+
+function exchangeOneLevelBetweenRandomTwoOptionsAdvice(odds: number, params: AdviceTemplateProps): Advice {
+  const { n } = params;
+  return {
+    name: `${Placeholders.OPTION} 효과의 단계를 +1 올려${Placeholders[I.주겠네]}. 대신 ${Placeholders.SUB_OPTION} 효과의 단계가 ${n} 감소${Placeholders[I.할걸세]}.`,
+    type: 'util',
+    effect:
+      ({ optionIndex, subIndex }) =>
+      (beforeElixirs) => {
+        const result = [...beforeElixirs];
+        applyAdvice(result[optionIndex], { level: result[optionIndex].level + 1 });
+        applyAdvice(result[subIndex], { level: result[subIndex].level - n });
+        return { elixirs: result };
+      },
     odds,
   };
 }

@@ -12,8 +12,8 @@ class AdviceService {
   }, 0);
 
   createAdviceInstance(advice: Advice, beforeElixirs: ElixirInstance[]) {
-    const [idx] = gacha(beforeElixirs);
-    return new AdviceInstance(advice, beforeElixirs[idx].name, idx);
+    const [idx, subIdx] = gacha(beforeElixirs, { count: 2 });
+    return new AdviceInstance(advice, beforeElixirs, idx, subIdx);
   }
 
   private getAdvices(sage: Sage) {
