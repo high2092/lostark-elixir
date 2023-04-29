@@ -8,7 +8,7 @@ import { alchemyService } from '../AlchemyService';
 import { Activation } from '../components/Activation';
 import { getAdviceRerollButtonText, getStackForDisplaying, isFullStack, playClickSound } from '../util';
 import { SageTemplates } from '../database/sage';
-import { SageInstance, SageKeys } from '../type/sage';
+import { SageKeys } from '../type/sage';
 import { SageTypeStackCounter } from '../components/SageTypeStackCounter';
 import { Sage } from '../domain/Sage';
 import { AdviceInstance } from '../domain/AdviceInstance';
@@ -33,7 +33,7 @@ const MaterialSectionText = {
   SELECT_OPTION: '엘릭서에 정제할 효과를 위 항목에서 선택하세요.',
 };
 
-const initialSages: SageInstance[] = [new Sage(SageTemplates[SageKeys.L]), new Sage(SageTemplates[SageKeys.B]), new Sage(SageTemplates[SageKeys.C])];
+const initialSages: Sage[] = [new Sage(SageTemplates[SageKeys.L]), new Sage(SageTemplates[SageKeys.B]), new Sage(SageTemplates[SageKeys.C])];
 
 interface ElixirOptionDialogueProps {
   SelectOption: ElixirInstance;
@@ -55,12 +55,14 @@ const SelectOptionDialogue = ({ SelectOption: elixirOption, sage }: ElixirOption
 };
 
 interface AdviceDialogueProps {
-  sage: SageInstance;
+  sage: Sage;
 }
 
+const MEDITATION_TEXT = '(현자는 사색에 빠져 있습니다.)';
 const AdviceDialogue = ({ sage }: AdviceDialogueProps) => {
   const { advice } = sage;
   if (!advice) return <></>;
+  if (sage.meditation) return <div>{MEDITATION_TEXT}</div>;
 
   const name = Object.values(I).reduce((acc, cur) => {
     return acc.replace(Placeholders[cur], sage.dialogueEnds[cur]);
@@ -83,7 +85,7 @@ const OPTION_COUNT = 5;
 const Home = () => {
   const [selectedAdviceIndex, setSelectedAdviceIndex] = useState<number>(null);
   const handleAdviceClick = (e: React.MouseEvent, idx: number) => {
-    if (alchemyStatus === AlchemyStatus.ALCHEMY || getDisabled()) return;
+    if (getAdviceButtonDisabled(sages[idx])) return;
     setSelectedAdviceIndex(idx);
     playClickSound();
   };
@@ -94,7 +96,7 @@ const Home = () => {
   const [selectedOptionIndex, setSelectedOptionIndex] = useState<number>(null);
   const [alchemyStatus, setAlchemyStatus] = useState<AlchemyStatus>();
   const statusTextTimeoutRef = useRef<NodeJS.Timeout>();
-  const [sages, setSages] = useState<SageInstance[]>(initialSages);
+  const [sages, setSages] = useState<Sage[]>(initialSages);
   const [adviceEffectResult, setAdviceEffectResult] = useState<AdviceEffectResult>();
   const [adviceRerollChance, setAdviceRerollChance] = useState(DEFAULT_ADVICE_REROLL_CHANCE);
 
@@ -157,6 +159,7 @@ const Home = () => {
         }
 
         const { result: adviceEffectResult, sages: _sages } = response;
+        if (adviceEffectResult.enterMeditation) _sages[selectedAdviceIndex].meditation = true;
 
         setAdviceEffectResult(adviceEffectResult);
         setSages(_sages);
@@ -192,6 +195,10 @@ const Home = () => {
 
   const getDisabled = () => {
     return alchemyChance <= 0;
+  };
+
+  const getAdviceButtonDisabled = (sage: Sage) => {
+    return alchemyChance <= 0 || alchemyStatus === AlchemyStatus.ALCHEMY || getDisabled() || sage.meditation;
   };
 
   const STATUS_TEXT_DISPLAY_TIME_MS = 2000;
@@ -235,9 +242,9 @@ const Home = () => {
                 <div style={{ height: STACK_COUNTER_EXPECTED_HEIGHT }}>
                   <SageTypeStackCounter sage={sage} />
                 </div>
-                <S.AdviceDialogue disabled={alchemyStatus === AlchemyStatus.ALCHEMY || getDisabled()} special={special} selected={selectedAdviceIndex === idx}>
-                  {alchemyStatus === AlchemyStatus.REFINE && <SelectOptionDialogue SelectOption={elixirOptions[idx]} sage={sages[idx]} />}
-                  {alchemyStatus !== AlchemyStatus.REFINE && <AdviceDialogue sage={sages[idx]} />}
+                <S.AdviceDialogue disabled={getAdviceButtonDisabled(sage)} special={special} selected={selectedAdviceIndex === idx}>
+                  {alchemyStatus === AlchemyStatus.REFINE && <SelectOptionDialogue SelectOption={elixirOptions[idx]} sage={sage} />}
+                  {alchemyStatus !== AlchemyStatus.REFINE && <AdviceDialogue sage={sage} />}
                 </S.AdviceDialogue>
               </S.Advice>
             );

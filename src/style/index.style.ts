@@ -66,7 +66,7 @@ export const AdviceDialogue = styled.div<{ disabled: boolean; special: SageTypes
   padding: 0 10%;
 
   ${({ selected }) => (selected ? 'outline: 3px solid #FF8400;' : '')}
-  ${({ special }) => (special ? `box-shadow: 0 0 20px 5px ${SageTypes[special].color};` : '')}
+  ${({ special, disabled }) => (special && !disabled ? `box-shadow: 0 0 20px 5px ${SageTypes[special].color};` : '')}
 
   border-radius: ${DEFAULT_BORDER_RADIUS_PX}px;
   font-size: 0.8rem;

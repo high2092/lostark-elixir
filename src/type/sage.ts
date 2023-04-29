@@ -19,12 +19,6 @@ export const SageTypesTypes = {
 
 export type SageTypesType = (typeof SageTypesTypes)[keyof typeof SageTypesTypes];
 
-export interface SageInstance extends Sage {
-  type?: SageTypesType;
-  stack: number;
-  advice: AdviceInstance;
-}
-
 export const SageKeys = {
   L: '루베도',
   B: '비르디타스',

@@ -4,7 +4,6 @@ import { AdviceInstance } from './domain/AdviceInstance';
 import { Sage } from './domain/Sage';
 import { Advice, AdviceEffectResult } from './type/advice';
 import { ElixirInstance } from './type/elixir';
-import { SageInstance } from './type/sage';
 import { calculateOddsSum, gacha, isFullStack, playRefineFailureSound, playRefineSuccessSound } from './util';
 
 class AdviceService {
@@ -17,14 +16,14 @@ class AdviceService {
     return new AdviceInstance(advice, beforeElixirs[idx].name, idx, remainChance);
   }
 
-  private getAdvices(sage: SageInstance) {
+  private getAdvices(sage: Sage) {
     if (isFullStack(sage)) {
       return ADVICES.filter((advice) => advice.special === sage.type && (advice.sage === sage.name || !advice.sage));
     }
     return ADVICES.filter((advice) => !advice.special);
   }
 
-  drawAdvices(beforeElixirs: ElixirInstance[], sages: SageInstance[], remainChance: number): SageInstance[] {
+  drawAdvices(beforeElixirs: ElixirInstance[], sages: Sage[], remainChance: number): Sage[] {
     const _sages = [...sages];
 
     for (const sage of _sages) {
@@ -42,7 +41,7 @@ class AdviceService {
     return _sages;
   }
 
-  pickAdvice(selectedSageIndex: number, beforeElixirs: ElixirInstance[], sages: SageInstance[], optionIdx: number): PickAdviceReturnType {
+  pickAdvice(selectedSageIndex: number, beforeElixirs: ElixirInstance[], sages: Sage[], optionIdx: number): PickAdviceReturnType {
     try {
       const { advice } = sages[selectedSageIndex];
       let before = beforeElixirs.map((elixir) => elixir.level);

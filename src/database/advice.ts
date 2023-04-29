@@ -153,9 +153,9 @@ export const ADVICES: Advice[] = [
   amplifyBigHitRateAdviceTemplate(1, { percentage: 7 }),
   amplifyBigHitRateAdviceTemplate(1, { percentage: 15 }),
   amplifyBigHitRateTemporarilyAdviceTemplate(1, { percentage: 100 }),
-  changeSelectedPotentialLevelAdviceTemplate(1, { maxRisk: 0, maxReturn: 4, special: SageTypesTypes.CHAOS, sage: SageKeys.L }),
-  changeSelectedPotentialLevelAdviceTemplate(1, { maxRisk: -2, maxReturn: 3, special: SageTypesTypes.CHAOS, sage: SageKeys.B }),
-  changeSelectedPotentialLevelAdviceTemplate(1, { maxRisk: 4, maxReturn: 5, special: SageTypesTypes.CHAOS, sage: SageKeys.C }),
+  changeSelectedPotentialLevelAdviceTemplate(1, { maxRisk: 0, maxReturn: 4, special: SageTypesTypes.CHAOS, sage: SageKeys.L, enterMeditation: true }),
+  changeSelectedPotentialLevelAdviceTemplate(1, { maxRisk: -2, maxReturn: 3, special: SageTypesTypes.CHAOS, sage: SageKeys.B, enterMeditation: true }),
+  changeSelectedPotentialLevelAdviceTemplate(1, { maxRisk: 4, maxReturn: 5, special: SageTypesTypes.CHAOS, sage: SageKeys.C, enterMeditation: true }),
   amplifySelectedHitRateAdviceTemplate(1, { percentage: 15, special: SageTypesTypes.ORDER }),
   extraTargetAdviceTemplate(1, { extraTarget: 1, extraChanceConsume: 1 }),
   addRerollChanceAdviceTemplate(1, { addRerollChance: 1, special: SageTypesTypes.ORDER }),
@@ -232,6 +232,8 @@ interface AdviceTemplateProps {
   maxReturn?: number;
   extraTarget?: number;
   extraChanceConsume?: number;
+
+  enterMeditation?: boolean;
 }
 
 /**
@@ -244,7 +246,7 @@ interface AdviceTemplateProps {
  */
 function changeSelectedPotentialLevelAdviceTemplate(odds: number, props?: AdviceTemplateProps): Advice {
   props ??= {};
-  const { special, sage, maxRisk, maxReturn } = props;
+  const { special, sage, maxRisk, maxReturn, enterMeditation } = props;
   return {
     name: special
       ? `${Placeholders[I.내]} 힘을 모두 소진${Placeholders[I.하겠네]}. 대신 ${Placeholders[I.자네]}가 ${Placeholders[I.선택한]} 효과의 단계를 [${convertToSignedString(-maxRisk)}~${convertToSignedString(maxReturn)}] 중 하나만큼 ${
@@ -258,7 +260,7 @@ function changeSelectedPotentialLevelAdviceTemplate(odds: number, props?: Advice
       const result = [...beforeElixirs];
       const diff = Math.floor(Math.random() * (maxReturn + maxRisk + 1)) - maxRisk;
       applyAdvice(result[optionIndex], { level: result[optionIndex].level + diff });
-      return { elixirs: result };
+      return { elixirs: result, enterMeditation };
     },
     odds,
   };

@@ -21,6 +21,7 @@ export interface AdviceEffectResult {
   extraChanceConsume?: number;
   addRerollChance?: number;
   reset?: boolean;
+  enterMeditation?: boolean;
 }
 
 export type AdviceEffect = (beforeElixirs: ElixirInstance[], optionIdx?: number) => AdviceEffectResult;
