@@ -40,8 +40,6 @@ export const DIALOGUE_END_INDEX = {
 
 export const Placeholders = {
   OPTION: '?{option}',
-  N: '?{n}',
-  N_NPLUS_1: '?{[n~n+1]}',
   [DIALOGUE_END_INDEX.어떤가]: '?{어떤가}',
   [DIALOGUE_END_INDEX.주겠네]: '?{주겠네}',
   [DIALOGUE_END_INDEX.올릴걸세]: '?{올릴걸세}',

@@ -11,9 +11,9 @@ class AdviceService {
     return acc + odds;
   }, 0);
 
-  createAdviceInstance(advice: Advice, beforeElixirs: ElixirInstance[], remainChance: number) {
+  createAdviceInstance(advice: Advice, beforeElixirs: ElixirInstance[]) {
     const [idx] = gacha(beforeElixirs);
-    return new AdviceInstance(advice, beforeElixirs[idx].name, idx, remainChance);
+    return new AdviceInstance(advice, beforeElixirs[idx].name, idx);
   }
 
   private getAdvices(sage: Sage) {
@@ -32,7 +32,7 @@ class AdviceService {
       let oddsAcc = 0;
       for (const advice of advices) {
         if (randomNumber <= (oddsAcc += advice.odds)) {
-          sage.advice = this.createAdviceInstance(advice, beforeElixirs, remainChance);
+          sage.advice = this.createAdviceInstance(advice, beforeElixirs);
           break;
         }
       }

@@ -488,16 +488,14 @@ function raiseAllBelowNAdviceTemplate(odds: number, params: AdviceTemplateProps)
     type: 'util',
     remainChanceUpperBound,
     remainChanceLowerBound,
-    effect:
-      ({ n }) =>
-      (beforeElixirs) => {
-        const result = [...beforeElixirs];
-        const candidate = result.filter((option) => option.level <= n && !option.locked);
-        for (const option of candidate) {
-          applyAdvice(option, { level: option.level + 1 });
-        }
-        return { elixirs: result };
-      },
+    effect: () => (beforeElixirs) => {
+      const result = [...beforeElixirs];
+      const candidate = result.filter((option) => option.level <= n && !option.locked);
+      for (const option of candidate) {
+        applyAdvice(option, { level: option.level + 1 });
+      }
+      return { elixirs: result };
+    },
     odds,
   };
 }
@@ -510,10 +508,10 @@ function changeOptionToFixedLevelAdviceTemplate(odds: number, params: AdviceTemp
     remainChanceUpperBound,
     remainChanceLowerBound,
     effect:
-      ({ optionIndex, nPlus1 }) =>
+      ({ optionIndex }) =>
       (beforeElixirs) => {
         const result = [...beforeElixirs];
-        applyAdvice(result[optionIndex], { level: nPlus1 - Math.floor(Math.random() * 2) });
+        applyAdvice(result[optionIndex], { level: n + Math.floor(Math.random() * 2) });
         return { elixirs: result };
       },
     odds,
@@ -521,19 +519,17 @@ function changeOptionToFixedLevelAdviceTemplate(odds: number, params: AdviceTemp
 }
 
 function changeSelectedOptionToFixedLevelAdviceTemplate(odds: number, params: AdviceTemplateProps): Advice {
-  const { remainChanceUpperBound, remainChanceLowerBound } = params;
+  const { n, remainChanceUpperBound, remainChanceLowerBound } = params;
   return {
-    name: `선택한 효과의 단계를 ${Placeholders.N_NPLUS_1} 중 하나로 변경해${Placeholders[I.주겠네]}.`,
+    name: `선택한 효과의 단계를 [${n}~${n + 1}] 중 하나로 변경해${Placeholders[I.주겠네]}.`,
     type: 'util',
     remainChanceUpperBound,
     remainChanceLowerBound,
-    effect:
-      ({ nPlus1 }) =>
-      (beforeElixirs, optionIndex) => {
-        const result = [...beforeElixirs];
-        applyAdvice(result[optionIndex], { level: nPlus1 - Math.floor(Math.random() * 2) });
-        return { elixirs: result };
-      },
+    effect: () => (beforeElixirs, optionIndex) => {
+      const result = [...beforeElixirs];
+      applyAdvice(result[optionIndex], { level: n + Math.floor(Math.random() * 2) });
+      return { elixirs: result };
+    },
     odds,
   };
 }

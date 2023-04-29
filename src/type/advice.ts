@@ -28,8 +28,6 @@ export type AdviceEffect = (beforeElixirs: ElixirInstance[], optionIdx?: number)
 
 export interface AdviceParam {
   optionIndex?: number;
-  n?: number;
-  nPlus1?: number;
 }
 
 export type AdviceType = 'potential' | 'util';
