@@ -14,6 +14,7 @@ import { Sage } from '../domain/Sage';
 import { AdviceInstance } from '../domain/AdviceInstance';
 import { ElixirInstance } from '../type/elixir';
 import { AdviceEffectResult } from '../type/advice';
+import { BGMPlayer } from '../components/BGMPlayer';
 
 const AlchemyStatus = {
   REFINE: 'refine', // 정제
@@ -291,6 +292,7 @@ const Home = () => {
           {ButtonTexts[alchemyStatus]}
         </S.RefineButton>
       </S.DescriptionSection>
+      <BGMPlayer />
     </S.Home>
   );
 };

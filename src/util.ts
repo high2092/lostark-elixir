@@ -73,9 +73,27 @@ export const isFullStack = (sage: Sage) => {
   return sage.stack === SageTypes[sage.type]?.fullStack;
 };
 
-export const playRefineSuccessSound = () => new Audio('/sound/refine-success.mp3').play();
-export const playRefineFailureSound = () => new Audio('/sound/refine-failure.mp3').play();
-export const playClickSound = () => new Audio('sound/click.mp3').play();
+const REFINE_SUCCESS_SOUND_VOLUME = 0.1;
+export const playRefineSuccessSound = () => {
+  const audio = new Audio('/sound/refine-success.mp3');
+  audio.volume = REFINE_SUCCESS_SOUND_VOLUME;
+  audio.play();
+};
+
+const REFINE_FAILURE_SOUND_VOLUME = 0.1;
+export const playRefineFailureSound = () => {
+  const audio = new Audio('/sound/refine-failure.mp3');
+  audio.volume = REFINE_FAILURE_SOUND_VOLUME;
+  audio.play();
+};
+
+const CLICK_SOUND_VOLUME = 0.1;
+export const playClickSound = () => {
+  const audio = new Audio('/sound/click.mp3');
+  audio.volume = CLICK_SOUND_VOLUME;
+  audio.play();
+};
+
 export const convertToSignedString = (n: number) => {
   if (n > 0) return `+${n}`;
   return `${n}`;
