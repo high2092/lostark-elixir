@@ -3,23 +3,32 @@ import { Sage } from './domain/Sage';
 import { ElixirInstance } from './type/elixir';
 import { SageTypesType, SageTypesTypes } from './type/sage';
 
+type FilterCondition = (elem: Record<string, any>, idx: number) => boolean;
+
 interface GachaProps {
   oddsKey?: 'odds' | 'hitRate';
   count?: number;
+  filterConditions?: FilterCondition[];
 }
 
 export const gacha = (arr: Record<string, any>[], props?: GachaProps) => {
   props ??= {};
-  let { oddsKey, count } = props;
+  let { oddsKey, count, filterConditions } = props;
   count ??= 1;
+  filterConditions ??= [];
 
-  const _arr = arr.map((elem) => {
+  filterConditions.push((elem) => !elem.locked);
+
+  const _arr = arr.map((elem, idx) => {
     const copy = { ...elem };
-    copy.odds = elem.locked ? 0 : oddsKey ? elem[oddsKey] : 1;
+    const pass = filterConditions.reduce((acc, cur) => {
+      return acc && cur(copy, idx);
+    }, true);
+    copy.odds = pass === false ? 0 : oddsKey ? elem[oddsKey] : 1;
     return copy;
   });
-  const result = [];
 
+  const result: number[] = [];
   // Q: 가능성은 0에 가깝겠지만, 4개 봉인된 상태에서 2개 뽑아야 하는 상황이 생긴다면 어떻게 할 것인가
 
   if (count > _arr.length - 1) throw new Error('gacha: Given count is greater than arr length.');

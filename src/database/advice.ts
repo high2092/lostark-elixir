@@ -25,33 +25,31 @@ export const ADVICES: Advice[] = [
   changeSelectedPotentialLevelAdviceTemplate(1, { maxRisk: 2, maxReturn: 2 }),
   changeSelectedPotentialLevelAdviceTemplate(1, { maxRisk: 1, maxReturn: 2 }),
   {
-    name: `최고 단계 효과를 +1 올려${Placeholders[I.주겠네]}. 대신...`,
+    name: `최고 단계 효과를 +1 올려${Placeholders[I.주겠네]}. 대신 다른 효과 1개의 단계는 2 감소${Placeholders[I.할걸세]}.`,
     type: 'util',
     effect: () => (beforeElixirs) => {
       const result = [...beforeElixirs];
       const maxLevel = result.reduce((acc, cur) => {
         return Math.max(cur.level, acc);
       }, result[0].level);
-
-      const candidate = result.filter((elixir) => elixir.level === maxLevel);
-      const targetIndex = Math.floor(Math.random()) * candidate.length;
-      applyAdvice(candidate[targetIndex], { level: candidate[targetIndex].level + 1 });
+      const [upTargetIndex] = gacha(result, { filterConditions: [(option) => option.level === maxLevel] });
+      const [downTargetIndex] = gacha(result, { filterConditions: [(option, idx) => idx !== upTargetIndex] });
+      applyAdvice(result[upTargetIndex], { level: result[upTargetIndex].level + 1 });
+      applyAdvice(result[downTargetIndex], { level: result[downTargetIndex].level - 2 });
       return { elixirs: result };
     },
     odds: 1,
   },
   {
-    name: `최하 단계 효과를 +1 올려${Placeholders[I.주겠네]}. 대신...`,
+    name: `최하 단계 효과를 +1 올려${Placeholders[I.주겠네]}. 대신 최고 단계의 효과가 2 감소${Placeholders[I.할걸세]}.`,
     type: 'util',
     effect: () => (beforeElixirs) => {
       const result = [...beforeElixirs];
-      const minLevel = result.reduce((acc, cur) => {
-        return Math.min(cur.level, acc);
-      }, result[0].level);
-
-      const candidate = result.filter((elixir) => elixir.level === minLevel);
-      const targetIndex = Math.floor(Math.random()) * candidate.length;
-      applyAdvice(candidate[targetIndex], { level: candidate[targetIndex].level + 1 });
+      const [minLevel, maxLevel] = result.reduce((acc, cur) => [Math.min(cur.level, acc[0]), Math.max(cur.level, acc[1])], [result[0].level, result[0].level]);
+      const [upTargetIndex] = gacha(result, { filterConditions: [(option) => option.level === minLevel] });
+      const [downTargetIndex] = gacha(result, { filterConditions: [(option, idx) => idx !== upTargetIndex && option.level === maxLevel] });
+      applyAdvice(result[upTargetIndex], { level: result[upTargetIndex].level + 1 });
+      applyAdvice(result[downTargetIndex], { level: result[downTargetIndex].level - 2 });
       return { elixirs: result };
     },
     odds: 1,
