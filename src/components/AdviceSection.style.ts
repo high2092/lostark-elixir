@@ -3,8 +3,6 @@ import { SageTypesType } from '../type/sage';
 import { DEFAULT_BORDER_RADIUS_PX, STACK_COUNTER_EXPECTED_HEIGHT, SageTypes } from '../constants';
 
 const ADVICE_SECTION_WIDTH_VW = 75;
-const ADVICE_REROLL_BUTTON_WIDTH_REM = 14;
-const ADVICE_REROLL_BUTTON_MARGIN_LEFT_REM = 10.5 - ADVICE_REROLL_BUTTON_WIDTH_REM / 2;
 
 export const AdviceSection = styled.div`
   position: absolute;
@@ -13,8 +11,7 @@ export const AdviceSection = styled.div`
 
   bottom: 0;
   left: 50%;
-  transform: translateX(calc(-50% + ${(ADVICE_REROLL_BUTTON_WIDTH_REM + ADVICE_REROLL_BUTTON_MARGIN_LEFT_REM) / 2}rem));
-
+  transform: translateX(calc(-37.5%)); // [25] [12.5 (요기) 12.5] [25] // [25]
   display: flex;
   align-items: center;
 `;
@@ -54,13 +51,18 @@ export const Advice = styled.div`
 `;
 
 const ADVICE_REROLL_BUTTON_FLEX_RATIO = 1;
-export const AdviceRerollButton = styled.div<{ disabled: boolean }>`
+export const AdviceRerollButtonSection = styled.div`
   flex: ${ADVICE_REROLL_BUTTON_FLEX_RATIO};
   height: 3.5rem;
 
   margin-top: ${STACK_COUNTER_EXPECTED_HEIGHT};
+`;
 
-  margin-left: ${ADVICE_SECTION_WIDTH_VW / 20 - 1 * ADVICE_REROLL_BUTTON_FLEX_RATIO}vw;
+export const AdviceRerollButton = styled.div<{ disabled: boolean }>`
+  float: right;
+
+  width: 80%;
+  height: 100%;
 
   background-color: ${({ disabled }) => (disabled ? '#999999' : 'orange')};
 

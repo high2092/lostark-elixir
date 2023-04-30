@@ -49,9 +49,9 @@ export const AdviceSection = () => {
           </S.Advice>
         );
       })}
-      <S.AdviceRerollButton onClick={handleRerollButtonClick} disabled={adviceRerollChance <= 0}>
-        {getAdviceRerollButtonText(adviceRerollChance)}
-      </S.AdviceRerollButton>
+      <S.AdviceRerollButtonSection onClick={handleRerollButtonClick}>
+        <S.AdviceRerollButton disabled={adviceRerollChance <= 0}>{getAdviceRerollButtonText(adviceRerollChance)}</S.AdviceRerollButton>
+      </S.AdviceRerollButtonSection>
     </S.AdviceSection>
   );
 };

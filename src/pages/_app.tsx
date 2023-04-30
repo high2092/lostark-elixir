@@ -6,7 +6,7 @@ import { store } from '../store';
 const App = ({ Component, pageProps }) => {
   return (
     <Provider store={store}>
-      <Component {...pageProps} />;
+      <Component {...pageProps} />
     </Provider>
   );
 };

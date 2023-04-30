@@ -16,6 +16,8 @@ export const Home = styled.div`
 export const ElixirOptionSection = styled.div`
   position: absolute;
 
+  z-index: 1;
+
   top: 45%;
   right: 0;
 
@@ -49,11 +51,11 @@ export const MainSection = styled.div`
 
   background: url('image/background.png');
   background-size: cover;
+  background-position: center center;
 `;
 
 export const DescriptionSection = styled.div`
   width: 100%;
-  height: 25%;
 
   background-color: #a4907c;
 
@@ -64,7 +66,7 @@ export const DescriptionSection = styled.div`
 `;
 
 export const MaterialSection = styled.div`
-  width: max-content;
+  width: 60%;
 
   text-align: center;
 `;
@@ -79,10 +81,8 @@ export const MaterialInfo = styled.div`
   align-items: center;
 `;
 
-const MATERIAL_INFO_SUB_SECTION_WIDTH_REM = 20;
-
 export const MaterialInfoSubSection = styled.div`
-  width: ${MATERIAL_INFO_SUB_SECTION_WIDTH_REM}rem;
+  flex: 1;
 
   padding: 0.5rem;
 
