@@ -10,10 +10,12 @@
   "dependencies": {
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
+    "@reduxjs/toolkit": "^1.9.5",
     "next": "^13.3.1",
     "react": "^18.2.0",
     "react-cookie": "^4.1.1",
     "react-dom": "^18.2.0",
+    "react-redux": "^8.0.5",
     "react-youtube": "^10.1.0",
     "terser-webpack-plugin": "^5.3.7"
   },
