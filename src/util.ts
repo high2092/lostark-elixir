@@ -111,15 +111,3 @@ export const convertToSignedString = (n: number) => {
 export const getLockedCount = (elixirs: ElixirInstance[]) => {
   return elixirs.reduce((acc, { locked }) => acc + Number(locked), 0);
 };
-
-export const checkLevelDiff = (before: ElixirInstance[], after: ElixirInstance[]) => {
-  let upCount = 0;
-  let downCount = 0;
-  let bigHit = false;
-
-  return {
-    upCount,
-    downCount,
-    bigHit,
-  };
-};
