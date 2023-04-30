@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { useEffect, useRef, useState } from 'react';
 import * as S from '../style/index.style';
-import { AUDIO_RESOURCE_URL_LIST, CENTERED_FLEX_STYLE, FIRST_VISIT_HELP_TEXT, MAX_ACTIVE, OPTION_COUNT, STACK_COUNTER_EXPECTED_HEIGHT, VISITED_COOKIE_KEY } from '../constants';
+import { AUDIO_RESOURCE_URL_LIST, ButtonTexts, CENTERED_FLEX_STYLE, FIRST_VISIT_HELP_TEXT, MAX_ACTIVE, MaterialSectionText, OPTION_COUNT, STACK_COUNTER_EXPECTED_HEIGHT, VISITED_COOKIE_KEY } from '../constants';
 import { Activation } from '../components/Activation';
 import { playClickSound } from '../util';
 import { BGMPlayer } from '../components/BGMPlayer';
@@ -13,16 +13,6 @@ import { alchemy, clearStatusText, drawAdvices, drawOptions, pickAdvice, pickOpt
 import { Gold } from '../components/Gold';
 import { AdviceSection } from '../components/AdviceSection';
 import { setSelectedAdviceIndex, setSelectedOptionIndex } from '../features/uiSlice';
-
-const ButtonTexts = {
-  [AlchemyStatuses.REFINE]: '효과 정제',
-  [AlchemyStatuses.ADVICE]: '조언 선택',
-  [AlchemyStatuses.ALCHEMY]: '연성하기',
-};
-
-const MaterialSectionText = {
-  SELECT_OPTION: '엘릭서에 정제할 효과를 위 항목에서 선택하세요.',
-};
 
 const Home = () => {
   const [cookies, setCookie] = useCookies();

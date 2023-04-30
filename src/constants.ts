@@ -1,5 +1,6 @@
 import { css } from '@emotion/react';
 import { SageTypesTypes } from './type/sage';
+import { AlchemyStatuses } from './type/common';
 
 export const OPTION_COUNT = 5;
 export const ADVICE_COUNT = 3;
@@ -65,3 +66,13 @@ export const IMAGE_RESOURCE_URL_LIST = ['/image/background.png', '/image/gold', 
 export const VISITED_COOKIE_KEY = 'LOSTARK_ELIXIR_VISITED';
 
 export const FIRST_VISIT_HELP_TEXT = '좌측 상단의 버튼을 클릭해 BGM을 켜거나 끌 수 있어요.';
+
+export const ButtonTexts = {
+  [AlchemyStatuses.REFINE]: '효과 정제',
+  [AlchemyStatuses.ADVICE]: '조언 선택',
+  [AlchemyStatuses.ALCHEMY]: '연성하기',
+};
+
+export const MaterialSectionText = {
+  SELECT_OPTION: '엘릭서에 정제할 효과를 위 항목에서 선택하세요.',
+};
