@@ -1,19 +1,25 @@
+import { ElixirInstance } from '../type/elixir';
 import { SageTemplate, SageTypesType } from '../type/sage';
 import { AdviceInstance } from './AdviceInstance';
 
-export class Sage {
+export interface Sage {
   name: string;
   type: SageTypesType;
   dialogueEnds: { [key: string]: string };
   stack: number;
   advice: AdviceInstance;
+  elixir: ElixirInstance;
   meditation: boolean;
+}
 
-  constructor(template: SageTemplate) {
-    this.name = template.name;
-    this.dialogueEnds = template.dialogueEnds;
-    this.stack = 0;
-    this.advice = null;
-    this.meditation = false;
-  }
+export function createSage(template: SageTemplate): Sage {
+  return {
+    name: template.name,
+    type: null,
+    dialogueEnds: template.dialogueEnds,
+    stack: 0,
+    advice: null,
+    elixir: null,
+    meditation: false,
+  };
 }

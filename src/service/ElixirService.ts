@@ -1,42 +1,18 @@
-import { ADVICE_COUNT, OPTION_COUNT } from '../constants';
+import { OPTION_COUNT } from '../constants';
 import { ELIXIRS } from '../database/elixir';
-import { ElixirInstance } from '../type/elixir';
+import { gacha } from '../util';
 
 const DEFAULT_BIG_HIT_RATE_PERCENT = 10;
 
+const hitRate = 100 / OPTION_COUNT;
+const bigHitRate = DEFAULT_BIG_HIT_RATE_PERCENT;
+
 class ElixirService {
-  elixirs: ElixirInstance[];
-  oddsSum = ELIXIRS.reduce((acc, { odds }) => {
-    return acc + odds;
-  }, 0);
+  elixirs = ELIXIRS.map((elixir, idx) => ({ ...elixir, id: idx, level: 0, locked: false, hitRate, bigHitRate, statusText: null, nextHitRate: hitRate, nextBigHitRate: bigHitRate }));
 
-  init() {
-    this.elixirs = ELIXIRS.map((elixir, idx) => {
-      const hitRate = 100 / OPTION_COUNT;
-      const bigHitRate = DEFAULT_BIG_HIT_RATE_PERCENT;
-      return { ...elixir, id: idx, level: 0, locked: false, hitRate, bigHitRate, statusText: null, nextHitRate: hitRate, nextBigHitRate: bigHitRate };
-    });
-  }
-
-  drawOptions(count?: number) {
-    count ??= ADVICE_COUNT;
-
-    const elixirs = [...this.elixirs]; // deep copy
-    const result = [];
-
-    while (result.length < count) {
-      const randomNumber = Math.random() * this.oddsSum;
-      let oddsAcc = 0;
-      for (let i = 0; i < elixirs.length; i++) {
-        const elixir = elixirs[i];
-        if (randomNumber <= (oddsAcc += elixir.odds)) {
-          result.push(elixir);
-          elixirs.splice(i, 1);
-          break;
-        }
-      }
-    }
-
+  drawOptions() {
+    const targetIndexList = gacha(this.elixirs, { count: OPTION_COUNT, oddsKey: 'odds' });
+    const result = targetIndexList.map((idx) => this.elixirs[idx]);
     return result;
   }
 

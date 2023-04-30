@@ -1,7 +1,8 @@
 import { DIALOGUE_END_INDEX as I, MAX_ACTIVE, OPTION_COUNT, Placeholders } from '../constants';
 import { Advice } from '../type/advice';
+import { ElixirInstance } from '../type/elixir';
 import { SageKey, SageKeys, SageTypesType, SageTypesTypes } from '../type/sage';
-import { applyAdvice, convertToSignedString, gacha, getLockedCount, validateOptionIndex } from '../util';
+import { convertToSignedString, gacha, getLockedCount, validateOptionIndex } from '../util';
 
 const NO_OPTION_SELECTED_ERROR_MESSAGE = '옵션을 선택해주세요.';
 const getExtraAlchemyText = (extraAlchemy: number) => `이번에 연성되는 효과는 ${1 + extraAlchemy}단계 연성해${Placeholders[I.주겠네]}.`;
@@ -27,8 +28,8 @@ export const ADVICES: Advice[] = [
   {
     name: `최고 단계 효과를 +1 올려${Placeholders[I.주겠네]}. 대신 다른 효과 1개의 단계는 2 감소${Placeholders[I.할걸세]}.`,
     type: 'util',
-    effect: () => (beforeElixirs) => {
-      const result = [...beforeElixirs];
+    effect: () => (elixirs) => {
+      const result = elixirs.map((elixir) => ({ ...elixir }));
       const maxLevel = result.reduce((acc, cur) => {
         return Math.max(cur.level, acc);
       }, result[0].level);
@@ -43,8 +44,8 @@ export const ADVICES: Advice[] = [
   {
     name: `최하 단계 효과를 +1 올려${Placeholders[I.주겠네]}. 대신 최고 단계의 효과가 2 감소${Placeholders[I.할걸세]}.`,
     type: 'util',
-    effect: () => (beforeElixirs) => {
-      const result = [...beforeElixirs];
+    effect: () => (elixirs) => {
+      const result = elixirs.map((elixir) => ({ ...elixir }));
       const [minLevel, maxLevel] = result.reduce((acc, cur) => [Math.min(cur.level, acc[0]), Math.max(cur.level, acc[1])], [result[0].level, result[0].level]);
       const [upTargetIndex] = gacha(result, { filterConditions: [(option) => option.level === minLevel] });
       const [downTargetIndex] = gacha(result, { filterConditions: [(option, idx) => idx !== upTargetIndex && option.level === maxLevel] });
@@ -57,8 +58,8 @@ export const ADVICES: Advice[] = [
   {
     name: `임의 효과를 +1 올려${Placeholders[I.주겠네]}.`,
     type: 'util',
-    effect: () => (beforeElixirs) => {
-      const result = [...beforeElixirs];
+    effect: () => (elixirs) => {
+      const result = elixirs.map((elixir) => ({ ...elixir }));
       const candidate = result.filter((option) => !option.locked);
       const targetIndex = Math.floor(Math.random()) * candidate.length;
       applyAdvice(candidate[targetIndex], { level: candidate[targetIndex].level + 1 });
@@ -115,8 +116,8 @@ function potentialAlchemyAdviceTemplate(odds: number, params: AdviceTemplateProp
     type: 'potential',
     effect:
       ({ optionIndex }) =>
-      (beforeElixirs) => {
-        const result = [...beforeElixirs];
+      (elixirs) => {
+        const result = elixirs.map((elixir) => ({ ...elixir }));
         if (Math.random() * 100 <= percentage) applyAdvice(result[optionIndex], { level: result[optionIndex].level + 1 });
         return { elixirs: result };
       },
@@ -129,8 +130,8 @@ function potentialSelectedAlchemyAdviceTemplate(odds: number, params: AdviceTemp
   return {
     name: `선택한 효과를 ${percentage}% 확률로 +1 올려${Placeholders[I.주겠네]}.`,
     type: 'potential',
-    effect: () => (beforeElixirs, optionIndex) => {
-      const result = [...beforeElixirs];
+    effect: () => (elixirs, optionIndex) => {
+      const result = elixirs.map((elixir) => ({ ...elixir }));
       if (typeof optionIndex !== 'number') throw new Error(NO_OPTION_SELECTED_ERROR_MESSAGE);
       if (Math.random() * 100 <= percentage) applyAdvice(result[optionIndex], { level: result[optionIndex].level + 1 });
       return { elixirs: result };
@@ -146,8 +147,8 @@ function changePotentialLevelAdviceTemplate(odds: number, params: AdviceTemplate
     type: 'potential',
     effect:
       ({ optionIndex }) =>
-      (beforeElixirs) => {
-        const result = [...beforeElixirs];
+      (elixirs) => {
+        const result = elixirs.map((elixir) => ({ ...elixir }));
         const diff = Math.floor(Math.random() * maxReturn + maxRisk + 1) - maxRisk;
         applyAdvice(result[optionIndex], { level: result[optionIndex].level + diff });
         return { elixirs: result };
@@ -199,8 +200,8 @@ function changeSelectedPotentialLevelAdviceTemplate(odds: number, props?: Advice
     type: 'potential',
     special,
     sage,
-    effect: () => (beforeElixirs, optionIndex) => {
-      const result = [...beforeElixirs];
+    effect: () => (elixirs, optionIndex) => {
+      const result = elixirs.map((elixir) => ({ ...elixir }));
       const diff = Math.floor(Math.random() * (maxReturn + maxRisk + 1)) - maxRisk;
       applyAdvice(result[optionIndex], { level: result[optionIndex].level + diff });
       return { elixirs: result, enterMeditation };
@@ -216,8 +217,8 @@ function amplifyHitRateTemporarilyAdviceTemplate(odds: number, params: AdviceTem
     type: 'util',
     effect:
       ({ optionIndex }) =>
-      (beforeElixirs) => {
-        const result = [...beforeElixirs];
+      (elixirs) => {
+        const result = elixirs.map((elixir) => ({ ...elixir }));
         result.forEach((option, idx) => {
           option.nextHitRate = option.hitRate;
 
@@ -237,8 +238,8 @@ function amplifyHitRateAdviceTemplate(odds: number, params: AdviceTemplateProps)
     type: 'util',
     effect:
       ({ optionIndex }) =>
-      (beforeElixirs) => {
-        const result = [...beforeElixirs];
+      (elixirs) => {
+        const result = elixirs.map((elixir) => ({ ...elixir }));
         const lockedCount = getLockedCount(result);
         result.forEach((option, idx) => {
           if (option.locked) return;
@@ -262,8 +263,8 @@ function amplifySelectedHitRateAdviceTemplate(odds: number, props?: AdviceTempla
     type: 'util',
     special,
     sage,
-    effect: () => (beforeElixirs, optionIndex) => {
-      const result = [...beforeElixirs];
+    effect: () => (elixirs, optionIndex) => {
+      const result = elixirs.map((elixir) => ({ ...elixir }));
       const lockedCount = getLockedCount(result);
       validateOptionIndex(optionIndex);
       result.forEach((option, idx) => {
@@ -285,8 +286,8 @@ function amplifyBigHitRateAdviceTemplate(odds: number, params: AdviceTemplatePro
     type: 'util',
     effect:
       ({ optionIndex }) =>
-      (beforeElixirs) => {
-        const result = [...beforeElixirs];
+      (elixirs) => {
+        const result = elixirs.map((elixir) => ({ ...elixir }));
         result.forEach((option, idx) => {
           if (optionIndex === idx) applyAdvice(option, { bigHitRate: option.bigHitRate + percentage });
 
@@ -305,8 +306,8 @@ function amplifyBigHitRateTemporarilyAdviceTemplate(odds: number, params: Advice
     type: 'util',
     effect:
       ({ optionIndex }) =>
-      (beforeElixirs) => {
-        const result = [...beforeElixirs];
+      (elixirs) => {
+        const result = elixirs.map((elixir) => ({ ...elixir }));
         result.forEach((option, idx) => {
           option.nextBigHitRate = option.bigHitRate;
 
@@ -325,9 +326,7 @@ function extraTargetAdviceTemplate(odds: number, params?: AdviceTemplateProps): 
   return {
     name: `이번 연성에서 ${extraTarget + 1}개의 효과를 동시에 연성해${Placeholders[I.주겠네]}.${extraChanceConsume ? ` 다만, 기회를 ${extraChanceConsume + 1}번 소모${Placeholders[I.할걸세]}.` : ''}`,
     type: 'util',
-    effect: () => (beforeElixirs) => {
-      return { elixirs: beforeElixirs, extraTarget, extraChanceConsume };
-    },
+    effect: () => (elixirs) => ({ elixirs, extraTarget, extraChanceConsume }),
     odds,
   };
 }
@@ -338,9 +337,7 @@ function addRerollChanceAdviceTemplate(odds: number, params: AdviceTemplateProps
     name: `다른 조언 보기 횟수를 ${addRerollChance}회 늘려${Placeholders[I.주겠네]}.`,
     type: 'util',
     special,
-    effect: () => (beforeElixirs) => {
-      return { elixirs: beforeElixirs, addRerollChance };
-    },
+    effect: () => (elixirs) => ({ elixirs, addRerollChance }),
     odds,
   };
 }
@@ -351,8 +348,8 @@ function moveUpLevelAdviceTemplate(odds: number, params: AdviceTemplateProps): A
     name: `모든 효과의 단계를 위로 1 슬롯 씩 올려${Placeholders[I.주겠네]}.`,
     type: 'util',
     special,
-    effect: () => (beforeElixirs) => {
-      const result = [...beforeElixirs];
+    effect: () => (elixirs) => {
+      const result = elixirs.map((elixir) => ({ ...elixir }));
       const firstLevel = result[0].level;
       for (let i = 0; i < OPTION_COUNT - 1; i++) {
         result[i].level = result[i + 1].level;
@@ -370,8 +367,8 @@ function moveDownLevelAdviceTemplate(odds: number, params: AdviceTemplateProps):
     name: `모든 효과의 단계를 아래로 1 슬롯 씩 내려${Placeholders[I.주겠네]}.`,
     type: 'util',
     special,
-    effect: () => (beforeElixirs) => {
-      const result = [...beforeElixirs];
+    effect: () => (elixirs) => {
+      const result = elixirs.map((elixir) => ({ ...elixir }));
       const lastLevel = result[OPTION_COUNT - 1].level;
       for (let i = 0; i < OPTION_COUNT - 1; i++) {
         result[i + 1].level = result[i].level;
@@ -390,8 +387,8 @@ function lockAdviceTemplate(odds: number, params: AdviceTemplateProps): Advice {
     type: 'util',
     special,
     remainChanceUpperBound,
-    effect: () => (beforeElixirs) => {
-      const result = [...beforeElixirs];
+    effect: () => (elixirs) => {
+      const result = elixirs.map((elixir) => ({ ...elixir }));
       const [idx] = gacha(result);
       result[idx].locked = true;
       const lockedCount = result.reduce((acc, cur) => acc + Number(cur.locked), 0);
@@ -419,8 +416,8 @@ function lockSelectedOptionAdviceTemplate(odds: number, params: AdviceTemplatePr
     type: 'util',
     special,
     remainChanceUpperBound,
-    effect: () => (beforeElixirs, optionIndex) => {
-      const result = [...beforeElixirs];
+    effect: () => (elixirs, optionIndex) => {
+      const result = elixirs.map((elixir) => ({ ...elixir }));
       result[optionIndex].locked = true;
       const lockedCount = result.reduce((acc, cur) => acc + Number(cur.locked), 0);
       for (let i = 0; i < OPTION_COUNT; i++) {
@@ -443,8 +440,8 @@ function redistributeAdviceTemplate(odds: number, params: AdviceTemplateProps): 
     name: `모든 효과의 단계를 재분배${Placeholders[I.하겠네]}.`,
     type: 'util',
     special,
-    effect: () => (beforeElixirs) => {
-      const result = [...beforeElixirs];
+    effect: () => (elixirs) => {
+      const result = elixirs.map((elixir) => ({ ...elixir }));
 
       const lockedCount = getLockedCount(result);
       let levelSum = result.reduce((acc, cur) => {
@@ -478,8 +475,8 @@ function raiseAllBelowNAdviceTemplate(odds: number, params: AdviceTemplateProps)
     type: 'util',
     remainChanceUpperBound,
     remainChanceLowerBound,
-    effect: () => (beforeElixirs) => {
-      const result = [...beforeElixirs];
+    effect: () => (elixirs) => {
+      const result = elixirs.map((elixir) => ({ ...elixir }));
       const candidate = result.filter((option) => option.level <= n && !option.locked);
       for (const option of candidate) {
         applyAdvice(option, { level: option.level + 1 });
@@ -499,8 +496,8 @@ function changeOptionToFixedLevelAdviceTemplate(odds: number, params: AdviceTemp
     remainChanceLowerBound,
     effect:
       ({ optionIndex }) =>
-      (beforeElixirs) => {
-        const result = [...beforeElixirs];
+      (elixirs) => {
+        const result = elixirs.map((elixir) => ({ ...elixir }));
         applyAdvice(result[optionIndex], { level: n + Math.floor(Math.random() * 2) });
         return { elixirs: result };
       },
@@ -515,8 +512,8 @@ function changeSelectedOptionToFixedLevelAdviceTemplate(odds: number, params: Ad
     type: 'util',
     remainChanceUpperBound,
     remainChanceLowerBound,
-    effect: () => (beforeElixirs, optionIndex) => {
-      const result = [...beforeElixirs];
+    effect: () => (elixirs, optionIndex) => {
+      const result = elixirs.map((elixir) => ({ ...elixir }));
       applyAdvice(result[optionIndex], { level: n + Math.floor(Math.random() * 2) });
       return { elixirs: result };
     },
@@ -530,8 +527,8 @@ function exchangeOddEvenAdviceTemplate(odds: number, params: AdviceTemplateProps
   return {
     name: `${str[Number(odd)]} 슬롯의 효과를 +1 올려${Placeholders[I.주겠네]}. 대신 ${str[Number(!odd)]} 슬롯의 효과가 1 감소${Placeholders[I.할걸세]}.`,
     type: 'util',
-    effect: () => (beforeElixirs) => {
-      const result = [...beforeElixirs];
+    effect: () => (elixirs) => {
+      const result = elixirs.map((elixir) => ({ ...elixir }));
 
       for (let i = 0; i < result.length; i++) {
         const option = result[i];
@@ -552,8 +549,8 @@ function exchangeOneLevelBetweenRandomTwoOptionsAdviceTemplate(odds: number, par
     type: 'util',
     effect:
       ({ optionIndex, subIndex }) =>
-      (beforeElixirs) => {
-        const result = [...beforeElixirs];
+      (elixirs) => {
+        const result = elixirs.map((elixir) => ({ ...elixir }));
         applyAdvice(result[optionIndex], { level: result[optionIndex].level + 1 });
         applyAdvice(result[subIndex], { level: result[subIndex].level - n });
         return { elixirs: result };
@@ -567,9 +564,25 @@ function extraAlchemyAdviceTemplate(odds: number, params: AdviceTemplateProps): 
   return {
     name: `${getExtraAlchemyText(extraAlchemy)}.${extraChanceConsume ? ` 다만, 기회를 ${extraChanceConsume + 1}번 소모${Placeholders[I.할걸세]}.` : ''}`,
     type: 'util',
-    effect: () => (beforeElixirs) => {
-      return { elixirs: beforeElixirs, extraAlchemy, extraChanceConsume };
-    },
+    effect: () => (elixirs) => ({ elixirs, extraAlchemy, extraChanceConsume }),
     odds,
   };
+}
+
+interface ApplyAdviceProps {
+  level?: number;
+  hitRate?: number;
+  bigHitRate?: number;
+  nextHitRate?: number;
+  nextBigHitRate?: number;
+}
+
+function applyAdvice(option: ElixirInstance, props: ApplyAdviceProps) {
+  if (option.locked) return;
+  const { level, hitRate, bigHitRate, nextHitRate, nextBigHitRate } = props;
+  if (level !== undefined) option.level = Math.max(Math.min(level, MAX_ACTIVE), 0);
+  if (hitRate !== undefined) option.hitRate = Math.max(Math.min(hitRate, 100), 0);
+  if (bigHitRate !== undefined) option.bigHitRate = Math.max(Math.min(bigHitRate, 100), 0);
+  if (nextHitRate !== undefined) option.nextHitRate = Math.max(Math.min(nextHitRate, 100), 0);
+  if (nextBigHitRate !== undefined) option.nextBigHitRate = Math.max(Math.min(nextBigHitRate, 100), 0);
 }

@@ -1,71 +1,26 @@
 /** @jsxImportSource @emotion/react */
 import { useEffect, useRef, useState } from 'react';
 import * as S from '../style/index.style';
-import {
-  ADVICE_COUNT,
-  ALCHEMY_CHANCE,
-  AUDIO_RESOURCE_URL_LIST,
-  CENTERED_FLEX_STYLE,
-  DEFAULT_ADVICE_REROLL_CHANCE,
-  FIRST_VISIT_HELP_TEXT,
-  DIALOGUE_END_INDEX as I,
-  MAX_ACTIVE,
-  Placeholders,
-  STACK_COUNTER_EXPECTED_HEIGHT,
-  VISITED_COOKIE_KEY,
-} from '../constants';
-import { elixirService } from '../service/ElixirService';
-import { adviceService } from '../service/AdviceService';
-import { alchemyService } from '../service/AlchemyService';
+import { ADVICE_COUNT, AUDIO_RESOURCE_URL_LIST, CENTERED_FLEX_STYLE, FIRST_VISIT_HELP_TEXT, DIALOGUE_END_INDEX as I, MAX_ACTIVE, OPTION_COUNT, Placeholders, STACK_COUNTER_EXPECTED_HEIGHT, VISITED_COOKIE_KEY } from '../constants';
 import { Activation } from '../components/Activation';
 import { getAdviceRerollButtonText, isFullStack, playClickSound } from '../util';
-import { SageTemplates } from '../database/sage';
-import { SageKeys } from '../type/sage';
 import { SageTypeStackCounter } from '../components/SageTypeStackCounter';
 import { Sage } from '../domain/Sage';
-import { ElixirInstance } from '../type/elixir';
-import { AdviceEffectResult } from '../type/advice';
 import { BGMPlayer } from '../components/BGMPlayer';
 import { Loading } from '../components/Loading';
 import { useCookies } from 'react-cookie';
-
-const AlchemyStatus = {
-  REFINE: 'refine', // 정제
-  ADVICE: 'advice', // 조언
-  ALCHEMY: 'alchemy', // 연성
-} as const;
-
-type AlchemyStatus = (typeof AlchemyStatus)[keyof typeof AlchemyStatus];
+import { AlchemyStatuses } from '../type/common';
+import { useAppDispatch, useAppSelector } from '../store';
+import { alchemy, clearStatusText, drawAdvices, drawOptions, pickAdvice, pickOption } from '../features/elixirSlice';
 
 const ButtonTexts = {
-  [AlchemyStatus.REFINE]: '효과 정제',
-  [AlchemyStatus.ADVICE]: '조언 선택',
-  [AlchemyStatus.ALCHEMY]: '연성하기',
+  [AlchemyStatuses.REFINE]: '효과 정제',
+  [AlchemyStatuses.ADVICE]: '조언 선택',
+  [AlchemyStatuses.ALCHEMY]: '연성하기',
 };
 
 const MaterialSectionText = {
   SELECT_OPTION: '엘릭서에 정제할 효과를 위 항목에서 선택하세요.',
-};
-
-const initialSages: Sage[] = [new Sage(SageTemplates[SageKeys.L]), new Sage(SageTemplates[SageKeys.B]), new Sage(SageTemplates[SageKeys.C])];
-
-interface ElixirOptionDialogueProps {
-  SelectOption: ElixirInstance;
-  sage: Sage;
-}
-const SelectOptionDialogue = ({ SelectOption: elixirOption, sage }: ElixirOptionDialogueProps) => {
-  if (!elixirOption) return <></>;
-
-  const { name, type, part } = elixirOption;
-  return (
-    <div style={{ height: '100%', padding: '1rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center' }}>
-      <div>
-        <span>{`${name}${type ? ` (${type})` : ''}`}</span>
-        <span>{` 효과를 정제하는건 ${sage.dialogueEnds[I.어떤가]}?`}</span>
-      </div>
-      <div>{`(${part ? `${part} 전용` : '공용'})`}</div>
-    </div>
-  );
 };
 
 interface AdviceDialogueProps {
@@ -74,15 +29,29 @@ interface AdviceDialogueProps {
 
 const MEDITATION_TEXT = '(현자는 사색에 빠져 있습니다.)';
 const AdviceDialogue = ({ sage }: AdviceDialogueProps) => {
-  const { advice } = sage;
-  if (!advice) return <></>;
   if (sage.meditation) return <div>{MEDITATION_TEXT}</div>;
 
-  const name = Object.values(I).reduce((acc, cur) => {
-    return acc.replace(Placeholders[cur], sage.dialogueEnds[cur]);
-  }, advice.name);
+  const { elixir, advice } = sage;
 
-  return <div>{name}</div>;
+  if (advice) {
+    const name = Object.values(I).reduce((acc, cur) => {
+      return acc.replace(Placeholders[cur], sage.dialogueEnds[cur]);
+    }, advice.name);
+    return <div>{name}</div>;
+  } else if (elixir) {
+    const { name, part, type } = elixir;
+    return (
+      <div style={{ height: '100%', padding: '1rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div>
+          <span>{`${name}${type ? ` (${type})` : ''}`}</span>
+          <span>{` 효과를 정제하는건 ${sage.dialogueEnds[I.어떤가]}?`}</span>
+        </div>
+        <div>{`(${part ? `${part} 전용` : '공용'})`}</div>
+      </div>
+    );
+  }
+
+  return <></>;
 };
 
 const Gold = ({ amount }: { amount: number }) => {
@@ -94,33 +63,21 @@ const Gold = ({ amount }: { amount: number }) => {
   );
 };
 
-const OPTION_COUNT = 5;
-
 const Home = () => {
-  const [selectedAdviceIndex, setSelectedAdviceIndex] = useState<number>(null);
-  const handleAdviceClick = (e: React.MouseEvent, idx: number) => {
-    if (getAdviceButtonDisabled(sages[idx])) return;
-    setSelectedAdviceIndex(idx);
-    playClickSound();
-  };
-  const [elixirOptions, setElixirOptions] = useState<ElixirInstance[]>([]);
-  const [selectOptionChance, setSelectOptionChance] = useState(OPTION_COUNT);
-  const [selectedOptions, setSelectedOptions] = useState<ElixirInstance[]>([]);
-  const [alchemyChance, setAlchemyChance] = useState(ALCHEMY_CHANCE);
-  const [selectedOptionIndex, setSelectedOptionIndex] = useState<number>(null);
-  const [alchemyStatus, setAlchemyStatus] = useState<AlchemyStatus>();
-  const statusTextTimeoutRef = useRef<NodeJS.Timeout>();
-  const [sages, setSages] = useState<Sage[]>(initialSages);
-  const [adviceEffectResult, setAdviceEffectResult] = useState<AdviceEffectResult>();
-  const [adviceRerollChance, setAdviceRerollChance] = useState(DEFAULT_ADVICE_REROLL_CHANCE);
-  const [loaded, setLoaded] = useState(false);
-  const [isFirstVisit, setIsFirstVisit] = useState(false);
   const [cookies, setCookie] = useCookies();
 
+  const dispatch = useAppDispatch();
+  const { sages, adviceRerollChance, alchemyChance, alchemyStatus, elixirs, pickOptionChance } = useAppSelector((state) => state.elixir);
+
+  const [loaded, setLoaded] = useState(false);
+  const [isFirstVisit, setIsFirstVisit] = useState(false);
+  const [selectedAdviceIndex, setSelectedAdviceIndex] = useState<number>(null);
+  const [selectedOptionIndex, setSelectedOptionIndex] = useState<number>(null);
+  const statusTextTimeoutRef = useRef<NodeJS.Timeout>();
+
   useEffect(() => {
-    const handleWindowClick = () => {
-      setIsFirstVisit(false);
-    };
+    const handleWindowClick = () => setIsFirstVisit(false);
+
     if (!cookies[VISITED_COOKIE_KEY]) {
       setIsFirstVisit(true);
       setCookie(VISITED_COOKIE_KEY, true, { expires: new Date('2030-09-02') });
@@ -155,98 +112,73 @@ const Home = () => {
     Promise.all(promises).then(() => setLoaded(true));
   });
 
-  const drawAdvices = () => {
-    setSages(adviceService.drawAdvices(selectedOptions, sages, alchemyChance));
-  };
-
-  useEffect(() => {
-    if (!adviceEffectResult) return;
-    const { elixirs, addRerollChance } = adviceEffectResult;
-    setSelectedOptions(elixirs);
-    if (addRerollChance) setAdviceRerollChance(adviceRerollChance + addRerollChance);
-  }, [adviceEffectResult]);
-
   useEffect(() => {
     switch (alchemyStatus) {
-      case AlchemyStatus.REFINE: {
-        setElixirOptions(elixirService.drawOptions());
-        break;
-      }
-      case AlchemyStatus.ADVICE: {
-        drawAdvices();
-        break;
+      case AlchemyStatuses.ADVICE: {
+        dispatch(drawAdvices());
       }
     }
   }, [alchemyStatus]);
 
   useEffect(() => {
-    elixirService.init();
-    setAlchemyStatus(AlchemyStatus.REFINE);
-  }, []);
-
-  useEffect(() => {
-    if (selectOptionChance === OPTION_COUNT) return;
-    setElixirOptions(elixirService.drawOptions());
-    if (selectOptionChance === 0) setAlchemyStatus(AlchemyStatus.ADVICE);
-  }, [selectOptionChance]);
+    dispatch(drawOptions());
+  }, [pickOptionChance]);
 
   if (!loaded) return <Loading />;
 
   const handleRefineButtonClick = () => {
     if (alchemyChance <= 0) return;
-    if (selectedAdviceIndex === null && alchemyStatus !== AlchemyStatus.ALCHEMY) {
+    if (selectedAdviceIndex === null && alchemyStatus !== AlchemyStatuses.ALCHEMY) {
       alert('조언을 선택해주세요.');
       return;
     }
 
+    dispatch(clearStatusText());
+
     switch (alchemyStatus) {
-      case AlchemyStatus.REFINE: {
-        const id = elixirOptions[selectedAdviceIndex].id;
-        const option = elixirService.pickOption(id);
-        setSelectedOptions((selectedOptions) => selectedOptions.concat(option));
-        setSelectOptionChance(selectOptionChance - 1);
+      case AlchemyStatuses.REFINE: {
+        const { id } = sages[selectedAdviceIndex].elixir;
+        dispatch(pickOption(id));
         break;
       }
-      case AlchemyStatus.ADVICE: {
-        const response = adviceService.pickAdvice(selectedAdviceIndex, selectedOptions, sages, selectedOptionIndex);
-
-        if (!response.ok) {
-          alert(response.statusText);
+      case AlchemyStatuses.ADVICE: {
+        try {
+          dispatch(pickAdvice({ selectedAdviceIndex, selectedOptionIndex }));
+        } catch (e) {
+          console.error(e);
+          alert('옵션을 선택해주세요.');
           return;
         }
-
-        const { result: adviceEffectResult, sages: _sages } = response;
-        if (adviceEffectResult.enterMeditation) _sages[selectedAdviceIndex].meditation = true;
-
-        setAdviceEffectResult(adviceEffectResult);
-        setSages(_sages);
-        setAlchemyStatus(AlchemyStatus.ALCHEMY);
         break;
       }
-      case AlchemyStatus.ALCHEMY: {
-        setSelectedOptions(alchemyService.alchemy(adviceEffectResult));
-        if (!adviceEffectResult.saveChance) setAlchemyChance(alchemyChance - (1 + (adviceEffectResult.extraChanceConsume ?? 0)));
-        setAlchemyStatus(AlchemyStatus.ADVICE);
+      case AlchemyStatuses.ALCHEMY: {
+        dispatch(alchemy());
         break;
       }
     }
 
+    setStatusTextTimeout();
+
     setSelectedAdviceIndex(null);
     setSelectedOptionIndex(null);
-    setStatusTextTimeout();
   };
 
   const handleElixirOptionClick = (e: React.MouseEvent, idx: number) => {
-    if (alchemyStatus === AlchemyStatus.ALCHEMY || getDisabled()) return;
-    if (selectedOptions[idx].locked) return;
+    if (alchemyStatus === AlchemyStatuses.ALCHEMY || getDisabled()) return;
+    if (elixirs[idx].locked) return;
     setSelectedOptionIndex(idx);
     playClickSound();
   };
 
   const handleRerollButtonClick = () => {
-    if (adviceRerollChance <= 0 || alchemyStatus !== AlchemyStatus.ADVICE) return;
-    drawAdvices();
-    setAdviceRerollChance(adviceRerollChance - 1);
+    if (adviceRerollChance <= 0 || alchemyStatus !== AlchemyStatuses.ADVICE) return;
+    dispatch(drawAdvices({ reroll: true }));
+    playClickSound();
+  };
+
+  const handleAdviceClick = (e: React.MouseEvent, idx: number) => {
+    if (getAdviceButtonDisabled(sages[idx])) return;
+    setSelectedAdviceIndex(idx);
     playClickSound();
   };
 
@@ -255,14 +187,14 @@ const Home = () => {
   };
 
   const getAdviceButtonDisabled = (sage: Sage) => {
-    return alchemyChance <= 0 || alchemyStatus === AlchemyStatus.ALCHEMY || getDisabled() || sage.meditation;
+    return alchemyChance <= 0 || alchemyStatus === AlchemyStatuses.ALCHEMY || getDisabled() || sage.meditation;
   };
 
   const STATUS_TEXT_DISPLAY_TIME_MS = 2000;
   const setStatusTextTimeout = () => {
     clearTimeout(statusTextTimeoutRef.current);
     statusTextTimeoutRef.current = setTimeout(() => {
-      setSelectedOptions((selectedOptions) => selectedOptions.map((option) => ({ ...option, statusText: null })));
+      dispatch(clearStatusText());
     }, STATUS_TEXT_DISPLAY_TIME_MS);
   };
 
@@ -270,38 +202,40 @@ const Home = () => {
     <S.Home>
       <S.MainSection>
         <S.ElixirOptionSection>
-          {selectedOptions.map(({ name, part, level, hitRate, bigHitRate, statusText, locked }, idx) => (
-            <S.ElixirOption key={`elixirOption-${idx}`} onClick={(e) => handleElixirOptionClick(e, idx)} selected={selectedOptionIndex === idx} locked={locked}>
-              <div css={[CENTERED_FLEX_STYLE, { flex: 2 }]}>{locked ? '봉인' : `${hitRate.toFixed(1)}%`}</div>
-              <div css={{ flex: 7, paddingRight: '1rem', display: 'flex', justifyContent: 'center', flexDirection: 'column' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span>{name}</span>
-                  <span>{`(${part ? `${part} 전용` : '공용'})`}</span>
+          {elixirs.map((elixir, idx) => {
+            const { name, part, level, hitRate, bigHitRate, statusText, locked } = elixir;
+            return (
+              <S.ElixirOption key={`elixirOption-${idx}`} onClick={(e) => handleElixirOptionClick(e, idx)} selected={selectedOptionIndex === idx} locked={locked}>
+                <div css={[CENTERED_FLEX_STYLE, { flex: 2 }]}>{locked ? '봉인' : `${hitRate.toFixed(1)}%`}</div>
+                <div css={{ flex: 7, paddingRight: '1rem', display: 'flex', justifyContent: 'center', flexDirection: 'column' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span>{name}</span>
+                    <span>{`(${part ? `${part} 전용` : '공용'})`}</span>
+                  </div>
+                  <Activation percentage={level / MAX_ACTIVE} />
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <div>{statusText}</div>
+                    <div>{`${bigHitRate}%`}</div>
+                  </div>
                 </div>
-                <Activation percentage={level / MAX_ACTIVE} />
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <div>{statusText}</div>
-                  <div>{`${bigHitRate}%`}</div>
-                </div>
-              </div>
-            </S.ElixirOption>
-          ))}
-          {Array.from({ length: OPTION_COUNT - selectedOptions.length }).map((_, idx) => (
+              </S.ElixirOption>
+            );
+          })}
+          {Array.from({ length: OPTION_COUNT - elixirs.length }).map((_, idx) => (
             <S.ElixirOption key={`elixirOptionEmpty-${idx}`} />
           ))}
         </S.ElixirOptionSection>
         <S.AdviceSection>
           {Array.from({ length: ADVICE_COUNT }).map((_, idx) => {
             const sage = sages[idx];
-            const special = alchemyStatus === AlchemyStatus.ADVICE && isFullStack(sage) ? sage.type : null;
+            const special = alchemyStatus === AlchemyStatuses.ADVICE && isFullStack(sage) ? sage.type : null;
             return (
               <S.Advice key={`advice-${idx}`} onClick={(e) => handleAdviceClick(e, idx)}>
                 <div style={{ height: STACK_COUNTER_EXPECTED_HEIGHT }}>
                   <SageTypeStackCounter sage={sage} />
                 </div>
                 <S.AdviceDialogue disabled={getAdviceButtonDisabled(sage)} special={special} selected={selectedAdviceIndex === idx}>
-                  {alchemyStatus === AlchemyStatus.REFINE && <SelectOptionDialogue SelectOption={elixirOptions[idx]} sage={sage} />}
-                  {alchemyStatus !== AlchemyStatus.REFINE && <AdviceDialogue sage={sage} />}
+                  <AdviceDialogue sage={sage} />
                 </S.AdviceDialogue>
               </S.Advice>
             );

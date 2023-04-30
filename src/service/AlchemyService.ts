@@ -1,41 +1,31 @@
-import { MAX_ACTIVE, OPTION_COUNT } from '../constants';
-import { AdviceEffectResult } from '../type/advice';
+import { MAX_ACTIVE } from '../constants';
+import { AdviceAfterEffect } from '../type/advice';
 import { ElixirInstance } from '../type/elixir';
-import { applyAdvice, gacha, playRefineSuccessSound } from '../util';
+import { gacha, playRefineSuccessSound } from '../util';
 
 class AlchemyService {
-  private clean(elixirs: ElixirInstance[]) {
-    for (const elixir of elixirs) {
-      elixir.hitRate = elixir.nextHitRate;
-      elixir.bigHitRate = elixir.nextBigHitRate;
-    }
-  }
+  alchemy(elixirs: ElixirInstance[], adviceAfterResult: AdviceAfterEffect) {
+    const { extraTarget, extraAlchemy } = adviceAfterResult;
+    const delta = 1 + (extraAlchemy ?? 0);
+    const result = [...elixirs];
+    const targetIndexList = gacha(elixirs, { oddsKey: 'hitRate', count: 1 + (extraTarget ?? 0) });
 
-  alchemy(adviceEffectResult: AdviceEffectResult) {
-    const { elixirs: beforeElixirs, extraTarget, extraAlchemy } = adviceEffectResult;
-    let delta = 1 + (extraAlchemy ?? 0);
-    const result = [...beforeElixirs];
-    const targetIndexList = gacha(beforeElixirs, { oddsKey: 'hitRate', count: 1 + (extraTarget ?? 0) });
-    let before = beforeElixirs.map((elixir) => elixir.level);
-
-    for (let i = 0; i < targetIndexList.length; i++) {
-      const idx = targetIndexList[i];
+    let bigHit = false;
+    for (const idx of targetIndexList) {
       const randomNumber = Math.random() * 100;
-      let bonus = Number(randomNumber <= result[idx].bigHitRate);
-      applyAdvice(result[idx], { level: result[idx].level + delta + bonus });
+      const bonus = Number(randomNumber <= result[idx].bigHitRate);
+      if (bonus) {
+        bigHit = true;
+        result[idx].statusText = '연성 대성공';
+      } else result[idx].statusText = '연성 성공';
+      result[idx] = { ...result[idx], level: Math.min(result[idx].level + delta + bonus, MAX_ACTIVE) };
     }
 
-    for (let i = 0; i < OPTION_COUNT; i++) {
-      const diff = result[i].level - before[i];
+    result.forEach((option, idx) => {
+      result[idx] = { ...option, hitRate: option.nextHitRate, bigHitRate: option.nextBigHitRate };
+    });
 
-      if (diff === delta + 1) {
-        result[i].statusText = '연성 대성공';
-        playRefineSuccessSound();
-      } else if (diff === delta) result[i].statusText = '연성 성공';
-      else result[i].statusText = null;
-    }
-
-    this.clean(result);
+    if (bigHit) playRefineSuccessSound();
 
     return result;
   }

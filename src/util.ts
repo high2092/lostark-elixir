@@ -1,7 +1,7 @@
-import { MAX_ACTIVE, OPTION_COUNT, SageTypes } from './constants';
+import { OPTION_COUNT, SageTypes } from './constants';
 import { Sage } from './domain/Sage';
 import { ElixirInstance } from './type/elixir';
-import { SageTypesType, SageTypesTypes } from './type/sage';
+import { SageTypesType } from './type/sage';
 
 type FilterCondition = (elem: Record<string, any>, idx: number) => boolean;
 
@@ -110,24 +110,18 @@ export const convertToSignedString = (n: number) => {
 
 export const getAdviceRerollButtonText = (chance: number) => `다른 조언 보기 (${chance}회 남음)`;
 
-interface ApplyAdviceProps {
-  level?: number;
-  hitRate?: number;
-  bigHitRate?: number;
-  nextHitRate?: number;
-  nextBigHitRate?: number;
-}
-
-export const applyAdvice = (option: ElixirInstance, props: ApplyAdviceProps) => {
-  const { level, hitRate, bigHitRate, nextHitRate, nextBigHitRate } = props;
-  if (option.locked) return;
-  if (level !== undefined) option.level = Math.max(Math.min(level, MAX_ACTIVE), 0);
-  if (hitRate !== undefined) option.hitRate = Math.max(Math.min(hitRate, 100), 0);
-  if (bigHitRate !== undefined) option.bigHitRate = Math.max(Math.min(bigHitRate, 100), 0);
-  if (nextHitRate !== undefined) option.nextHitRate = Math.max(Math.min(nextHitRate, 100), 0);
-  if (nextBigHitRate !== undefined) option.nextBigHitRate = Math.max(Math.min(nextBigHitRate, 100), 0);
-};
-
 export const getLockedCount = (elixirs: ElixirInstance[]) => {
   return elixirs.reduce((acc, { locked }) => acc + Number(locked), 0);
+};
+
+export const checkLevelDiff = (before: ElixirInstance[], after: ElixirInstance[]) => {
+  let upCount = 0;
+  let downCount = 0;
+  let bigHit = false;
+
+  return {
+    upCount,
+    downCount,
+    bigHit,
+  };
 };

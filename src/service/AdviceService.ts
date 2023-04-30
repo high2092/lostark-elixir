@@ -1,98 +1,49 @@
-import { OPTION_COUNT } from '../constants';
 import { ADVICES } from '../database/advice';
-import { AdviceInstance } from '../domain/AdviceInstance';
+import { AdviceInstance, createAdviceInstance } from '../domain/AdviceInstance';
 import { Sage } from '../domain/Sage';
-import { Advice, AdviceEffectResult } from '../type/advice';
+import { Advice } from '../type/advice';
 import { ElixirInstance } from '../type/elixir';
-import { calculateOddsSum, gacha, isFullStack, playRefineFailureSound, playRefineSuccessSound } from '../util';
+import { gacha, isFullStack, playRefineFailureSound, playRefineSuccessSound } from '../util';
 
 class AdviceService {
-  oddsSum = ADVICES.reduce((acc, { odds }) => {
-    return acc + odds;
-  }, 0);
-
-  createAdviceInstance(advice: Advice, beforeElixirs: ElixirInstance[]) {
-    const [idx, subIdx] = gacha(beforeElixirs, { count: 2 });
-    return new AdviceInstance(advice, beforeElixirs, idx, subIdx);
-  }
-
-  private getAdvices(sage: Sage) {
-    if (isFullStack(sage)) {
-      return ADVICES.filter((advice) => advice.special === sage.type && (advice.sage === sage.name || !advice.sage));
-    }
+  private getAdvicePool(sage: Sage) {
+    if (isFullStack(sage)) return ADVICES.filter((advice) => advice.special === sage.type && (advice.sage === sage.name || !advice.sage));
     return ADVICES.filter((advice) => !advice.special);
   }
 
-  drawAdvices(beforeElixirs: ElixirInstance[], sages: Sage[], remainChance: number): Sage[] {
-    const _sages = [...sages];
-
-    for (const sage of _sages) {
-      const advices = this.getAdvices(sage).filter((advice) => (!advice.remainChanceLowerBound || remainChance >= advice.remainChanceLowerBound) && (!advice.remainChanceUpperBound || remainChance <= advice.remainChanceUpperBound));
-      const randomNumber = Math.random() * calculateOddsSum(advices, 'odds');
-      let oddsAcc = 0;
-      for (const advice of advices) {
-        if (randomNumber <= (oddsAcc += advice.odds)) {
-          sage.advice = this.createAdviceInstance(advice, beforeElixirs);
-          break;
-        }
-      }
-    }
-
-    return _sages;
+  private createAdviceInstance(advice: Advice, elixirs: ElixirInstance[]) {
+    const [idx, subIdx] = gacha(elixirs, { count: 2 });
+    return createAdviceInstance(advice, elixirs, idx, subIdx);
   }
 
-  pickAdvice(selectedSageIndex: number, beforeElixirs: ElixirInstance[], sages: Sage[], optionIdx: number): PickAdviceReturnType {
-    try {
-      const { advice } = sages[selectedSageIndex];
-      let before = beforeElixirs.map((elixir) => elixir.level);
-      const adviceEffectResult = advice.execute(beforeElixirs, optionIdx);
-      const { elixirs } = adviceEffectResult;
-
-      let success = false;
-
-      for (let i = 0; i < OPTION_COUNT; i++) {
-        const diff = elixirs[i].level - before[i];
-        if (diff > 0) {
-          elixirs[i].statusText = '연성 단계 상승';
-          success = true;
-        } else if (diff < 0) {
-          elixirs[i].statusText = '연성 단계 하락';
-        } else elixirs[i].statusText = null;
-      }
-
-      if (advice.type === 'util' || success) playRefineSuccessSound();
-      else playRefineFailureSound();
-
-      for (let i = 0; i < sages.length; i++) {
-        if (isFullStack(sages[i])) sages[i].stack = 0;
-        if (selectedSageIndex === i) {
-          if (sages[i].type !== 'order') {
-            sages[i].type = 'order';
-            sages[i].stack = 0;
-          }
-          sages[i].stack++;
-        } else {
-          if (sages[i].type !== 'chaos') {
-            sages[i].type = 'chaos';
-            sages[i].stack = 0;
-          }
-          sages[i].stack++;
-        }
-      }
-
-      return { ok: true, result: adviceEffectResult, sages, statusText: null };
-    } catch (e) {
-      console.error(e);
-      return { ok: false, statusText: '엘릭서를 선택해주세요.' };
-    }
+  private getAdvice(sage: Sage, elixirs: ElixirInstance[], remainChance: number) {
+    const advicePool = this.getAdvicePool(sage);
+    const [adviceIndex] = gacha(advicePool, {
+      oddsKey: 'odds',
+      filterConditions: [(advice: Advice) => (!advice.remainChanceLowerBound || remainChance >= advice.remainChanceLowerBound) && (!advice.remainChanceUpperBound || remainChance <= advice.remainChanceUpperBound)],
+    });
+    return this.createAdviceInstance(advicePool[adviceIndex], elixirs);
   }
-}
 
-interface PickAdviceReturnType {
-  ok: boolean;
-  result?: AdviceEffectResult;
-  sages?: Sage[];
-  statusText: string;
+  getAdvices(sages: Sage[], elixirs: ElixirInstance[], remainChance: number) {
+    return sages.map((sage) => this.getAdvice(sage, elixirs, remainChance));
+  }
+
+  executeAdvice(advice: AdviceInstance, elixirs: ElixirInstance[], selectedOptionIndex: number) {
+    const result = advice.execute(elixirs, selectedOptionIndex);
+
+    result.elixirs.forEach((elixir, i) => {
+      const diff = elixir.level - elixirs[i].level;
+      if (diff > 0) elixir.statusText = '연성 단계 상승';
+      else if (diff < 0) elixir.statusText = '연성 단계 하락';
+    });
+
+    const levelUp = result.elixirs.reduce((acc, cur, i) => acc || cur.level - elixirs[i].level > 0, false);
+    if (advice.type === 'util' || levelUp) playRefineSuccessSound();
+    else playRefineFailureSound();
+
+    return result;
+  }
 }
 
 export const adviceService = new AdviceService();
