@@ -18,7 +18,7 @@ export const uiSlice = createSlice({
       state.selectedAdviceIndex = action.payload;
     },
     setSelectedOptionIndex(state, action: PayloadAction<number>) {
-      state.selectedAdviceIndex = action.payload;
+      state.selectedOptionIndex = action.payload;
     },
   },
 });
