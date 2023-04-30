@@ -108,8 +108,6 @@ export const convertToSignedString = (n: number) => {
   return `${n}`;
 };
 
-export const getAdviceRerollButtonText = (chance: number) => `다른 조언 보기 (${chance}회 남음)`;
-
 export const getLockedCount = (elixirs: ElixirInstance[]) => {
   return elixirs.reduce((acc, { locked }) => acc + Number(locked), 0);
 };
