@@ -1,12 +1,12 @@
 import * as S from './AdviceSection.style';
 import { Placeholders, DIALOGUE_END_INDEX as I, ADVICE_COUNT, STACK_COUNTER_EXPECTED_HEIGHT } from '../constants';
-import { Sage } from '../domain/Sage';
 import { drawAdvices } from '../features/elixirSlice';
 import { setSelectedAdviceIndex } from '../features/uiSlice';
 import { useAppDispatch, useAppSelector } from '../store';
 import { AlchemyStatuses } from '../type/common';
 import { isFullStack, playClickSound } from '../util';
 import { SageTypeStackCounter } from './SageTypeStackCounter';
+import { Sage } from '../type/sage';
 
 interface AdviceDialogueProps {
   sage: Sage;

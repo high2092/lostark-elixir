@@ -40,3 +40,9 @@ export interface AdviceAfterEffect {
   saveChance?: boolean;
   extraChanceConsume?: number;
 }
+
+export interface AdviceInstance {
+  name: string;
+  type: AdviceType;
+  execute: AdviceEffect;
+}

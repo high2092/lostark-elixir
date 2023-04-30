@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { createSage, Sage } from '../domain/Sage';
-import { SageKeys, SageTypesTypes } from '../type/sage';
+import { Sage, SageKeys, SageTypesTypes } from '../type/sage';
 import { SageTemplates } from '../database/sage';
 import { DEFAULT_ADVICE_REROLL_CHANCE, OPTION_COUNT } from '../constants';
 import { ElixirInstance } from '../type/elixir';
@@ -10,7 +9,7 @@ import { alchemyService } from '../service/AlchemyService';
 import { ALCHEMY_CHANCE } from '../constants';
 import { elixirService } from '../service/ElixirService';
 import { AlchemyStatus, AlchemyStatuses } from '../type/common';
-import { isFullStack } from '../util';
+import { createSage, isFullStack } from '../util';
 
 interface ElixirState {
   sages: Sage[];

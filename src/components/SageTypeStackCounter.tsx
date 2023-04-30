@@ -1,12 +1,10 @@
 import * as S from './SageTypeStackCounter.style';
 import { SageTypes } from '../constants';
-import { SageTypesType, SageTypesTypes } from '../type/sage';
-import { getStackForDisplaying } from '../util';
+import { Sage, SageTypesTypes } from '../type/sage';
 import { ActiveChaosStackIcon } from './ActiveChaosStackIcon';
 import { ActiveOrderStackIcon } from './ActiveOrderStackIcon';
 import { InactiveChaosStackIcon } from './InactiveChaosStackIcon';
 import { InactiveOrderStackIcon } from './InactiveOrderStackIcon';
-import { Sage } from '../domain/Sage';
 
 interface SageTypeStackCounterProps {
   sage: Sage;

@@ -1,7 +1,7 @@
-import { OPTION_COUNT, SageTypes } from './constants';
-import { Sage } from './domain/Sage';
+import { OPTION_COUNT, Placeholders, SageTypes } from './constants';
+import { Advice, AdviceInstance } from './type/advice';
 import { ElixirInstance } from './type/elixir';
-import { SageTypesType } from './type/sage';
+import { Sage, SageTemplate, SageTypesType } from './type/sage';
 
 type FilterCondition = (elem: Record<string, any>, idx: number) => boolean;
 
@@ -111,3 +111,23 @@ export const convertToSignedString = (n: number) => {
 export const getLockedCount = (elixirs: ElixirInstance[]) => {
   return elixirs.reduce((acc, { locked }) => acc + Number(locked), 0);
 };
+
+export function createSage(template: SageTemplate): Sage {
+  return {
+    name: template.name,
+    type: null,
+    dialogueEnds: template.dialogueEnds,
+    stack: 0,
+    advice: null,
+    elixir: null,
+    meditation: false,
+  };
+}
+
+export function createAdviceInstance(advice: Advice, elixirs: ElixirInstance[], optionIndex: number, subIndex: number): AdviceInstance {
+  return {
+    name: advice.name.replace(Placeholders.OPTION, elixirs[optionIndex].name).replace(Placeholders.SUB_OPTION, elixirs[subIndex].name),
+    type: advice.type,
+    execute: advice.effect({ optionIndex, subIndex }),
+  };
+}

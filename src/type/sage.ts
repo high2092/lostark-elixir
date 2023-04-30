@@ -1,15 +1,9 @@
-import { AdviceInstance } from '../domain/AdviceInstance';
+import { AdviceInstance } from './advice';
+import { ElixirInstance } from './elixir';
 
 export interface SageTemplate {
   name: string;
   dialogueEnds: { [key: string]: string };
-}
-
-export interface Sage {
-  name: string;
-  dialogueEnds: { [key: string]: string };
-  stack: number;
-  advice: AdviceInstance;
 }
 
 export const SageTypesTypes = {
@@ -26,3 +20,13 @@ export const SageKeys = {
 } as const;
 
 export type SageKey = (typeof SageKeys)[keyof typeof SageKeys];
+
+export interface Sage {
+  name: string;
+  type: SageTypesType;
+  dialogueEnds: { [key: string]: string };
+  stack: number;
+  advice: AdviceInstance;
+  elixir: ElixirInstance;
+  meditation: boolean;
+}

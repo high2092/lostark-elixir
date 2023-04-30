@@ -1,9 +1,8 @@
 import { ADVICES } from '../database/advice';
-import { AdviceInstance, createAdviceInstance } from '../domain/AdviceInstance';
-import { Sage } from '../domain/Sage';
-import { Advice } from '../type/advice';
+import { Advice, AdviceInstance } from '../type/advice';
 import { ElixirInstance } from '../type/elixir';
-import { gacha, isFullStack, playRefineFailureSound, playRefineSuccessSound } from '../util';
+import { Sage } from '../type/sage';
+import { createAdviceInstance, gacha, isFullStack, playRefineFailureSound, playRefineSuccessSound } from '../util';
 
 class AdviceService {
   private getAdvicePool(sage: Sage) {
