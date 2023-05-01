@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import * as S from '../style/index.style';
 import { AUDIO_RESOURCE_URL_LIST, ButtonTexts, CENTERED_FLEX_STYLE, FIRST_VISIT_HELP_TEXT, MAX_ACTIVE, MaterialSectionText, OPTION_COUNT, STACK_COUNTER_EXPECTED_HEIGHT, VISITED_COOKIE_KEY } from '../constants';
 import { Activation } from '../components/Activation';
-import { playClickSound } from '../util';
+import { getOptionName, playClickSound } from '../util';
 import { BGMPlayer } from '../components/BGMPlayer';
 import { Loading } from '../components/Loading';
 import { useCookies } from 'react-cookie';
@@ -143,7 +143,7 @@ const Home = () => {
                 <div css={[CENTERED_FLEX_STYLE, { flex: 2 }]}>{locked ? '봉인' : `${hitRate.toFixed(1)}%`}</div>
                 <div css={{ flex: 7, paddingRight: '1rem', display: 'flex', justifyContent: 'center', flexDirection: 'column' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span>{name}</span>
+                    <span>{getOptionName(elixir)}</span>
                     <span>{`(${part ? `${part} 전용` : '공용'})`}</span>
                   </div>
                   <Activation percentage={level / MAX_ACTIVE} />

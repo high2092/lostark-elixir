@@ -125,9 +125,15 @@ export function createSage(template: SageTemplate): Sage {
 }
 
 export function createAdviceInstance(advice: Advice, elixirs: ElixirInstance[], optionIndex: number, subIndex: number): AdviceInstance {
+  const option = elixirs[optionIndex];
+  const subOption = elixirs[subIndex];
   return {
-    name: advice.name.replace(Placeholders.OPTION, elixirs[optionIndex].name).replace(Placeholders.SUB_OPTION, elixirs[subIndex].name),
+    name: advice.name.replace(Placeholders.OPTION, getOptionName(option)).replace(Placeholders.SUB_OPTION, getOptionName(subOption)),
     type: advice.type,
     execute: advice.effect({ optionIndex, subIndex }),
   };
+}
+
+export function getOptionName(option: ElixirInstance) {
+  return `${option.name}${option.type ? ` (${option.type})` : ''}`;
 }
