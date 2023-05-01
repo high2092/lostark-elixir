@@ -102,7 +102,7 @@ export const ADVICES: Advice[] = [
   lockSelectedOptionAdviceTemplate(INF, { saveChance: true, special: SageTypesTypes.ORDER, remainChanceUpperBound: 3 }),
   lockSelectedOptionAdviceTemplate(INF, { extraTarget: 1, special: SageTypesTypes.ORDER, remainChanceUpperBound: 3 }),
   lockSelectedOptionAdviceTemplate(INF, { extraAlchemy: 1, special: SageTypesTypes.ORDER, remainChanceUpperBound: 3 }),
-  lockSelectedOptionAndRedistributeAdviceTemplate(INF, { special: SageTypesTypes.CHAOS, remainChanceUpperBound: 10 }),
+  lockSelectedOptionAndRedistributeAdviceTemplate(INF, { special: SageTypesTypes.CHAOS, remainChanceUpperBound: 3 }),
   redistributeAdviceTemplate(2, { special: SageTypesTypes.CHAOS }),
   exchangeOddEvenAdviceTemplate(1, { odd: true, n: 1 }),
   exchangeOddEvenAdviceTemplate(1, { odd: false, n: 1 }),
@@ -410,7 +410,7 @@ function lockRandomOptionAdviceTemplate(odds: number, params: AdviceTemplateProp
 function lockOptionAdviceTemplate(odds: number, params: AdviceTemplateProps): Advice {
   const { remainChanceUpperBound, extraChanceConsume } = params;
   return {
-    name: `${Placeholders.OPTION} 효과를 봉인${Placeholders[I.하겠네]}.${extraChanceConsume ? ` 다만, 기회를 ${1 + extraChanceConsume}번 소모${Placeholders[I.할걸세]}.` : ''}`,
+    name: `${Placeholders.OPTION} 효과를 봉인${Placeholders[I.하겠네]}.${extraChanceConsume ? ` 다만, 이번 연성에서 기회를 ${1 + extraChanceConsume}번 소모${Placeholders[I.할걸세]}.` : ''}`,
     type: 'util',
     remainChanceUpperBound,
     effect:

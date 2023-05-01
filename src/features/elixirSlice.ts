@@ -84,7 +84,11 @@ export const elixirSlice = createSlice({
     alchemy(state) {
       const { elixirs, adviceAfterEffect } = state;
       state.elixirs = alchemyService.alchemy(elixirs, adviceAfterEffect);
-      state.alchemyStatus = --state.alchemyChance ? AlchemyStatuses.ADVICE : null;
+
+      const { extraChanceConsume, saveChance } = adviceAfterEffect;
+
+      if (!saveChance) state.alchemyChance -= 1 + (extraChanceConsume ?? 0);
+      state.alchemyStatus = state.alchemyChance ? AlchemyStatuses.ADVICE : null;
     },
 
     clearStatusText(state) {
