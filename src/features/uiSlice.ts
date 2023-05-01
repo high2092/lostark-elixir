@@ -20,7 +20,12 @@ export const uiSlice = createSlice({
     setSelectedOptionIndex(state, action: PayloadAction<number>) {
       state.selectedOptionIndex = action.payload;
     },
+    resetUI(state) {
+      Object.entries(initialState).forEach(([key, value]) => {
+        state[key] = value;
+      });
+    },
   },
 });
 
-export const { setSelectedAdviceIndex, setSelectedOptionIndex } = uiSlice.actions;
+export const { setSelectedAdviceIndex, setSelectedOptionIndex, resetUI } = uiSlice.actions;

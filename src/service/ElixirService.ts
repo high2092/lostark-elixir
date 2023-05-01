@@ -10,6 +10,10 @@ const bigHitRate = DEFAULT_BIG_HIT_RATE_PERCENT;
 class ElixirService {
   elixirs = ELIXIRS.map((elixir, idx) => ({ ...elixir, id: idx, level: 0, locked: false, hitRate, bigHitRate, statusText: null, nextHitRate: hitRate, nextBigHitRate: bigHitRate }));
 
+  reset() {
+    this.elixirs = ELIXIRS.map((elixir, idx) => ({ ...elixir, id: idx, level: 0, locked: false, hitRate, bigHitRate, statusText: null, nextHitRate: hitRate, nextBigHitRate: bigHitRate }));
+  }
+
   drawOptions() {
     const targetIndexList = gacha(this.elixirs, { count: OPTION_COUNT, oddsKey: 'odds' });
     const result = targetIndexList.map((idx) => this.elixirs[idx]);

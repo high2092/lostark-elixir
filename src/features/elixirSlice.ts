@@ -19,6 +19,7 @@ interface ElixirState {
   alchemyChance: number;
   adviceAfterEffect: AdviceAfterEffect;
   alchemyStatus: AlchemyStatus;
+  reset: boolean;
 }
 
 const initialSages: Sage[] = [createSage(SageTemplates[SageKeys.L]), createSage(SageTemplates[SageKeys.B]), createSage(SageTemplates[SageKeys.C])];
@@ -31,20 +32,18 @@ const initialState: ElixirState = {
   alchemyChance: ALCHEMY_CHANCE,
   adviceAfterEffect: {},
   alchemyStatus: AlchemyStatuses.REFINE,
+  reset: true,
 };
 
 export const elixirSlice = createSlice({
   name: 'elixir',
   initialState,
   reducers: {
-    drawOptions(state) {
-      const elixirs = elixirService.drawOptions();
-      state.sages.forEach((sage, i) => (sage.elixir = elixirs[i]));
-    },
-
     pickOption(state, action: PayloadAction<number>) {
       const id = action.payload;
       state.elixirs.push(elixirService.pickOption(id));
+      const elixirs = elixirService.drawOptions();
+      state.sages.forEach((sage, i) => (sage.elixir = elixirs[i]));
       if (--state.pickOptionChance === 0) state.alchemyStatus = AlchemyStatuses.ADVICE;
     },
 
@@ -99,7 +98,22 @@ export const elixirSlice = createSlice({
     clearStatusText(state) {
       state.elixirs.forEach((elixir) => (elixir.statusText = null));
     },
+
+    resetElixir(state) {
+      elixirService.reset();
+      adviceService.reset();
+      Object.entries(initialState).forEach(([key, value]) => {
+        state[key] = value;
+      });
+      state.reset = true;
+    },
+
+    initElixir(state) {
+      const elixirs = elixirService.drawOptions();
+      state.sages.forEach((sage, i) => (sage.elixir = elixirs[i]));
+      state.reset = false;
+    },
   },
 });
 
-export const { drawOptions, pickOption, drawAdvices, pickAdvice, alchemy, clearStatusText } = elixirSlice.actions;
+export const { pickOption, drawAdvices, pickAdvice, alchemy, clearStatusText, resetElixir, initElixir } = elixirSlice.actions;

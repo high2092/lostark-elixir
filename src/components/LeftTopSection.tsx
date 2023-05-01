@@ -1,8 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
-import * as S from './BGMPlayer.style';
+import * as S from './LeftTopSection.style';
 import YouTube, { YouTubePlayer } from 'react-youtube';
 import { PauseIcon } from './PauseIcon';
 import { PlayIcon } from './PlayIcon';
+import { ResetIcon } from './ResetIcon';
+import { useAppDispatch } from '../store';
+import { resetUI } from '../features/uiSlice';
+import { resetElixir } from '../features/elixirSlice';
 
 const DEFAULT_BGM_VOLUME = 5;
 
@@ -10,14 +14,11 @@ interface BGMPlayerProps {
   outline: boolean;
 }
 
-export const BGMPlayer = ({ outline }) => {
+export const LeftTopSection = ({ outline }) => {
   const [playing, setPlaying] = useState(false);
   const youtubePlayerRef = useRef<YouTubePlayer>();
   const [volume, setVolume] = useState(DEFAULT_BGM_VOLUME);
-
-  const handlePlayButtonClick = () => {
-    setPlaying(!playing);
-  };
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     if (!youtubePlayerRef.current) return;
@@ -26,8 +27,20 @@ export const BGMPlayer = ({ outline }) => {
       youtubePlayerRef.current.playVideo();
     } else youtubePlayerRef.current.pauseVideo();
   }, [playing]);
+
+  const handlePlayButtonClick = () => {
+    setPlaying(!playing);
+  };
+
+  const handleResetButtonClick = () => {
+    if (!confirm('현재 연성 상태를 초기화할까요?')) return;
+
+    dispatch(resetUI());
+    dispatch(resetElixir());
+  };
+
   return (
-    <S.BGMPlayer outline={outline} onClick={handlePlayButtonClick}>
+    <>
       <S.YouTube>
         <YouTube
           videoId="Qz99BEtXOtk"
@@ -38,10 +51,16 @@ export const BGMPlayer = ({ outline }) => {
           onEnd={(e) => e.target.playVideo()}
         />
       </S.YouTube>
-      <span>BGM</span>
-      <S.PlayButton>
-        <div>{playing ? <PauseIcon /> : <PlayIcon />}</div>
-      </S.PlayButton>
-    </S.BGMPlayer>
+      <S.LeftTopSection outline={outline}>
+        <S.BGMPlayer onClick={handlePlayButtonClick}>
+          <S.PlayButton>
+            <div>{playing ? <PauseIcon /> : <PlayIcon />}</div>
+          </S.PlayButton>
+        </S.BGMPlayer>
+        <S.ResetButton onClick={handleResetButtonClick}>
+          <ResetIcon />
+        </S.ResetButton>
+      </S.LeftTopSection>
+    </>
   );
 };

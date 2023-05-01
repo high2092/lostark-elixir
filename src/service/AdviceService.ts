@@ -8,6 +8,10 @@ import { gacha, getLockedCount, isFullStack, playRefineFailureSound, playRefineS
 class AdviceService {
   advices: Advice[] = ADVICES.map((advice, idx) => ({ ...advice, id: idx + 1 }));
 
+  reset() {
+    this.advices = ADVICES.map((advice, idx) => ({ ...advice, id: idx + 1 }));
+  }
+
   private getAdvicePool(sage: Sage) {
     if (isFullStack(sage)) return this.advices.filter((advice) => advice.special === sage.type && (advice.sage === sage.name || !advice.sage));
     return this.advices.filter((advice) => !advice.special);

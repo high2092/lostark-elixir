@@ -4,12 +4,12 @@ import * as S from '../style/index.style';
 import { AUDIO_RESOURCE_URL_LIST, ButtonTexts, CENTERED_FLEX_STYLE, FIRST_VISIT_HELP_TEXT, MAX_ACTIVE, MaterialSectionText, OPTION_COUNT, STACK_COUNTER_EXPECTED_HEIGHT, VISITED_COOKIE_KEY } from '../constants';
 import { Activation } from '../components/Activation';
 import { getOptionName, playClickSound } from '../util';
-import { BGMPlayer } from '../components/BGMPlayer';
+import { LeftTopSection } from '../components/LeftTopSection';
 import { Loading } from '../components/Loading';
 import { useCookies } from 'react-cookie';
 import { AlchemyStatuses } from '../type/common';
 import { useAppDispatch, useAppSelector } from '../store';
-import { alchemy, clearStatusText, drawAdvices, drawOptions, pickAdvice, pickOption } from '../features/elixirSlice';
+import { alchemy, clearStatusText, drawAdvices, initElixir, pickAdvice, pickOption } from '../features/elixirSlice';
 import { Gold } from '../components/Gold';
 import { AdviceSection } from '../components/AdviceSection';
 import { setSelectedAdviceIndex, setSelectedOptionIndex } from '../features/uiSlice';
@@ -18,7 +18,7 @@ const Home = () => {
   const [cookies, setCookie] = useCookies();
 
   const dispatch = useAppDispatch();
-  const { sages, adviceRerollChance, alchemyChance, alchemyStatus, elixirs, pickOptionChance } = useAppSelector((state) => state.elixir);
+  const { sages, adviceRerollChance, alchemyChance, alchemyStatus, elixirs, pickOptionChance, reset } = useAppSelector((state) => state.elixir);
   const { selectedAdviceIndex, selectedOptionIndex } = useAppSelector((state) => state.ui);
 
   const [loaded, setLoaded] = useState(false);
@@ -71,8 +71,8 @@ const Home = () => {
   }, [alchemyStatus]);
 
   useEffect(() => {
-    dispatch(drawOptions());
-  }, [pickOptionChance]);
+    if (reset) dispatch(initElixir());
+  }, [reset]);
 
   if (!loaded) return <Loading />;
 
@@ -198,7 +198,7 @@ const Home = () => {
           {ButtonTexts[alchemyStatus]}
         </S.RefineButton>
       </S.DescriptionSection>
-      <BGMPlayer outline={isFirstVisit} />
+      <LeftTopSection outline={isFirstVisit} />
       {isFirstVisit && <S.FirstVisitHelpText>{FIRST_VISIT_HELP_TEXT}</S.FirstVisitHelpText>}
     </S.Home>
   );
