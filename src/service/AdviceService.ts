@@ -13,7 +13,7 @@ class AdviceService {
     return this.advices.filter((advice) => !advice.special);
   }
 
-  private getAdvice(sage: Sage, elixirs: ElixirInstance[], remainChance: number, currentAdvices: Advice[]) {
+  private getAdvice(sage: Sage, elixirs: ElixirInstance[], remainChance: number, currentAdvices: Advice[], someoneMeditation: boolean) {
     const advicePool = this.getAdvicePool(sage);
 
     const filterConditions = [
@@ -25,6 +25,8 @@ class AdviceService {
 
     if (remainChance <= OPTION_COUNT - FINAL_OPTION_COUNT - getLockedCount(elixirs)) filterConditions.push((advice: Advice) => advice.type === 'lock');
     else filterConditions.push((advice: Advice) => advice.type !== 'lock');
+
+    if (someoneMeditation) filterConditions.push((advice: Advice) => !advice.exhaust); // 소진 조언 1회 제한
 
     const [adviceIndex] = gacha(advicePool, {
       oddsKey: 'odds',
@@ -38,9 +40,10 @@ class AdviceService {
   }
 
   getAdvices(sages: Sage[], elixirs: ElixirInstance[], remainChance: number) {
+    const someoneMeditation = sages.reduce((acc, cur) => acc || cur.meditation, false);
     const result = [];
     sages.forEach((sage) => {
-      result.push(this.getAdvice(sage, elixirs, remainChance, result));
+      result.push(this.getAdvice(sage, elixirs, remainChance, result, someoneMeditation));
     });
     return result;
   }

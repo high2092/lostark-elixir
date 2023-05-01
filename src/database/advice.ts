@@ -231,6 +231,7 @@ function potentialChangeLevelSelectedOptionAdviceTemplate(odds: number, props?: 
       return { elixirs: result, enterMeditation };
     },
     odds,
+    exhaust: enterMeditation,
   };
 }
 

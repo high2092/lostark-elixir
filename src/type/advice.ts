@@ -13,6 +13,7 @@ export interface AdviceBody {
   odds: number;
   optionIndex?: number;
   subOptionIndex?: number;
+  exhaust?: boolean;
 }
 
 export interface Advice extends AdviceBody {
