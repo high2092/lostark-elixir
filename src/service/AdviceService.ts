@@ -1,13 +1,15 @@
 import { ADVICES } from '../database/advice';
-import { Advice, AdviceBody, AdviceInstance } from '../type/advice';
+import { Advice, AdviceInstance } from '../type/advice';
 import { ElixirInstance } from '../type/elixir';
 import { Sage } from '../type/sage';
 import { createAdviceInstance, gacha, isFullStack, playRefineFailureSound, playRefineSuccessSound } from '../util';
 
 class AdviceService {
+  advices: Advice[] = ADVICES.map((advice, idx) => ({ ...advice, id: idx + 1 }));
+
   private getAdvicePool(sage: Sage) {
-    if (isFullStack(sage)) return ADVICES.filter((advice) => advice.special === sage.type && (advice.sage === sage.name || !advice.sage));
-    return ADVICES.filter((advice) => !advice.special);
+    if (isFullStack(sage)) return this.advices.filter((advice) => advice.special === sage.type && (advice.sage === sage.name || !advice.sage));
+    return this.advices.filter((advice) => !advice.special);
   }
 
   private createAdviceInstance(advice: Advice, elixirs: ElixirInstance[], currentAdvices: AdviceInstance[]) {
