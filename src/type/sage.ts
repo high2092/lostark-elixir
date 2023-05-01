@@ -26,7 +26,10 @@ export interface Sage {
   type: SageTypesType;
   dialogueEnds: { [key: string]: string };
   stack: number;
-  viewStack: number;
+  viewStack: {
+    type: SageTypesType;
+    stack: number;
+  };
   advice: Advice;
   elixir: ElixirInstance;
   meditation: boolean;
