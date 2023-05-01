@@ -74,18 +74,18 @@ export const ADVICES: Advice[] = [
   changeOptionToFixedLevelAdviceTemplate(1, { n: 1, remainChanceLowerBound: 10 }),
   changeOptionToFixedLevelAdviceTemplate(1, { n: 2, remainChanceUpperBound: 9, remainChanceLowerBound: 6 }),
   changeOptionToFixedLevelAdviceTemplate(1, { n: 3, remainChanceUpperBound: 5, remainChanceLowerBound: 3 }),
-  changeSelectedOptionToFixedLevelAdviceTemplate(1, { n: 1, remainChanceLowerBound: 10 }),
-  changeSelectedOptionToFixedLevelAdviceTemplate(1, { n: 2, remainChanceUpperBound: 9, remainChanceLowerBound: 6 }),
-  changeSelectedOptionToFixedLevelAdviceTemplate(1, { n: 3, remainChanceUpperBound: 5, remainChanceLowerBound: 3 }),
+  changeSelectedOptionToFixedLevelAdviceTemplate(0.5, { n: 1, remainChanceLowerBound: 10 }),
+  changeSelectedOptionToFixedLevelAdviceTemplate(0.5, { n: 2, remainChanceUpperBound: 9, remainChanceLowerBound: 6 }),
+  changeSelectedOptionToFixedLevelAdviceTemplate(0.5, { n: 3, remainChanceUpperBound: 5, remainChanceLowerBound: 3 }),
   amplifyHitRateTemporarilyAdviceTemplate(1, { percentage: 100, name: `이번 연성에서 ${Placeholders.OPTION} 효과를 연성해${Placeholders[I.주겠네]}.` }),
   amplifyHitRateTemporarilyAdviceTemplate(1, { percentage: 70 }),
   amplifyHitRateTemporarilyAdviceTemplate(1, { percentage: 30 }),
   amplifyHitRateTemporarilyAdviceTemplate(1, { percentage: -20 }),
   amplifyHitRateAdviceTemplate(1, { percentage: 5 }),
-  amplifyHitRateAdviceTemplate(1, { percentage: 10 }),
+  amplifyHitRateAdviceTemplate(0.5, { percentage: 10 }),
   amplifyHitRateAdviceTemplate(1, { percentage: -5 }),
   amplifyBigHitRateAdviceTemplate(1, { percentage: 7 }),
-  amplifyBigHitRateAdviceTemplate(1, { percentage: 15 }),
+  amplifyBigHitRateAdviceTemplate(0.5, { percentage: 15 }),
   amplifyBigHitRateTemporarilyAdviceTemplate(1, { percentage: 100 }),
   changeSelectedPotentialLevelAdviceTemplate(3, { maxRisk: 0, maxReturn: 4, special: SageTypesTypes.CHAOS, sage: SageKeys.L, enterMeditation: true }),
   changeSelectedPotentialLevelAdviceTemplate(3, { maxRisk: -2, maxReturn: 3, special: SageTypesTypes.CHAOS, sage: SageKeys.B, enterMeditation: true }),
@@ -98,11 +98,10 @@ export const ADVICES: Advice[] = [
   moveDownLevelAdviceTemplate(2, { special: SageTypesTypes.CHAOS }),
   lockRandomOptionAdviceTemplate(1, { extraChanceConsume: 0, remainChanceLowerBound: 6 }),
   lockOptionAdviceTemplate(INF, { remainChanceUpperBound: 3 }),
-  lockOptionAdviceTemplate(INF, { remainChanceUpperBound: 3, extraChanceConsume: 1 }),
   lockSelectedOptionAdviceTemplate(INF, { saveChance: true, special: SageTypesTypes.ORDER, remainChanceUpperBound: 3 }),
   lockSelectedOptionAdviceTemplate(INF, { extraTarget: 1, special: SageTypesTypes.ORDER, remainChanceUpperBound: 3 }),
   lockSelectedOptionAdviceTemplate(INF, { extraAlchemy: 1, special: SageTypesTypes.ORDER, remainChanceUpperBound: 3 }),
-  lockSelectedOptionAndRedistributeAdviceTemplate(INF, { special: SageTypesTypes.CHAOS, remainChanceUpperBound: 3 }),
+  lockFixedOptionAndRedistributeAdviceTemplate(INF, { special: SageTypesTypes.CHAOS, remainChanceUpperBound: 3 }),
   redistributeAdviceTemplate(2, { special: SageTypesTypes.CHAOS }),
   exchangeOddEvenAdviceTemplate(1, { odd: true, n: 1 }),
   exchangeOddEvenAdviceTemplate(1, { odd: false, n: 1 }),
@@ -123,7 +122,7 @@ function potentialAlchemyAdviceTemplate(odds: number, params: AdviceTemplateProp
         if (Math.random() * 100 <= percentage) applyAdvice(result[optionIndex], { level: result[optionIndex].level + 1 });
         return { elixirs: result };
       },
-    odds,
+    odds: odds * OPTION_COUNT,
   };
 }
 
@@ -155,7 +154,7 @@ function changePotentialLevelAdviceTemplate(odds: number, params: AdviceTemplate
         applyAdvice(result[optionIndex], { level: result[optionIndex].level + diff });
         return { elixirs: result };
       },
-    odds,
+    odds: odds * OPTION_COUNT,
   };
 }
 
@@ -229,7 +228,7 @@ function amplifyHitRateTemporarilyAdviceTemplate(odds: number, params: AdviceTem
         });
         return { elixirs: result };
       },
-    odds,
+    odds: odds * OPTION_COUNT,
   };
 }
 
@@ -253,7 +252,7 @@ function amplifyHitRateAdviceTemplate(odds: number, params: AdviceTemplateProps)
         });
         return { elixirs: result };
       },
-    odds,
+    odds: odds * OPTION_COUNT,
   };
 }
 
@@ -297,7 +296,7 @@ function amplifyBigHitRateAdviceTemplate(odds: number, params: AdviceTemplatePro
         });
         return { elixirs: result };
       },
-    odds,
+    odds: odds * OPTION_COUNT,
   };
 }
 
@@ -318,7 +317,7 @@ function amplifyBigHitRateTemporarilyAdviceTemplate(odds: number, params: Advice
         });
         return { elixirs: result };
       },
-    odds,
+    odds: odds * OPTION_COUNT,
   };
 }
 
@@ -428,7 +427,7 @@ function lockOptionAdviceTemplate(odds: number, params: AdviceTemplateProps): Ad
 
         return { elixirs: result, extraChanceConsume };
       },
-    odds,
+    odds: odds * OPTION_COUNT,
   };
 }
 
@@ -460,7 +459,7 @@ function lockSelectedOptionAdviceTemplate(odds: number, params: AdviceTemplatePr
   };
 }
 
-function lockSelectedOptionAndRedistributeAdviceTemplate(odds: number, params: AdviceTemplateProps): Advice {
+function lockFixedOptionAndRedistributeAdviceTemplate(odds: number, params: AdviceTemplateProps): Advice {
   const { remainChanceUpperBound, special } = params;
   return {
     name: `${Placeholders.OPTION} 효과를 봉인${Placeholders[I.하겠네]}. 그 후 모든 효과의 단계를 재분배${Placeholders[I.하겠네]}`,
@@ -475,7 +474,7 @@ function lockSelectedOptionAndRedistributeAdviceTemplate(odds: number, params: A
         redistribute(result);
         return { elixirs: result };
       },
-    odds,
+    odds: odds * OPTION_COUNT,
   };
 }
 
@@ -528,7 +527,7 @@ function changeOptionToFixedLevelAdviceTemplate(odds: number, params: AdviceTemp
         applyAdvice(result[optionIndex], { level: n + Math.floor(Math.random() * 2) });
         return { elixirs: result };
       },
-    odds,
+    odds: odds * OPTION_COUNT,
   };
 }
 
@@ -582,7 +581,7 @@ function exchangeOneLevelBetweenRandomTwoOptionsAdviceTemplate(odds: number, par
         applyAdvice(result[subIndex], { level: result[subIndex].level - n });
         return { elixirs: result };
       },
-    odds,
+    odds: odds * OPTION_COUNT,
   };
 }
 
