@@ -1,5 +1,5 @@
 import { ADVICES } from '../database/advice';
-import { Advice, AdviceInstance } from '../type/advice';
+import { AdviceBody, AdviceInstance } from '../type/advice';
 import { ElixirInstance } from '../type/elixir';
 import { Sage } from '../type/sage';
 import { createAdviceInstance, gacha, isFullStack, playRefineFailureSound, playRefineSuccessSound } from '../util';
@@ -10,7 +10,7 @@ class AdviceService {
     return ADVICES.filter((advice) => !advice.special);
   }
 
-  private createAdviceInstance(advice: Advice, elixirs: ElixirInstance[]) {
+  private createAdviceInstance(advice: AdviceBody, elixirs: ElixirInstance[]) {
     const [idx, subIdx] = gacha(elixirs, { count: 2 });
     return createAdviceInstance(advice, elixirs, idx, subIdx);
   }
@@ -19,7 +19,7 @@ class AdviceService {
     const advicePool = this.getAdvicePool(sage);
     const [adviceIndex] = gacha(advicePool, {
       oddsKey: 'odds',
-      filterConditions: [(advice: Advice) => (!advice.remainChanceLowerBound || remainChance >= advice.remainChanceLowerBound) && (!advice.remainChanceUpperBound || remainChance <= advice.remainChanceUpperBound)],
+      filterConditions: [(advice: AdviceBody) => (!advice.remainChanceLowerBound || remainChance >= advice.remainChanceLowerBound) && (!advice.remainChanceUpperBound || remainChance <= advice.remainChanceUpperBound)],
     });
     return this.createAdviceInstance(advicePool[adviceIndex], elixirs);
   }

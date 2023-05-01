@@ -1,5 +1,5 @@
 import { DIALOGUE_END_INDEX as I, MAX_ACTIVE, OPTION_COUNT, Placeholders } from '../constants';
-import { Advice } from '../type/advice';
+import { Advice, AdviceBody } from '../type/advice';
 import { ElixirInstance } from '../type/elixir';
 import { SageKey, SageKeys, SageTypesType, SageTypesTypes } from '../type/sage';
 import { convertToSignedString, gacha, getLockedCount, validateOptionIndex } from '../util';
@@ -17,100 +17,61 @@ const getExtraTargetText = (extraTarget: number) => `이번 연성에서 ${extra
 const INF = 2147483647;
 
 export const ADVICES: Advice[] = [
-  potentialAlchemyAdviceTemplate(1, { percentage: 25 }),
-  potentialAlchemyAdviceTemplate(1, { percentage: 50 }),
-  potentialSelectedAlchemyAdviceTemplate(1, { percentage: 25 }),
-  potentialSelectedAlchemyAdviceTemplate(1, { percentage: 50 }),
-  changePotentialLevelAdviceTemplate(1, { maxRisk: 2, maxReturn: 2 }),
-  changePotentialLevelAdviceTemplate(1, { maxRisk: 1, maxReturn: 2 }),
-  changeSelectedPotentialLevelAdviceTemplate(1, { maxRisk: 2, maxReturn: 2 }),
-  changeSelectedPotentialLevelAdviceTemplate(1, { maxRisk: 1, maxReturn: 2 }),
-  {
-    name: `최고 단계 효과를 +1 올려${Placeholders[I.주겠네]}. 대신 다른 효과 1개의 단계는 2 감소${Placeholders[I.할걸세]}.`,
-    type: 'util',
-    effect: () => (elixirs) => {
-      const result = elixirs.map((elixir) => ({ ...elixir }));
-      const maxLevel = result.reduce((acc, cur) => {
-        return Math.max(cur.level, acc);
-      }, result[0].level);
-      const [upTargetIndex] = gacha(result, { filterConditions: [(option) => option.level === maxLevel] });
-      const [downTargetIndex] = gacha(result, { filterConditions: [(option, idx) => idx !== upTargetIndex] });
-      applyAdvice(result[upTargetIndex], { level: result[upTargetIndex].level + 1 });
-      applyAdvice(result[downTargetIndex], { level: result[downTargetIndex].level - 2 });
-      return { elixirs: result };
-    },
-    odds: 1,
-  },
-  {
-    name: `최하 단계 효과를 +1 올려${Placeholders[I.주겠네]}. 대신 최고 단계의 효과가 2 감소${Placeholders[I.할걸세]}.`,
-    type: 'util',
-    effect: () => (elixirs) => {
-      const result = elixirs.map((elixir) => ({ ...elixir }));
-      const [minLevel, maxLevel] = result.reduce((acc, cur) => [Math.min(cur.level, acc[0]), Math.max(cur.level, acc[1])], [result[0].level, result[0].level]);
-      const [upTargetIndex] = gacha(result, { filterConditions: [(option) => option.level === minLevel] });
-      const [downTargetIndex] = gacha(result, { filterConditions: [(option, idx) => idx !== upTargetIndex && option.level === maxLevel] });
-      applyAdvice(result[upTargetIndex], { level: result[upTargetIndex].level + 1 });
-      applyAdvice(result[downTargetIndex], { level: result[downTargetIndex].level - 2 });
-      return { elixirs: result };
-    },
-    odds: 1,
-  },
-  {
-    name: `임의 효과를 +1 올려${Placeholders[I.주겠네]}.`,
-    type: 'util',
-    effect: () => (elixirs) => {
-      const result = elixirs.map((elixir) => ({ ...elixir }));
-      const candidate = result.filter((option) => !option.locked);
-      const targetIndex = Math.floor(Math.random()) * candidate.length;
-      applyAdvice(candidate[targetIndex], { level: candidate[targetIndex].level + 1 });
-      return { elixirs: result };
-    },
-    odds: 1,
-  },
-  raiseAllBelowNAdviceTemplate(1, { n: 0, remainChanceLowerBound: 10 }),
-  raiseAllBelowNAdviceTemplate(1, { n: 2, remainChanceUpperBound: 9, remainChanceLowerBound: 6 }),
-  raiseAllBelowNAdviceTemplate(1, { n: 2, remainChanceUpperBound: 6, remainChanceLowerBound: 3 }),
-  raiseAllBelowNAdviceTemplate(1, { n: 2, remainChanceUpperBound: 2 }),
-  changeOptionToFixedLevelAdviceTemplate(1, { n: 1, remainChanceLowerBound: 10 }),
-  changeOptionToFixedLevelAdviceTemplate(1, { n: 2, remainChanceUpperBound: 9, remainChanceLowerBound: 6 }),
-  changeOptionToFixedLevelAdviceTemplate(1, { n: 3, remainChanceUpperBound: 5, remainChanceLowerBound: 3 }),
-  changeSelectedOptionToFixedLevelAdviceTemplate(0.5, { n: 1, remainChanceLowerBound: 10 }),
-  changeSelectedOptionToFixedLevelAdviceTemplate(0.5, { n: 2, remainChanceUpperBound: 9, remainChanceLowerBound: 6 }),
-  changeSelectedOptionToFixedLevelAdviceTemplate(0.5, { n: 3, remainChanceUpperBound: 5, remainChanceLowerBound: 3 }),
-  amplifyHitRateTemporarilyAdviceTemplate(1, { percentage: 100, name: `이번 연성에서 ${Placeholders.OPTION} 효과를 연성해${Placeholders[I.주겠네]}.` }),
-  amplifyHitRateTemporarilyAdviceTemplate(1, { percentage: 70 }),
-  amplifyHitRateTemporarilyAdviceTemplate(1, { percentage: 30 }),
-  amplifyHitRateTemporarilyAdviceTemplate(1, { percentage: -20 }),
-  amplifyHitRateAdviceTemplate(1, { percentage: 5 }),
-  amplifyHitRateAdviceTemplate(0.5, { percentage: 10 }),
-  amplifyHitRateAdviceTemplate(1, { percentage: -5 }),
-  amplifyBigHitRateAdviceTemplate(1, { percentage: 7 }),
-  amplifyBigHitRateAdviceTemplate(0.5, { percentage: 15 }),
-  amplifyBigHitRateTemporarilyAdviceTemplate(1, { percentage: 100 }),
-  changeSelectedPotentialLevelAdviceTemplate(3, { maxRisk: 0, maxReturn: 4, special: SageTypesTypes.CHAOS, sage: SageKeys.L, enterMeditation: true }),
-  changeSelectedPotentialLevelAdviceTemplate(3, { maxRisk: -2, maxReturn: 3, special: SageTypesTypes.CHAOS, sage: SageKeys.B, enterMeditation: true }),
-  changeSelectedPotentialLevelAdviceTemplate(3, { maxRisk: 4, maxReturn: 5, special: SageTypesTypes.CHAOS, sage: SageKeys.C, enterMeditation: true }),
-  amplifySelectedHitRateAdviceTemplate(1, { percentage: 15, special: SageTypesTypes.ORDER }),
-  extraTargetAdviceTemplate(1, { extraTarget: 1, extraChanceConsume: 1 }),
-  addRerollChanceAdviceTemplate(1, { addRerollChance: 1, special: SageTypesTypes.ORDER }),
-  addRerollChanceAdviceTemplate(1, { addRerollChance: 2, special: SageTypesTypes.ORDER }),
-  moveUpLevelAdviceTemplate(2, { special: SageTypesTypes.CHAOS }),
-  moveDownLevelAdviceTemplate(2, { special: SageTypesTypes.CHAOS }),
-  lockRandomOptionAdviceTemplate(1, { extraChanceConsume: 0, remainChanceLowerBound: 6 }),
-  lockOptionAdviceTemplate(INF, { remainChanceUpperBound: 3 }),
-  lockSelectedOptionAdviceTemplate(INF, { saveChance: true, special: SageTypesTypes.ORDER, remainChanceUpperBound: 3 }),
-  lockSelectedOptionAdviceTemplate(INF, { extraTarget: 1, special: SageTypesTypes.ORDER, remainChanceUpperBound: 3 }),
-  lockSelectedOptionAdviceTemplate(INF, { extraAlchemy: 1, special: SageTypesTypes.ORDER, remainChanceUpperBound: 3 }),
-  lockFixedOptionAndRedistributeAdviceTemplate(INF, { special: SageTypesTypes.CHAOS, remainChanceUpperBound: 3 }),
-  redistributeAdviceTemplate(2, { special: SageTypesTypes.CHAOS }),
-  exchangeOddEvenAdviceTemplate(1, { odd: true, n: 1 }),
-  exchangeOddEvenAdviceTemplate(1, { odd: false, n: 1 }),
-  exchangeOneLevelBetweenRandomTwoOptionsAdviceTemplate(1, { n: 1 }),
-  exchangeOneLevelBetweenRandomTwoOptionsAdviceTemplate(1, { n: 2 }),
-  extraAlchemyAdviceTemplate(1, { extraAlchemy: 2, extraChanceConsume: 1 }),
+  { id: 1, ...potentialAlchemyAdviceTemplate(1, { percentage: 25 }) },
+  { id: 2, ...potentialAlchemyAdviceTemplate(1, { percentage: 50 }) },
+  { id: 3, ...potentialSelectedAlchemyAdviceTemplate(1, { percentage: 25 }) },
+  { id: 4, ...potentialSelectedAlchemyAdviceTemplate(1, { percentage: 50 }) },
+  { id: 5, ...changePotentialLevelAdviceTemplate(1, { maxRisk: 2, maxReturn: 2 }) },
+  { id: 6, ...changePotentialLevelAdviceTemplate(1, { maxRisk: 1, maxReturn: 2 }) },
+  { id: 7, ...changeSelectedPotentialLevelAdviceTemplate(1, { maxRisk: 2, maxReturn: 2 }) },
+  { id: 8, ...changeSelectedPotentialLevelAdviceTemplate(1, { maxRisk: 1, maxReturn: 2 }) },
+  { id: 9, ...levelUpHighestOptionAdviceTemplate(1) },
+  { id: 9, ...levelUpLowestOptionAdviceTemplate(1) },
+  { id: 10, ...levelUpRandomOptionAdviceTemplate(1) },
+  { id: 11, ...raiseAllBelowNAdviceTemplate(1, { n: 0, remainChanceLowerBound: 10 }) },
+  { id: 12, ...raiseAllBelowNAdviceTemplate(1, { n: 2, remainChanceUpperBound: 9, remainChanceLowerBound: 6 }) },
+  { id: 13, ...raiseAllBelowNAdviceTemplate(1, { n: 2, remainChanceUpperBound: 6, remainChanceLowerBound: 3 }) },
+  { id: 14, ...raiseAllBelowNAdviceTemplate(1, { n: 2, remainChanceUpperBound: 2 }) },
+  { id: 15, ...changeOptionToFixedLevelAdviceTemplate(1, { n: 1, remainChanceLowerBound: 10 }) },
+  { id: 16, ...changeOptionToFixedLevelAdviceTemplate(1, { n: 2, remainChanceUpperBound: 9, remainChanceLowerBound: 6 }) },
+  { id: 17, ...changeOptionToFixedLevelAdviceTemplate(1, { n: 3, remainChanceUpperBound: 5, remainChanceLowerBound: 3 }) },
+  { id: 18, ...changeSelectedOptionToFixedLevelAdviceTemplate(0.5, { n: 1, remainChanceLowerBound: 10 }) },
+  { id: 19, ...changeSelectedOptionToFixedLevelAdviceTemplate(0.5, { n: 2, remainChanceUpperBound: 9, remainChanceLowerBound: 6 }) },
+  { id: 20, ...changeSelectedOptionToFixedLevelAdviceTemplate(0.5, { n: 3, remainChanceUpperBound: 5, remainChanceLowerBound: 3 }) },
+  { id: 21, ...amplifyHitRateTemporarilyAdviceTemplate(1, { percentage: 100, name: `이번 연성에서 ${Placeholders.OPTION} 효과를 연성해${Placeholders[I.주겠네]}.` }) },
+  { id: 22, ...amplifyHitRateTemporarilyAdviceTemplate(1, { percentage: 70 }) },
+  { id: 23, ...amplifyHitRateTemporarilyAdviceTemplate(1, { percentage: 30 }) },
+  { id: 24, ...amplifyHitRateTemporarilyAdviceTemplate(1, { percentage: -20 }) },
+  { id: 25, ...amplifyHitRateAdviceTemplate(1, { percentage: 5 }) },
+  { id: 26, ...amplifyHitRateAdviceTemplate(0.5, { percentage: 10 }) },
+  { id: 27, ...amplifyHitRateAdviceTemplate(1, { percentage: -5 }) },
+  { id: 28, ...amplifyBigHitRateAdviceTemplate(1, { percentage: 7 }) },
+  { id: 29, ...amplifyBigHitRateAdviceTemplate(0.5, { percentage: 15 }) },
+  { id: 30, ...amplifyBigHitRateTemporarilyAdviceTemplate(1, { percentage: 100 }) },
+  { id: 31, ...changeSelectedPotentialLevelAdviceTemplate(3, { maxRisk: 0, maxReturn: 4, special: SageTypesTypes.CHAOS, sage: SageKeys.L, enterMeditation: true }) },
+  { id: 32, ...changeSelectedPotentialLevelAdviceTemplate(3, { maxRisk: -2, maxReturn: 3, special: SageTypesTypes.CHAOS, sage: SageKeys.B, enterMeditation: true }) },
+  { id: 33, ...changeSelectedPotentialLevelAdviceTemplate(3, { maxRisk: 4, maxReturn: 5, special: SageTypesTypes.CHAOS, sage: SageKeys.C, enterMeditation: true }) },
+  { id: 34, ...amplifySelectedHitRateAdviceTemplate(1, { percentage: 15, special: SageTypesTypes.ORDER }) },
+  { id: 35, ...extraTargetAdviceTemplate(1, { extraTarget: 1, extraChanceConsume: 1 }) },
+  { id: 36, ...addRerollChanceAdviceTemplate(1, { addRerollChance: 1, special: SageTypesTypes.ORDER }) },
+  { id: 37, ...addRerollChanceAdviceTemplate(1, { addRerollChance: 2, special: SageTypesTypes.ORDER }) },
+  { id: 38, ...moveUpLevelAdviceTemplate(2, { special: SageTypesTypes.CHAOS }) },
+  { id: 39, ...moveDownLevelAdviceTemplate(2, { special: SageTypesTypes.CHAOS }) },
+  { id: 40, ...lockRandomOptionAdviceTemplate(1, { extraChanceConsume: 0, remainChanceLowerBound: 6 }) },
+  { id: 41, ...lockOptionAdviceTemplate(INF, { remainChanceUpperBound: 3 }) },
+  { id: 42, ...lockSelectedOptionAdviceTemplate(INF, { saveChance: true, special: SageTypesTypes.ORDER, remainChanceUpperBound: 3 }) },
+  { id: 43, ...lockSelectedOptionAdviceTemplate(INF, { extraTarget: 1, special: SageTypesTypes.ORDER, remainChanceUpperBound: 3 }) },
+  { id: 44, ...lockSelectedOptionAdviceTemplate(INF, { extraAlchemy: 1, special: SageTypesTypes.ORDER, remainChanceUpperBound: 3 }) },
+  { id: 45, ...lockFixedOptionAndRedistributeAdviceTemplate(INF, { special: SageTypesTypes.CHAOS, remainChanceUpperBound: 3 }) },
+  { id: 46, ...redistributeAdviceTemplate(2, { special: SageTypesTypes.CHAOS }) },
+  { id: 47, ...exchangeOddEvenAdviceTemplate(1, { odd: true, n: 1 }) },
+  { id: 48, ...exchangeOddEvenAdviceTemplate(1, { odd: false, n: 1 }) },
+  { id: 49, ...exchangeOneLevelBetweenRandomTwoOptionsAdviceTemplate(1, { n: 1 }) },
+  { id: 50, ...exchangeOneLevelBetweenRandomTwoOptionsAdviceTemplate(1, { n: 2 }) },
+  { id: 51, ...extraAlchemyAdviceTemplate(1, { extraAlchemy: 2, extraChanceConsume: 1 }) },
 ];
 
-function potentialAlchemyAdviceTemplate(odds: number, params: AdviceTemplateProps): Advice {
+function potentialAlchemyAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
   const { percentage } = params;
   return {
     name: `${Placeholders.OPTION} 효과를 ${percentage}% 확률로 +1 올려${Placeholders[I.주겠네]}.`,
@@ -126,7 +87,7 @@ function potentialAlchemyAdviceTemplate(odds: number, params: AdviceTemplateProp
   };
 }
 
-function potentialSelectedAlchemyAdviceTemplate(odds: number, params: AdviceTemplateProps): Advice {
+function potentialSelectedAlchemyAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
   const { percentage } = params;
   return {
     name: `선택한 효과를 ${percentage}% 확률로 +1 올려${Placeholders[I.주겠네]}.`,
@@ -141,7 +102,7 @@ function potentialSelectedAlchemyAdviceTemplate(odds: number, params: AdviceTemp
   };
 }
 
-function changePotentialLevelAdviceTemplate(odds: number, params: AdviceTemplateProps): Advice {
+function changePotentialLevelAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
   const { maxRisk, maxReturn } = params;
   return {
     name: `${Placeholders.OPTION} 효과를 [${convertToSignedString(-maxRisk)}~${convertToSignedString(maxReturn)}] 중 하나만큼 올려${Placeholders[I.주겠네]}.`,
@@ -158,27 +119,55 @@ function changePotentialLevelAdviceTemplate(odds: number, params: AdviceTemplate
   };
 }
 
-interface AdviceTemplateProps {
-  name?: string;
+function levelUpHighestOptionAdviceTemplate(odds: number): AdviceBody {
+  return {
+    name: `최고 단계 효과를 +1 올려${Placeholders[I.주겠네]}. 대신 다른 효과 1개의 단계는 2 감소${Placeholders[I.할걸세]}.`,
+    type: 'util',
+    effect: () => (elixirs) => {
+      const result = elixirs.map((elixir) => ({ ...elixir }));
+      const maxLevel = result.reduce((acc, cur) => {
+        return Math.max(cur.level, acc);
+      }, result[0].level);
+      const [upTargetIndex] = gacha(result, { filterConditions: [(option) => option.level === maxLevel] });
+      const [downTargetIndex] = gacha(result, { filterConditions: [(option, idx) => idx !== upTargetIndex] });
+      applyAdvice(result[upTargetIndex], { level: result[upTargetIndex].level + 1 });
+      applyAdvice(result[downTargetIndex], { level: result[downTargetIndex].level - 2 });
+      return { elixirs: result };
+    },
+    odds,
+  };
+}
 
-  special?: SageTypesType;
-  sage?: SageKey;
-  remainChanceLowerBound?: number;
-  remainChanceUpperBound?: number;
+function levelUpLowestOptionAdviceTemplate(odds: number): AdviceBody {
+  return {
+    name: `최하 단계 효과를 +1 올려${Placeholders[I.주겠네]}. 대신 최고 단계의 효과가 2 감소${Placeholders[I.할걸세]}.`,
+    type: 'util',
+    effect: () => (elixirs) => {
+      const result = elixirs.map((elixir) => ({ ...elixir }));
+      const [minLevel, maxLevel] = result.reduce((acc, cur) => [Math.min(cur.level, acc[0]), Math.max(cur.level, acc[1])], [result[0].level, result[0].level]);
+      const [upTargetIndex] = gacha(result, { filterConditions: [(option) => option.level === minLevel] });
+      const [downTargetIndex] = gacha(result, { filterConditions: [(option, idx) => idx !== upTargetIndex && option.level === maxLevel] });
+      applyAdvice(result[upTargetIndex], { level: result[upTargetIndex].level + 1 });
+      applyAdvice(result[downTargetIndex], { level: result[downTargetIndex].level - 2 });
+      return { elixirs: result };
+    },
+    odds,
+  };
+}
 
-  percentage?: number;
-  n?: number;
-  addRerollChance?: number;
-  saveChance?: boolean;
-  maxRisk?: number;
-  maxReturn?: number;
-  extraTarget?: number;
-  extraAlchemy?: number;
-  extraChanceConsume?: number;
-
-  enterMeditation?: boolean;
-
-  odd?: boolean; // exchange 1 level between 1, 3, 5 <-> 2, 4
+function levelUpRandomOptionAdviceTemplate(odds: number): AdviceBody {
+  return {
+    name: `임의 효과를 +1 올려${Placeholders[I.주겠네]}.`,
+    type: 'util',
+    effect: () => (elixirs) => {
+      const result = elixirs.map((elixir) => ({ ...elixir }));
+      const candidate = result.filter((option) => !option.locked);
+      const targetIndex = Math.floor(Math.random()) * candidate.length;
+      applyAdvice(candidate[targetIndex], { level: candidate[targetIndex].level + 1 });
+      return { elixirs: result };
+    },
+    odds,
+  };
 }
 
 /**
@@ -189,7 +178,7 @@ interface AdviceTemplateProps {
  * @param props 풀스택 또는 특정 현자인 경우
  * @returns
  */
-function changeSelectedPotentialLevelAdviceTemplate(odds: number, props?: AdviceTemplateProps): Advice {
+function changeSelectedPotentialLevelAdviceTemplate(odds: number, props?: AdviceTemplateProps): AdviceBody {
   props ??= {};
   const { special, sage, maxRisk, maxReturn, enterMeditation } = props;
   return {
@@ -211,7 +200,7 @@ function changeSelectedPotentialLevelAdviceTemplate(odds: number, props?: Advice
   };
 }
 
-function amplifyHitRateTemporarilyAdviceTemplate(odds: number, params: AdviceTemplateProps): Advice {
+function amplifyHitRateTemporarilyAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
   const { percentage, name } = params;
   return {
     name: name ?? `이번 연성에서 ${Placeholders.OPTION} 효과의 연성 확률을 ${Math.abs(percentage)}% ${percentage >= 0 ? '높여' : '낮춰'}${Placeholders[I.주겠네]}.`,
@@ -232,7 +221,7 @@ function amplifyHitRateTemporarilyAdviceTemplate(odds: number, params: AdviceTem
   };
 }
 
-function amplifyHitRateAdviceTemplate(odds: number, params: AdviceTemplateProps): Advice {
+function amplifyHitRateAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
   const { percentage } = params;
   return {
     name: `남은 연성에서 ${Placeholders.OPTION} 효과의 연성 확률을 ${Math.abs(percentage)}% ${percentage >= 0 ? '높여' : '낮춰'}${Placeholders[I.주겠네]}.`,
@@ -256,7 +245,7 @@ function amplifyHitRateAdviceTemplate(odds: number, params: AdviceTemplateProps)
   };
 }
 
-function amplifySelectedHitRateAdviceTemplate(odds: number, props?: AdviceTemplateProps): Advice {
+function amplifySelectedHitRateAdviceTemplate(odds: number, props?: AdviceTemplateProps): AdviceBody {
   props ??= {};
   const { special, sage, percentage } = props;
   return {
@@ -280,7 +269,7 @@ function amplifySelectedHitRateAdviceTemplate(odds: number, props?: AdviceTempla
   };
 }
 
-function amplifyBigHitRateAdviceTemplate(odds: number, params: AdviceTemplateProps): Advice {
+function amplifyBigHitRateAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
   const { percentage } = params;
   return {
     name: `남은 연성에서 ${Placeholders.OPTION} 효과의 대성공 확률을 ${Math.abs(percentage)}% ${percentage >= 0 ? '높여' : '낮춰'}${Placeholders[I.주겠네]}.`,
@@ -300,7 +289,7 @@ function amplifyBigHitRateAdviceTemplate(odds: number, params: AdviceTemplatePro
   };
 }
 
-function amplifyBigHitRateTemporarilyAdviceTemplate(odds: number, params: AdviceTemplateProps): Advice {
+function amplifyBigHitRateTemporarilyAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
   const { percentage } = params;
   return {
     name: `이번 연성에서 ${Placeholders.OPTION} 효과의 대성공 확률을 ${Math.abs(percentage)}% ${percentage >= 0 ? '높여' : '낮춰'}${Placeholders[I.주겠네]}.`,
@@ -321,7 +310,7 @@ function amplifyBigHitRateTemporarilyAdviceTemplate(odds: number, params: Advice
   };
 }
 
-function extraTargetAdviceTemplate(odds: number, params?: AdviceTemplateProps): Advice {
+function extraTargetAdviceTemplate(odds: number, params?: AdviceTemplateProps): AdviceBody {
   params ??= {};
   const { extraTarget, extraChanceConsume } = params;
   return {
@@ -332,7 +321,7 @@ function extraTargetAdviceTemplate(odds: number, params?: AdviceTemplateProps): 
   };
 }
 
-function addRerollChanceAdviceTemplate(odds: number, params: AdviceTemplateProps): Advice {
+function addRerollChanceAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
   const { addRerollChance, special } = params;
   return {
     name: `다른 조언 보기 횟수를 ${addRerollChance}회 늘려${Placeholders[I.주겠네]}.`,
@@ -343,7 +332,7 @@ function addRerollChanceAdviceTemplate(odds: number, params: AdviceTemplateProps
   };
 }
 
-function moveUpLevelAdviceTemplate(odds: number, params: AdviceTemplateProps): Advice {
+function moveUpLevelAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
   const { special } = params;
   return {
     name: `모든 효과의 단계를 위로 1 슬롯 씩 올려${Placeholders[I.주겠네]}.`,
@@ -362,7 +351,7 @@ function moveUpLevelAdviceTemplate(odds: number, params: AdviceTemplateProps): A
   };
 }
 
-function moveDownLevelAdviceTemplate(odds: number, params: AdviceTemplateProps): Advice {
+function moveDownLevelAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
   const { special } = params;
   return {
     name: `모든 효과의 단계를 아래로 1 슬롯 씩 내려${Placeholders[I.주겠네]}.`,
@@ -381,7 +370,7 @@ function moveDownLevelAdviceTemplate(odds: number, params: AdviceTemplateProps):
   };
 }
 
-function lockRandomOptionAdviceTemplate(odds: number, params: AdviceTemplateProps): Advice {
+function lockRandomOptionAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
   const { extraChanceConsume, saveChance, special, remainChanceUpperBound } = params;
   return {
     name: `임의의 효과 하나를 봉인${Placeholders[I.하겠네]}.${extraChanceConsume ? ` 다만, 기회를 ${1 + extraChanceConsume}번 소모${Placeholders[I.할걸세]}.` : ''}${saveChance ? ` 이번 연성은 기회를 소모하지 ${Placeholders[I.않을걸세]}.` : ''}`,
@@ -406,7 +395,7 @@ function lockRandomOptionAdviceTemplate(odds: number, params: AdviceTemplateProp
   };
 }
 
-function lockOptionAdviceTemplate(odds: number, params: AdviceTemplateProps): Advice {
+function lockOptionAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
   const { remainChanceUpperBound, extraChanceConsume } = params;
   return {
     name: `${Placeholders.OPTION} 효과를 봉인${Placeholders[I.하겠네]}.${extraChanceConsume ? ` 다만, 이번 연성에서 기회를 ${1 + extraChanceConsume}번 소모${Placeholders[I.할걸세]}.` : ''}`,
@@ -431,7 +420,7 @@ function lockOptionAdviceTemplate(odds: number, params: AdviceTemplateProps): Ad
   };
 }
 
-function lockSelectedOptionAdviceTemplate(odds: number, params: AdviceTemplateProps): Advice {
+function lockSelectedOptionAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
   const { extraChanceConsume, saveChance, special, remainChanceUpperBound, extraAlchemy, extraTarget } = params;
   return {
     name: `선택한 효과 하나를 봉인${Placeholders[I.하겠네]}.
@@ -459,7 +448,7 @@ function lockSelectedOptionAdviceTemplate(odds: number, params: AdviceTemplatePr
   };
 }
 
-function lockFixedOptionAndRedistributeAdviceTemplate(odds: number, params: AdviceTemplateProps): Advice {
+function lockFixedOptionAndRedistributeAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
   const { remainChanceUpperBound, special } = params;
   return {
     name: `${Placeholders.OPTION} 효과를 봉인${Placeholders[I.하겠네]}. 그 후 모든 효과의 단계를 재분배${Placeholders[I.하겠네]}`,
@@ -478,7 +467,7 @@ function lockFixedOptionAndRedistributeAdviceTemplate(odds: number, params: Advi
   };
 }
 
-function redistributeAdviceTemplate(odds: number, params: AdviceTemplateProps): Advice {
+function redistributeAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
   const { special } = params;
 
   return {
@@ -494,7 +483,7 @@ function redistributeAdviceTemplate(odds: number, params: AdviceTemplateProps): 
   };
 }
 
-function raiseAllBelowNAdviceTemplate(odds: number, params: AdviceTemplateProps): Advice {
+function raiseAllBelowNAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
   const { n, remainChanceUpperBound, remainChanceLowerBound } = params;
   return {
     name: `${n === 0 ? '연성되지 않은' : `${n}단계 이하의`} 모든 효과를 +1 올려${Placeholders[I.주겠네]}.`,
@@ -513,7 +502,7 @@ function raiseAllBelowNAdviceTemplate(odds: number, params: AdviceTemplateProps)
   };
 }
 
-function changeOptionToFixedLevelAdviceTemplate(odds: number, params: AdviceTemplateProps): Advice {
+function changeOptionToFixedLevelAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
   const { n, remainChanceUpperBound, remainChanceLowerBound } = params;
   return {
     name: `${Placeholders.OPTION} 효과의 단계를 [${n}~${n + 1}] 중 하나로 변경해${Placeholders[I.주겠네]}.`,
@@ -531,7 +520,7 @@ function changeOptionToFixedLevelAdviceTemplate(odds: number, params: AdviceTemp
   };
 }
 
-function changeSelectedOptionToFixedLevelAdviceTemplate(odds: number, params: AdviceTemplateProps): Advice {
+function changeSelectedOptionToFixedLevelAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
   const { n, remainChanceUpperBound, remainChanceLowerBound } = params;
   return {
     name: `선택한 효과의 단계를 [${n}~${n + 1}] 중 하나로 변경해${Placeholders[I.주겠네]}.`,
@@ -547,7 +536,7 @@ function changeSelectedOptionToFixedLevelAdviceTemplate(odds: number, params: Ad
   };
 }
 
-function exchangeOddEvenAdviceTemplate(odds: number, params: AdviceTemplateProps): Advice {
+function exchangeOddEvenAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
   const { odd } = params;
   const str = ['2, 4', '1, 3, 5'];
   return {
@@ -568,7 +557,7 @@ function exchangeOddEvenAdviceTemplate(odds: number, params: AdviceTemplateProps
   };
 }
 
-function exchangeOneLevelBetweenRandomTwoOptionsAdviceTemplate(odds: number, params: AdviceTemplateProps): Advice {
+function exchangeOneLevelBetweenRandomTwoOptionsAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
   const { n } = params;
   return {
     name: `${Placeholders.OPTION} 효과의 단계를 +1 올려${Placeholders[I.주겠네]}. 대신 ${Placeholders.SUB_OPTION} 효과의 단계가 ${n} 감소${Placeholders[I.할걸세]}.`,
@@ -585,7 +574,7 @@ function exchangeOneLevelBetweenRandomTwoOptionsAdviceTemplate(odds: number, par
   };
 }
 
-function extraAlchemyAdviceTemplate(odds: number, params: AdviceTemplateProps): Advice {
+function extraAlchemyAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
   const { extraAlchemy, extraChanceConsume } = params;
   return {
     name: `${getExtraAlchemyText(extraAlchemy)}.${extraChanceConsume ? ` 다만, 기회를 ${extraChanceConsume + 1}번 소모${Placeholders[I.할걸세]}.` : ''}`,
@@ -643,4 +632,27 @@ function redistribute(elixirs: ElixirInstance[]) {
     if (option.locked) continue;
     applyAdvice(option, { level: shares[i++] });
   }
+}
+
+interface AdviceTemplateProps {
+  name?: string;
+
+  special?: SageTypesType;
+  sage?: SageKey;
+  remainChanceLowerBound?: number;
+  remainChanceUpperBound?: number;
+
+  percentage?: number;
+  n?: number;
+  addRerollChance?: number;
+  saveChance?: boolean;
+  maxRisk?: number;
+  maxReturn?: number;
+  extraTarget?: number;
+  extraAlchemy?: number;
+  extraChanceConsume?: number;
+
+  enterMeditation?: boolean;
+
+  odd?: boolean; // exchange 1 level between 1, 3, 5 <-> 2, 4
 }

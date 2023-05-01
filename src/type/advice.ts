@@ -1,7 +1,7 @@
 import { ElixirInstance } from './elixir';
 import { SageKey, SageTypesType } from './sage';
 
-export interface Advice {
+export interface AdviceBody {
   type: AdviceType;
   special?: SageTypesType;
   sage?: SageKey;
@@ -11,6 +11,10 @@ export interface Advice {
   name: string;
   effect: (param?: AdviceParam) => AdviceEffect;
   odds: number;
+}
+
+export interface Advice extends AdviceBody {
+  id: number;
 }
 
 export interface AdviceEffectResult {
