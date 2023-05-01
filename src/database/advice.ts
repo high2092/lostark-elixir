@@ -48,6 +48,8 @@ export const ADVICES: Advice[] = [
   { id: 28, ...amplifyBigHitRateAdviceTemplate(1, { percentage: 7 }) },
   { id: 29, ...amplifyBigHitRateAdviceTemplate(0.5, { percentage: 15 }) },
   { id: 30, ...amplifyBigHitRateTemporarilyAdviceTemplate(1, { percentage: 100 }) },
+  { id: 53, ...amplifyBigHitRateAllAdviceTemplate(1, { percentage: 5 }) },
+  { id: 54, ...amplifyBigHitRateAllAdviceTemplate(1, { percentage: 10 }) },
   { id: 31, ...changeSelectedPotentialLevelAdviceTemplate(3, { maxRisk: 0, maxReturn: 4, special: SageTypesTypes.CHAOS, sage: SageKeys.L, enterMeditation: true }) },
   { id: 32, ...changeSelectedPotentialLevelAdviceTemplate(3, { maxRisk: -2, maxReturn: 3, special: SageTypesTypes.CHAOS, sage: SageKeys.B, enterMeditation: true }) },
   { id: 33, ...changeSelectedPotentialLevelAdviceTemplate(3, { maxRisk: 4, maxReturn: 5, special: SageTypesTypes.CHAOS, sage: SageKeys.C, enterMeditation: true }) },
@@ -272,7 +274,7 @@ function amplifySelectedHitRateAdviceTemplate(odds: number, props?: AdviceTempla
 function amplifyBigHitRateAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
   const { percentage } = params;
   return {
-    name: `남은 연성에서 ${Placeholders.OPTION} 효과의 대성공 확률을 ${Math.abs(percentage)}% ${percentage >= 0 ? '높여' : '낮춰'}${Placeholders[I.주겠네]}.`,
+    name: `남은 연성에서 ${Placeholders.OPTION} 효과의 대성공 확률을 ${percentage}% 높여${Placeholders[I.주겠네]}.`,
     type: 'util',
     effect:
       ({ optionIndex }) =>
@@ -289,10 +291,30 @@ function amplifyBigHitRateAdviceTemplate(odds: number, params: AdviceTemplatePro
   };
 }
 
+function amplifyBigHitRateAllAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
+  const { percentage } = params;
+  return {
+    name: `남은 연성에서 모든 효과의 대성공 확률을 ${percentage}% 높여${Placeholders[I.주겠네]}.`,
+    type: 'util',
+    effect:
+      ({ optionIndex }) =>
+      (elixirs) => {
+        const result = elixirs.map((elixir) => ({ ...elixir }));
+        result.forEach((option, idx) => {
+          if (!option.locked) applyAdvice(option, { bigHitRate: option.bigHitRate + percentage });
+
+          option.nextBigHitRate = option.bigHitRate;
+        });
+        return { elixirs: result };
+      },
+    odds: odds * OPTION_COUNT,
+  };
+}
+
 function amplifyBigHitRateTemporarilyAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
   const { percentage } = params;
   return {
-    name: `이번 연성에서 ${Placeholders.OPTION} 효과의 대성공 확률을 ${Math.abs(percentage)}% ${percentage >= 0 ? '높여' : '낮춰'}${Placeholders[I.주겠네]}.`,
+    name: `이번 연성에서 ${Placeholders.OPTION} 효과의 대성공 확률을 ${percentage}% 높여${Placeholders[I.주겠네]}.`,
     type: 'util',
     effect:
       ({ optionIndex }) =>
