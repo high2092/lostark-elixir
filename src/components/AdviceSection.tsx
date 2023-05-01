@@ -64,7 +64,7 @@ const AdviceDialogue = ({ sage }: AdviceDialogueProps) => {
 
   if (advice) {
     const name = Object.values(I).reduce((acc, cur) => {
-      return acc.replace(Placeholders[cur], sage.dialogueEnds[cur]);
+      return acc.replaceAll(Placeholders[cur], sage.dialogueEnds[cur]);
     }, advice.name);
     return <div>{name}</div>;
   } else if (elixir) {
