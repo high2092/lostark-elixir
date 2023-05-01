@@ -1,4 +1,4 @@
-import { AdviceInstance } from './advice';
+import { Advice } from './advice';
 import { ElixirInstance } from './elixir';
 
 export interface SageTemplate {
@@ -27,7 +27,7 @@ export interface Sage {
   dialogueEnds: { [key: string]: string };
   stack: number;
   viewStack: number;
-  advice: AdviceInstance;
+  advice: Advice;
   elixir: ElixirInstance;
   meditation: boolean;
 }

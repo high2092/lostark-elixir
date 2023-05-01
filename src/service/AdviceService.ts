@@ -1,8 +1,8 @@
 import { ADVICES } from '../database/advice';
-import { Advice, AdviceInstance } from '../type/advice';
+import { Advice } from '../type/advice';
 import { ElixirInstance } from '../type/elixir';
 import { Sage } from '../type/sage';
-import { createAdviceInstance, gacha, isFullStack, playRefineFailureSound, playRefineSuccessSound } from '../util';
+import { gacha, isFullStack, playRefineFailureSound, playRefineSuccessSound, replaceOptionPlaceholder } from '../util';
 
 class AdviceService {
   advices: Advice[] = ADVICES.map((advice, idx) => ({ ...advice, id: idx + 1 }));
@@ -12,23 +12,24 @@ class AdviceService {
     return this.advices.filter((advice) => !advice.special);
   }
 
-  private createAdviceInstance(advice: Advice, elixirs: ElixirInstance[], currentAdvices: AdviceInstance[]) {
-    const [idx, subIdx] = gacha(elixirs, { count: 2, filterConditions: [(elixir: ElixirInstance, idx) => currentAdvices.find((currentAdvice) => (currentAdvice.adviceId === advice.id && currentAdvice.optionIndex) === idx) === undefined] });
-    return createAdviceInstance(advice, elixirs, idx, subIdx);
-  }
-
-  private getAdvice(sage: Sage, elixirs: ElixirInstance[], remainChance: number, currentAdvices: AdviceInstance[]) {
+  private getAdvice(sage: Sage, elixirs: ElixirInstance[], remainChance: number, currentAdvices: Advice[]) {
     const advicePool = this.getAdvicePool(sage);
     const filterConditions = [
       (advice: Advice) => (!advice.remainChanceLowerBound || remainChance >= advice.remainChanceLowerBound) && (!advice.remainChanceUpperBound || remainChance <= advice.remainChanceUpperBound),
-      (advice: Advice) => currentAdvices.find((currentAdvice) => currentAdvice.adviceId === advice.id) === undefined,
-      (advice: Advice) => sage.advice?.adviceId !== advice.id,
+      (advice: Advice) => currentAdvices.find((currentAdvice) => currentAdvice.id === advice.id) === undefined, // 다른 현자와 같은 조언 X
+      (advice: Advice) => sage.advice?.id !== advice.id, // 직전 조언과 같은 조언 X
+      (advice: Advice) => !elixirs[advice.optionIndex]?.locked && !elixirs[advice.subOptionIndex]?.locked, // 잠긴 옵션과 관련된 조언 X
     ];
+
     const [adviceIndex] = gacha(advicePool, {
       oddsKey: 'odds',
       filterConditions,
     });
-    return this.createAdviceInstance(advicePool[adviceIndex], elixirs, currentAdvices);
+
+    const result = { ...advicePool[adviceIndex] };
+    replaceOptionPlaceholder(result, elixirs);
+
+    return result;
   }
 
   getAdvices(sages: Sage[], elixirs: ElixirInstance[], remainChance: number) {
@@ -39,8 +40,8 @@ class AdviceService {
     return result;
   }
 
-  executeAdvice(advice: AdviceInstance, elixirs: ElixirInstance[], selectedOptionIndex: number) {
-    const result = advice.execute(elixirs, selectedOptionIndex);
+  executeAdvice(advice: Advice, elixirs: ElixirInstance[], selectedOptionIndex: number) {
+    const result = advice.effect(elixirs, selectedOptionIndex);
 
     result.elixirs.forEach((elixir, i) => {
       const diff = elixir.level - elixirs[i].level;

@@ -1,5 +1,5 @@
 import { OPTION_COUNT, Placeholders, SageTypes } from './constants';
-import { Advice, AdviceBody, AdviceInstance } from './type/advice';
+import { Advice } from './type/advice';
 import { ElixirInstance } from './type/elixir';
 import { Sage, SageTemplate, SageTypesType } from './type/sage';
 
@@ -125,18 +125,13 @@ export function createSage(template: SageTemplate): Sage {
   };
 }
 
-export function createAdviceInstance(advice: Advice, elixirs: ElixirInstance[], optionIndex: number, subIndex: number): AdviceInstance {
-  const option = elixirs[optionIndex];
-  const subOption = elixirs[subIndex];
-  return {
-    adviceId: advice.id,
-    optionIndex,
-    name: advice.name.replace(Placeholders.OPTION, getOptionName(option)).replace(Placeholders.SUB_OPTION, getOptionName(subOption)),
-    type: advice.type,
-    execute: advice.effect({ optionIndex, subIndex }),
-  };
+export function replaceOptionPlaceholder(advice: Advice, elixirs: ElixirInstance[]) {
+  const option = elixirs[advice.optionIndex];
+  const subOption = elixirs[advice.subOptionIndex];
+  advice.name = advice.name.replaceAll(Placeholders.OPTION, getOptionName(option)).replaceAll(Placeholders.SUB_OPTION, getOptionName(subOption));
 }
 
 export function getOptionName(option: ElixirInstance) {
+  if (!option) return 'null';
   return `${option.name}${option.type ? ` (${option.type})` : ''}`;
 }

@@ -9,8 +9,10 @@ export interface AdviceBody {
   remainChanceUpperBound?: number;
   oddsAmplification?: number;
   name: string;
-  effect: (param?: AdviceParam) => AdviceEffect;
+  effect: AdviceEffect;
   odds: number;
+  optionIndex?: number;
+  subOptionIndex?: number;
 }
 
 export interface Advice extends AdviceBody {
@@ -30,11 +32,6 @@ export interface AdviceEffectResult {
 
 export type AdviceEffect = (beforeElixirs: ElixirInstance[], optionIdx?: number) => AdviceEffectResult;
 
-export interface AdviceParam {
-  optionIndex: number;
-  subIndex: number;
-}
-
 export type AdviceType = 'potential' | 'util';
 
 // 연성 추가 효과
@@ -43,12 +40,4 @@ export interface AdviceAfterEffect {
   extraAlchemy?: number;
   saveChance?: boolean;
   extraChanceConsume?: number;
-}
-
-export interface AdviceInstance {
-  adviceId: number;
-  optionIndex?: number;
-  name: string;
-  type: AdviceType;
-  execute: AdviceEffect;
 }
