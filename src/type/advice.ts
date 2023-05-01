@@ -32,7 +32,7 @@ export interface AdviceEffectResult {
 
 export type AdviceEffect = (beforeElixirs: ElixirInstance[], optionIdx?: number) => AdviceEffectResult;
 
-export type AdviceType = 'potential' | 'util';
+export type AdviceType = 'potential' | 'util' | 'lock';
 
 // 연성 추가 효과
 export interface AdviceAfterEffect {

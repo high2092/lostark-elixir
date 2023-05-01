@@ -3,7 +3,9 @@ import { SageTypesTypes } from './type/sage';
 import { AlchemyStatuses } from './type/common';
 
 export const OPTION_COUNT = 5;
+export const FINAL_OPTION_COUNT = 2;
 export const ADVICE_COUNT = 3;
+
 export const ALCHEMY_CHANCE = 15;
 export const MAX_ACTIVE = 10;
 

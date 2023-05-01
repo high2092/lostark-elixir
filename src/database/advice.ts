@@ -88,15 +88,15 @@ export const ADVICES: AdviceBody[] = [
   moveUpLevelAdviceTemplate(2, { special: SageTypesTypes.CHAOS }),
   moveDownLevelAdviceTemplate(2, { special: SageTypesTypes.CHAOS }),
 
-  lockRandomOptionAdviceTemplate(1, { extraChanceConsume: 0, remainChanceLowerBound: 6 }),
+  lockRandomOptionAdviceTemplate(1, { remainChanceLowerBound: 6 }),
 
-  ...createFixedOptionAdvices(1, lockFixedOptionAdviceTemplate, { remainChanceUpperBound: 3 }),
+  ...createFixedOptionAdvices(1, lockFixedOptionAdviceTemplate, {}),
 
-  lockSelectedOptionAdviceTemplate(INF, { saveChance: true, special: SageTypesTypes.ORDER, remainChanceUpperBound: 3 }),
-  lockSelectedOptionAdviceTemplate(INF, { extraTarget: 1, special: SageTypesTypes.ORDER, remainChanceUpperBound: 3 }),
-  lockSelectedOptionAdviceTemplate(INF, { extraAlchemy: 1, special: SageTypesTypes.ORDER, remainChanceUpperBound: 3 }),
+  lockSelectedOptionAdviceTemplate(1, { saveChance: true, special: SageTypesTypes.ORDER }),
+  lockSelectedOptionAdviceTemplate(1, { extraTarget: 1, special: SageTypesTypes.ORDER }),
+  lockSelectedOptionAdviceTemplate(1, { extraAlchemy: 1, special: SageTypesTypes.ORDER }),
 
-  ...createFixedOptionAdvices(1, lockFixedOptionAndRedistributeAdviceTemplate, { special: SageTypesTypes.CHAOS, remainChanceUpperBound: 3 }),
+  ...createFixedOptionAdvices(1, lockFixedOptionAndRedistributeAdviceTemplate, { special: SageTypesTypes.CHAOS }),
 
   redistributeAdviceTemplate(2, { special: SageTypesTypes.CHAOS }),
   exchangeOddEvenAdviceTemplate(1, { odd: true, n: 1 }),
@@ -444,11 +444,10 @@ function lockRandomOptionAdviceTemplate(odds: number, params: AdviceTemplateProp
 }
 
 function lockFixedOptionAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
-  const { remainChanceUpperBound, extraChanceConsume, optionIndex } = params;
+  const { extraChanceConsume, optionIndex } = params;
   return {
     name: `${Placeholders.OPTION} 효과를 봉인${Placeholders[I.하겠네]}.${extraChanceConsume ? ` 다만, 이번 연성에서 기회를 ${1 + extraChanceConsume}번 소모${Placeholders[I.할걸세]}.` : ''}`,
-    type: 'util',
-    remainChanceUpperBound,
+    type: 'lock',
     effect: (elixirs) => {
       const result = elixirs.map((elixir) => ({ ...elixir }));
       result[optionIndex].locked = true;
@@ -462,22 +461,21 @@ function lockFixedOptionAdviceTemplate(odds: number, params: AdviceTemplateProps
 
       return { elixirs: result, extraChanceConsume };
     },
-    odds: odds,
+    odds,
     optionIndex,
   };
 }
 
 function lockSelectedOptionAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
-  const { extraChanceConsume, saveChance, special, remainChanceUpperBound, extraAlchemy, extraTarget } = params;
+  const { extraChanceConsume, saveChance, special, extraAlchemy, extraTarget } = params;
   return {
     name: `선택한 효과 하나를 봉인${Placeholders[I.하겠네]}.
     ${extraChanceConsume ? ` 다만, 기회를 ${1 + extraChanceConsume}번 소모${Placeholders[I.할걸세]}.` : ''}
     ${saveChance ? ` 이번 연성은 기회를 소모하지 ${Placeholders[I.않을걸세]}.` : ''}
     ${extraAlchemy ? ` ${getExtraAlchemyText(extraAlchemy)}` : ''}
     ${extraTarget ? ` ${getExtraTargetText(extraTarget)}` : ''}`,
-    type: 'util',
+    type: 'lock',
     special,
-    remainChanceUpperBound,
     effect: (elixirs, optionIndex) => {
       const result = elixirs.map((elixir) => ({ ...elixir }));
       result[optionIndex].locked = true;
@@ -496,19 +494,18 @@ function lockSelectedOptionAdviceTemplate(odds: number, params: AdviceTemplatePr
 }
 
 function lockFixedOptionAndRedistributeAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
-  const { remainChanceUpperBound, special, optionIndex } = params;
+  const { special, optionIndex } = params;
   return {
     name: `${Placeholders.OPTION} 효과를 봉인${Placeholders[I.하겠네]}. 그 후 모든 효과의 단계를 재분배${Placeholders[I.하겠네]}`,
-    type: 'util',
+    type: 'lock',
     special,
-    remainChanceUpperBound,
     effect: (elixirs) => {
       const result = elixirs.map((elixir) => ({ ...elixir }));
       lockOption(result, optionIndex);
       redistribute(result);
       return { elixirs: result };
     },
-    odds: odds,
+    odds,
     optionIndex,
   };
 }
@@ -613,7 +610,7 @@ function exchangeLevelBetweenFixedOptionsAdviceTemplate(odds: number, params: Ad
       applyAdvice(result[subOptionIndex], { level: result[subOptionIndex].level - n });
       return { elixirs: result };
     },
-    odds: odds,
+    odds,
     optionIndex,
     subOptionIndex,
   };

@@ -31,7 +31,7 @@ export const gacha = (arr: Record<string, any>[], props?: GachaProps) => {
   const result: number[] = [];
   // Q: 가능성은 0에 가깝겠지만, 4개 봉인된 상태에서 2개 뽑아야 하는 상황이 생긴다면 어떻게 할 것인가
 
-  if (count > _arr.length - 1) throw new Error('gacha: Given count is greater than arr length.');
+  if (count > _arr.length) throw new Error('gacha: Given count is greater than arr length.');
   for (let i = 0; i < count; i++) {
     const idx = gachaInternal(_arr);
     result.push(idx);
@@ -47,6 +47,7 @@ const gachaInternal = (arr: Record<string, any>[]) => {
   }, 0);
 
   if (oddsSum === 0) throw new Error('gacha: 뽑을 수 있는 아이템이 없습니다.');
+
   const randomNumber = Math.random() * oddsSum;
 
   let oddsCur = 0;
