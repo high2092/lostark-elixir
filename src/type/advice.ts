@@ -46,6 +46,8 @@ export interface AdviceAfterEffect {
 }
 
 export interface AdviceInstance {
+  adviceId: number;
+  optionIndex?: number;
   name: string;
   type: AdviceType;
   execute: AdviceEffect;

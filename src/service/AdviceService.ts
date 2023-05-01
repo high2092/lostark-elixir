@@ -1,5 +1,5 @@
 import { ADVICES } from '../database/advice';
-import { AdviceBody, AdviceInstance } from '../type/advice';
+import { Advice, AdviceBody, AdviceInstance } from '../type/advice';
 import { ElixirInstance } from '../type/elixir';
 import { Sage } from '../type/sage';
 import { createAdviceInstance, gacha, isFullStack, playRefineFailureSound, playRefineSuccessSound } from '../util';
@@ -10,22 +10,30 @@ class AdviceService {
     return ADVICES.filter((advice) => !advice.special);
   }
 
-  private createAdviceInstance(advice: AdviceBody, elixirs: ElixirInstance[]) {
-    const [idx, subIdx] = gacha(elixirs, { count: 2 });
+  private createAdviceInstance(advice: Advice, elixirs: ElixirInstance[], currentAdvices: AdviceInstance[]) {
+    const [idx, subIdx] = gacha(elixirs, { count: 2, filterConditions: [(elixir: ElixirInstance, idx) => currentAdvices.find((currentAdvice) => (currentAdvice.adviceId === advice.id && currentAdvice.optionIndex) === idx) === undefined] });
     return createAdviceInstance(advice, elixirs, idx, subIdx);
   }
 
-  private getAdvice(sage: Sage, elixirs: ElixirInstance[], remainChance: number) {
+  private getAdvice(sage: Sage, elixirs: ElixirInstance[], remainChance: number, currentAdvices: AdviceInstance[]) {
     const advicePool = this.getAdvicePool(sage);
+    const filterConditions = [
+      (advice: Advice) => (!advice.remainChanceLowerBound || remainChance >= advice.remainChanceLowerBound) && (!advice.remainChanceUpperBound || remainChance <= advice.remainChanceUpperBound),
+      (advice: Advice) => currentAdvices.find((currentAdvice) => currentAdvice.adviceId === advice.id) === undefined,
+    ];
     const [adviceIndex] = gacha(advicePool, {
       oddsKey: 'odds',
-      filterConditions: [(advice: AdviceBody) => (!advice.remainChanceLowerBound || remainChance >= advice.remainChanceLowerBound) && (!advice.remainChanceUpperBound || remainChance <= advice.remainChanceUpperBound)],
+      filterConditions,
     });
-    return this.createAdviceInstance(advicePool[adviceIndex], elixirs);
+    return this.createAdviceInstance(advicePool[adviceIndex], elixirs, currentAdvices);
   }
 
   getAdvices(sages: Sage[], elixirs: ElixirInstance[], remainChance: number) {
-    return sages.map((sage) => this.getAdvice(sage, elixirs, remainChance));
+    const result = [];
+    sages.forEach((sage) => {
+      result.push(this.getAdvice(sage, elixirs, remainChance, result));
+    });
+    return result;
   }
 
   executeAdvice(advice: AdviceInstance, elixirs: ElixirInstance[], selectedOptionIndex: number) {
