@@ -45,11 +45,17 @@ class AdviceService {
 
   getAdvices(sages: Sage[], elixirs: ElixirInstance[], remainChance: number) {
     const someoneMeditation = sages.reduce((acc, cur) => acc || cur.meditation, false);
-    const result = [];
-    sages.forEach((sage) => {
-      result.push(this.getAdvice(sage, elixirs, remainChance, result, someoneMeditation));
-    });
-    return result;
+
+    const TRY = remainChance <= OPTION_COUNT - FINAL_OPTION_COUNT ? 1000 : 1; // 봉인 턴이면 시행 횟수 늘리기
+    for (let i = 0; i < TRY; i++) {
+      try {
+        const result = [];
+        sages.forEach((sage) => {
+          result.push(this.getAdvice(sage, elixirs, remainChance, result, someoneMeditation));
+        });
+        return result;
+      } catch {}
+    }
   }
 
   executeAdvice(advice: Advice, elixirs: ElixirInstance[], selectedOptionIndex: number) {
