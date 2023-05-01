@@ -26,7 +26,7 @@ export const ADVICES: Advice[] = [
   { id: 7, ...changeSelectedPotentialLevelAdviceTemplate(1, { maxRisk: 2, maxReturn: 2 }) },
   { id: 8, ...changeSelectedPotentialLevelAdviceTemplate(1, { maxRisk: 1, maxReturn: 2 }) },
   { id: 9, ...levelUpHighestOptionAdviceTemplate(1) },
-  { id: 9, ...levelUpLowestOptionAdviceTemplate(1) },
+  { id: 52, ...levelUpLowestOptionAdviceTemplate(1) },
   { id: 10, ...levelUpRandomOptionAdviceTemplate(1) },
   { id: 11, ...raiseAllBelowNAdviceTemplate(1, { n: 0, remainChanceLowerBound: 10 }) },
   { id: 12, ...raiseAllBelowNAdviceTemplate(1, { n: 2, remainChanceUpperBound: 9, remainChanceLowerBound: 6 }) },

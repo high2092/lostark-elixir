@@ -20,6 +20,7 @@ class AdviceService {
     const filterConditions = [
       (advice: Advice) => (!advice.remainChanceLowerBound || remainChance >= advice.remainChanceLowerBound) && (!advice.remainChanceUpperBound || remainChance <= advice.remainChanceUpperBound),
       (advice: Advice) => currentAdvices.find((currentAdvice) => currentAdvice.adviceId === advice.id) === undefined,
+      (advice: Advice) => sage.advice?.adviceId !== advice.id,
     ];
     const [adviceIndex] = gacha(advicePool, {
       oddsKey: 'odds',
