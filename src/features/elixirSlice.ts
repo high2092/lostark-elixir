@@ -85,6 +85,10 @@ export const elixirSlice = createSlice({
       const { elixirs, adviceAfterEffect } = state;
       state.elixirs = alchemyService.alchemy(elixirs, adviceAfterEffect);
 
+      for (const sage of state.sages) {
+        sage.viewStack = sage.stack;
+      }
+
       const { extraChanceConsume, saveChance } = adviceAfterEffect;
 
       if (!saveChance) state.alchemyChance -= 1 + (extraChanceConsume ?? 0);

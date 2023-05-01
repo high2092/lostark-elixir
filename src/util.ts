@@ -118,6 +118,7 @@ export function createSage(template: SageTemplate): Sage {
     type: null,
     dialogueEnds: template.dialogueEnds,
     stack: 0,
+    viewStack: null,
     advice: null,
     elixir: null,
     meditation: false,
