@@ -18,14 +18,14 @@ const INF = 2147483647;
 
 type AdviceTemplate = (odds: number, params: AdviceTemplateProps) => AdviceBody;
 
-const createFixedOptionAdvices = (odds: number, template: AdviceTemplate, params: AdviceTemplateProps) => Array.from({ length: OPTION_COUNT }).map((_, idx) => template(odds, { ...params, optionIndex: idx }));
+const createFixedOptionAdvices = (odds: number, template: AdviceTemplate, params: AdviceTemplateProps) => Array.from({ length: OPTION_COUNT }).map((_, idx) => template(odds / OPTION_COUNT, { ...params, optionIndex: idx }));
 
 const createFixedSubOptionAdvices = (odds: number, template: AdviceTemplate, params: AdviceTemplateProps) => {
   const result = [];
   for (let i = 0; i < OPTION_COUNT; i++) {
     for (let j = 0; j < OPTION_COUNT; j++) {
       if (i === j) continue;
-      result.push(template(odds, { ...params, optionIndex: i, subOptionIndex: j }));
+      result.push(template(odds / (OPTION_COUNT * OPTION_COUNT - 1), { ...params, optionIndex: i, subOptionIndex: j }));
     }
   }
   return result;
