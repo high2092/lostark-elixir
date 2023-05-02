@@ -1,5 +1,5 @@
-import { DEFAULT_BIG_HIT_RATE_PERCENT, MAX_ACTIVE, OPTION_COUNT, Placeholders, SageTypes } from './constants';
-import { Advice } from './type/advice';
+import { DEFAULT_BIG_HIT_RATE_PERCENT, FINAL_OPTION_COUNT, MAX_ACTIVE, OPTION_COUNT, Placeholders, SageTypes } from './constants';
+import { Advice, AdviceType } from './type/advice';
 import { OddsKey } from './type/common';
 import { Elixir, ElixirInstance, ElixirInstanceBody } from './type/elixir';
 import { Sage, SageTemplate, SageTypesType } from './type/sage';
@@ -10,16 +10,16 @@ interface GachaProps {
   oddsKey?: OddsKey;
   count?: number;
   filterConditions?: FilterCondition[];
-  requireLock?: boolean;
+  locked?: boolean;
 }
 
 export const gacha = (arr: Record<string, any>[], props?: GachaProps) => {
   props ??= {};
-  let { oddsKey, count, filterConditions, requireLock } = props;
+  let { oddsKey, count, filterConditions, locked } = props;
   count ??= 1;
   filterConditions ??= [];
 
-  filterConditions.push((elem) => !elem.locked === !requireLock);
+  filterConditions.push((elem) => !elem.locked === !locked);
 
   const _arr = arr.map((elem, idx) => {
     const copy = { ...elem };
@@ -261,4 +261,16 @@ export function recalculateHitRate(elixirs: ElixirInstance[]) {
     option.hitRate /= hitRateSum;
     if (tempHitRateSum) option.tempHitRate /= tempHitRateSum;
   });
+}
+
+interface RequireLockParameter {
+  remainChance: number;
+  lockedCount: number;
+  extraChanceConsume?: number;
+  adviceType: AdviceType;
+}
+
+export function requireLock({ remainChance, lockedCount, extraChanceConsume, adviceType }: RequireLockParameter) {
+  extraChanceConsume ??= 0;
+  return remainChance - extraChanceConsume <= OPTION_COUNT - FINAL_OPTION_COUNT - lockedCount - Number(adviceType === 'utillock');
 }

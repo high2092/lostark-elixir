@@ -376,6 +376,7 @@ function addExtraTargetAdviceTemplate(odds: number, params?: AdviceTemplateProps
     type: 'util',
     effect: (elixirs) => ({ elixirs, extraTarget, extraChanceConsume }),
     odds,
+    extraChanceConsume,
   };
 }
 
@@ -446,6 +447,7 @@ function lockRandomOptionAdviceTemplate(odds: number, params: AdviceTemplateProp
       return { elixirs: result, saveChance, extraChanceConsume };
     },
     odds,
+    extraChanceConsume,
   };
 }
 
@@ -463,6 +465,7 @@ function lockFixedOptionAdviceTemplate(odds: number, params: AdviceTemplateProps
     },
     odds,
     optionIndex,
+    extraChanceConsume,
   };
 }
 
@@ -484,6 +487,7 @@ function lockSelectedOptionAdviceTemplate(odds: number, params: AdviceTemplatePr
       return { elixirs: result, saveChance, extraChanceConsume, extraAlchemy, extraTarget };
     },
     odds,
+    extraChanceConsume,
   };
 }
 
@@ -511,7 +515,7 @@ function unlockRandomOptionAndLockOtherOptionAdviceTemplate(odds: number): Advic
     special: SageTypesTypes.CHAOS,
     effect: (elixirs) => {
       const result = elixirs.map((elixir) => ({ ...elixir }));
-      const [unlockTargetIndex] = gacha(result, { requireLock: true });
+      const [unlockTargetIndex] = gacha(result, { locked: true });
       const [lockTargetIndex] = gacha(result);
 
       unlockOption(result, unlockTargetIndex);
@@ -657,6 +661,7 @@ function addExtraAlchemyChanceAdviceTemplate(odds: number, params: AdviceTemplat
     special,
     effect: (elixirs) => ({ elixirs, extraAlchemy, extraChanceConsume }),
     odds,
+    extraChanceConsume,
   };
 }
 

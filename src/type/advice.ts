@@ -14,6 +14,7 @@ export interface AdviceBody {
   optionIndex?: number;
   subOptionIndex?: number;
   exhaust?: boolean;
+  extraChanceConsume?: number;
 }
 
 export interface Advice extends AdviceBody {

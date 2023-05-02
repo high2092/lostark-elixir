@@ -3,7 +3,7 @@ import { ADVICES } from '../database/advice';
 import { Advice } from '../type/advice';
 import { ElixirInstance } from '../type/elixir';
 import { Sage } from '../type/sage';
-import { checkMaxLevel, gacha, getLockedCount, isFullStack, playRefineFailureSound, playRefineSuccessSound, recalculateHitRate, replaceOptionPlaceholder } from '../util';
+import { checkMaxLevel, gacha, getLockedCount, isFullStack, playRefineFailureSound, playRefineSuccessSound, recalculateHitRate, replaceOptionPlaceholder, requireLock } from '../util';
 
 class AdviceService {
   advices: Advice[] = ADVICES.map((advice, idx) => ({ ...advice, id: idx + 1 }));
@@ -19,24 +19,24 @@ class AdviceService {
 
   private getAdvice(sage: Sage, elixirs: ElixirInstance[], remainChance: number, currentAdvices: Advice[], someoneMeditation: boolean) {
     const advicePool = this.getAdvicePool(sage);
+    const lockedCount = getLockedCount(elixirs);
 
     const filterConditions = [
       (advice: Advice) => (!advice.remainChanceLowerBound || remainChance >= advice.remainChanceLowerBound) && (!advice.remainChanceUpperBound || remainChance <= advice.remainChanceUpperBound),
       (advice: Advice) => currentAdvices.find((currentAdvice) => currentAdvice.id === advice.id) === undefined, // 다른 현자와 같은 조언 X
       (advice: Advice) => sage.advice?.id !== advice.id, // 직전 조언과 같은 조언 X
       (advice: Advice) => !elixirs[advice.optionIndex]?.locked && !elixirs[advice.subOptionIndex]?.locked, // 잠긴 옵션과 관련된 조언 X
+      ({ extraChanceConsume, type }: Advice) => {
+        if (requireLock({ remainChance, lockedCount, extraChanceConsume, adviceType: type })) return type === 'lock';
+        else return type !== 'lock';
+      },
     ];
-
-    const lockedCount = getLockedCount(elixirs);
 
     if (lockedCount === 0) filterConditions.push((advice: Advice) => advice.type !== 'unlock'); // 봉인된 옵션 없는 경우 봉인 해제 조언 등장 X
 
-    if (remainChance <= OPTION_COUNT - FINAL_OPTION_COUNT - lockedCount) filterConditions.push((advice: Advice) => advice.type === 'lock');
-    else filterConditions.push((advice: Advice) => advice.type !== 'lock');
-
     if (someoneMeditation) filterConditions.push((advice: Advice) => !advice.exhaust); // 소진 조언 1회 제한
 
-    if (OPTION_COUNT - lockedCount === FINAL_OPTION_COUNT) filterConditions.push((advice) => advice.type !== 'utillock');
+    if (OPTION_COUNT - lockedCount === FINAL_OPTION_COUNT) filterConditions.push((advice) => advice.type !== 'utillock'); // 이미 최종 옵션을 제외하고 모두 봉인된 경우 유틸 봉인 조언 등장 X
 
     const [adviceIndex] = gacha(advicePool, {
       oddsKey: 'odds',
