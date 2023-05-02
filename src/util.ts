@@ -212,7 +212,6 @@ export function applySafeResult(option: ElixirInstance, props: ApplyAdviceProps)
 
   const result = getSafeResult(props);
   const { level, hitRate, bigHitRate, tempHitRate, tempBigHitRate } = result;
-  console.log(result);
 
   if (level !== undefined) option.level = level;
   if (hitRate !== undefined) option.hitRate = hitRate;
