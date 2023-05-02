@@ -63,7 +63,7 @@ const gachaInternal = (arr: Record<string, any>[]) => {
   throw new Error('gacha: [bug] result was not returned');
 };
 
-export const calculateOddsSum = <T>(arr: T[], oddsKey: 'odds' | 'hitRate') => {
+export const calculateOddsSum = <T>(arr: T[], oddsKey: OddsKey) => {
   return arr.reduce((acc, cur) => {
     const odds = cur[oddsKey];
     return acc + odds;
@@ -249,5 +249,16 @@ export function checkMaxLevel(elixirs: ElixirInstance[]) {
       handleDemotedFromMaxLevel(idx, elixirs);
       option.isMaxLevel = false;
     }
+  });
+}
+
+export function recalculateHitRate(elixirs: ElixirInstance[]) {
+  const unlocked = elixirs.filter((elixir) => !elixir.locked);
+  const hitRateSum = calculateOddsSum(unlocked, 'hitRate') / 100;
+  const tempHitRateSum = calculateOddsSum(unlocked, 'tempHitRate') / 100;
+
+  elixirs.forEach((option) => {
+    option.hitRate /= hitRateSum;
+    if (tempHitRateSum) option.tempHitRate /= tempHitRateSum;
   });
 }
