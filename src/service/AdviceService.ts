@@ -27,10 +27,13 @@ class AdviceService {
       (advice: Advice) => !elixirs[advice.optionIndex]?.locked && !elixirs[advice.subOptionIndex]?.locked, // 잠긴 옵션과 관련된 조언 X
     ];
 
-    if (remainChance <= OPTION_COUNT - FINAL_OPTION_COUNT - getLockedCount(elixirs)) filterConditions.push((advice: Advice) => advice.type === 'lock');
+    const lockedCount = getLockedCount(elixirs);
+    if (remainChance <= OPTION_COUNT - FINAL_OPTION_COUNT - lockedCount) filterConditions.push((advice: Advice) => advice.type === 'lock');
     else filterConditions.push((advice: Advice) => advice.type !== 'lock');
 
     if (someoneMeditation) filterConditions.push((advice: Advice) => !advice.exhaust); // 소진 조언 1회 제한
+
+    if (OPTION_COUNT - lockedCount === FINAL_OPTION_COUNT) filterConditions.push((advice) => advice.type !== 'utillock');
 
     const [adviceIndex] = gacha(advicePool, {
       oddsKey: 'odds',

@@ -1,5 +1,5 @@
 import { DIALOGUE_END_INDEX as I, MAX_ACTIVE, OPTION_COUNT, Placeholders } from '../constants';
-import { Advice, AdviceBody } from '../type/advice';
+import { Advice, AdviceBody, AdviceType } from '../type/advice';
 import { ElixirInstance } from '../type/elixir';
 import { SageKey, SageKeys, SageTypesType, SageTypesTypes } from '../type/sage';
 import { convertToSignedString, gacha, getLockedCount, validateOptionIndex } from '../util';
@@ -88,14 +88,13 @@ export const ADVICES: AdviceBody[] = [
   moveUpLevelAdviceTemplate(2, { special: SageTypesTypes.CHAOS }),
   moveDownLevelAdviceTemplate(2, { special: SageTypesTypes.CHAOS }),
 
-  lockRandomOptionAdviceTemplate(1, { remainChanceLowerBound: 6 }),
+  lockRandomOptionAdviceTemplate(1, { remainChanceLowerBound: 8, extraChanceConsume: 1 }),
+  ...createFixedOptionAdvices(1, lockFixedOptionAdviceTemplate, { type: 'utillock', remainChanceLowerBound: 8, extraChanceConsume: 1 }),
 
   ...createFixedOptionAdvices(1, lockFixedOptionAdviceTemplate, {}),
-
   lockSelectedOptionAdviceTemplate(1, { saveChance: true, special: SageTypesTypes.ORDER }),
   lockSelectedOptionAdviceTemplate(1, { extraTarget: 1, special: SageTypesTypes.ORDER }),
   lockSelectedOptionAdviceTemplate(1, { extraAlchemy: 1, special: SageTypesTypes.ORDER }),
-
   ...createFixedOptionAdvices(1, lockFixedOptionAndRedistributeAdviceTemplate, { special: SageTypesTypes.CHAOS }),
 
   redistributeAdviceTemplate(2, { special: SageTypesTypes.CHAOS }),
@@ -423,7 +422,7 @@ function lockRandomOptionAdviceTemplate(odds: number, params: AdviceTemplateProp
   const { extraChanceConsume, saveChance, special, remainChanceUpperBound } = params;
   return {
     name: `임의의 효과 하나를 봉인${Placeholders[I.하겠네]}.${extraChanceConsume ? ` 다만, 기회를 ${1 + extraChanceConsume}번 소모${Placeholders[I.할걸세]}.` : ''}${saveChance ? ` 이번 연성은 기회를 소모하지 ${Placeholders[I.않을걸세]}.` : ''}`,
-    type: 'util',
+    type: 'utillock',
     special,
     remainChanceUpperBound,
     effect: (elixirs) => {
@@ -445,10 +444,10 @@ function lockRandomOptionAdviceTemplate(odds: number, params: AdviceTemplateProp
 }
 
 function lockFixedOptionAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
-  const { extraChanceConsume, optionIndex } = params;
+  const { extraChanceConsume, optionIndex, type } = params;
   return {
     name: `${Placeholders.OPTION} 효과를 봉인${Placeholders[I.하겠네]}.${extraChanceConsume ? ` 다만, 이번 연성에서 기회를 ${1 + extraChanceConsume}번 소모${Placeholders[I.할걸세]}.` : ''}`,
-    type: 'lock',
+    type: type ?? 'lock',
     effect: (elixirs) => {
       const result = elixirs.map((elixir) => ({ ...elixir }));
       result[optionIndex].locked = true;
@@ -701,4 +700,6 @@ interface AdviceTemplateProps {
 
   optionIndex?: number;
   subOptionIndex?: number;
+
+  type?: AdviceType;
 }
