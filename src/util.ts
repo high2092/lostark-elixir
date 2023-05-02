@@ -1,7 +1,7 @@
-import { OPTION_COUNT, Placeholders, SageTypes } from './constants';
+import { DEFAULT_BIG_HIT_RATE_PERCENT, OPTION_COUNT, Placeholders, SageTypes } from './constants';
 import { Advice } from './type/advice';
 import { OddsKey } from './type/common';
-import { ElixirInstance } from './type/elixir';
+import { Elixir, ElixirInstance, ElixirInstanceBody } from './type/elixir';
 import { Sage, SageTemplate, SageTypesType } from './type/sage';
 
 type FilterCondition = (elem: Record<string, any>, idx: number) => boolean;
@@ -169,4 +169,18 @@ export function getHitRate(option: ElixirInstance) {
 export function getBigHitRate(option: ElixirInstance) {
   if (option.tempBigHitRate !== null) return option.tempBigHitRate;
   return option.bigHitRate;
+}
+
+export function createElixirInstanceBody(elixir: Elixir): ElixirInstanceBody {
+  return {
+    ...elixir,
+    level: 0,
+    locked: false,
+    hitRate: 100 / OPTION_COUNT,
+    bigHitRate: DEFAULT_BIG_HIT_RATE_PERCENT,
+    tempHitRate: null,
+    tempBigHitRate: null,
+    statusText: null,
+    backUpHitRate: null,
+  };
 }

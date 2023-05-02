@@ -79,3 +79,5 @@ export const ButtonTexts = {
 export const MaterialSectionText = {
   SELECT_OPTION: '엘릭서에 정제할 효과를 위 항목에서 선택하세요.',
 };
+
+export const DEFAULT_BIG_HIT_RATE_PERCENT = 10;

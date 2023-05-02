@@ -7,8 +7,7 @@ export interface Elixir {
 
 type AlchemyStatusText = '연성 대성공' | '연성 성공' | '연성 단계 상승' | '연성 단계 하락';
 
-export interface ElixirInstance extends Elixir {
-  id: number;
+export interface ElixirInstanceBody extends Elixir {
   level: number;
   locked: boolean;
   hitRate: number;
@@ -17,4 +16,10 @@ export interface ElixirInstance extends Elixir {
 
   tempHitRate: number;
   tempBigHitRate: number;
+
+  backUpHitRate: number;
+}
+
+export interface ElixirInstance extends ElixirInstanceBody {
+  id: number;
 }
