@@ -46,17 +46,17 @@ export const ADVICES: AdviceBody[] = [
   levelUpLowestOptionAdviceTemplate(1),
   levelUpRandomOptionAdviceTemplate(1),
 
-  raiseAllBelowNAdviceTemplate(1, { n: 0, remainChanceLowerBound: 10 }),
-  raiseAllBelowNAdviceTemplate(1, { n: 2, remainChanceUpperBound: 9, remainChanceLowerBound: 6 }),
-  raiseAllBelowNAdviceTemplate(1, { n: 2, remainChanceUpperBound: 6, remainChanceLowerBound: 3 }),
-  raiseAllBelowNAdviceTemplate(1, { n: 2, remainChanceUpperBound: 2 }),
+  raiseAllBelowNAdviceTemplate(1, { n: 0, remainChanceUpperBound: 13, remainChanceLowerBound: 10 }),
+  raiseAllBelowNAdviceTemplate(1, { n: 2, remainChanceUpperBound: 10, remainChanceLowerBound: 7 }),
+  raiseAllBelowNAdviceTemplate(1, { n: 4, remainChanceUpperBound: 7, remainChanceLowerBound: 4 }),
+  raiseAllBelowNAdviceTemplate(1, { n: 6, remainChanceUpperBound: 4 }),
 
   ...createFixedOptionAdvices(1, changeFixedOptionToFixedLevelAdviceTemplate, { n: 1, remainChanceLowerBound: 10 }),
   ...createFixedOptionAdvices(1, changeFixedOptionToFixedLevelAdviceTemplate, { n: 2, remainChanceUpperBound: 9, remainChanceLowerBound: 6 }),
   ...createFixedOptionAdvices(1, changeFixedOptionToFixedLevelAdviceTemplate, { n: 3, remainChanceUpperBound: 5, remainChanceLowerBound: 3 }),
-  changeSelectedOptionToFixedLevelAdviceTemplate(0.5, { n: 1, remainChanceLowerBound: 10 }),
-  changeSelectedOptionToFixedLevelAdviceTemplate(0.5, { n: 2, remainChanceUpperBound: 9, remainChanceLowerBound: 6 }),
-  changeSelectedOptionToFixedLevelAdviceTemplate(0.5, { n: 3, remainChanceUpperBound: 5, remainChanceLowerBound: 3 }),
+  changeSelectedOptionToFixedLevelAdviceTemplate(0.5, { n: 1, remainChanceUpperBound: 13, remainChanceLowerBound: 10 }),
+  changeSelectedOptionToFixedLevelAdviceTemplate(0.5, { n: 2, remainChanceUpperBound: 10, remainChanceLowerBound: 7 }),
+  changeSelectedOptionToFixedLevelAdviceTemplate(0.5, { n: 3, remainChanceUpperBound: 7, remainChanceLowerBound: 4 }),
 
   ...createFixedOptionAdvices(1, amplifyFixedOptionHitRateTemporarilyAdviceTemplate, { percentage: 100, name: `이번 연성에서 ${Placeholders.OPTION} 효과를 연성해${Placeholders[I.주겠네]}.` }),
   ...createFixedOptionAdvices(1, amplifyFixedOptionHitRateTemporarilyAdviceTemplate, { percentage: 70 }),
@@ -73,12 +73,17 @@ export const ADVICES: AdviceBody[] = [
 
   amplifyAllBigHitRateAdviceTemplate(1, { percentage: 5 }),
   amplifyAllBigHitRateAdviceTemplate(1, { percentage: 10 }),
+  amplifyAllBigHitRateAdviceTemplate(1, { percentage: 15, special: SageTypesTypes.ORDER }),
+  amplifyOddOrEvenBigHitRateAdviceTemplate(1, { odd: true, percentage: 15, special: SageTypesTypes.ORDER }),
+  amplifyOddOrEvenBigHitRateAdviceTemplate(1, { odd: false, percentage: 15, special: SageTypesTypes.ORDER }),
+  amplifySelectedOptionBigHitRateAdviceTemplate(1, { percentage: 25, special: SageTypesTypes.ORDER }),
 
   potentialChangeLevelSelectedOptionAdviceTemplate(3, { maxRisk: 0, maxReturn: 4, special: SageTypesTypes.CHAOS, sage: SageKeys.L, enterMeditation: true }),
   potentialChangeLevelSelectedOptionAdviceTemplate(3, { maxRisk: -2, maxReturn: 3, special: SageTypesTypes.CHAOS, sage: SageKeys.B, enterMeditation: true }),
   potentialChangeLevelSelectedOptionAdviceTemplate(3, { maxRisk: 4, maxReturn: 5, special: SageTypesTypes.CHAOS, sage: SageKeys.C, enterMeditation: true }),
 
   amplifySelectedHitRateAdviceTemplate(1, { percentage: 15, special: SageTypesTypes.ORDER }),
+  amplifySelectedHitRateAdviceTemplate(1, { percentage: 20, special: SageTypesTypes.ORDER }),
 
   addExtraTargetAdviceTemplate(1, { extraTarget: 1, extraChanceConsume: 1 }),
 
@@ -88,8 +93,8 @@ export const ADVICES: AdviceBody[] = [
   moveUpLevelAdviceTemplate(2, { special: SageTypesTypes.CHAOS }),
   moveDownLevelAdviceTemplate(2, { special: SageTypesTypes.CHAOS }),
 
-  lockRandomOptionAdviceTemplate(1, { remainChanceLowerBound: 8, extraChanceConsume: 1 }),
-  ...createFixedOptionAdvices(1, lockFixedOptionAdviceTemplate, { type: 'utillock', remainChanceLowerBound: 8, extraChanceConsume: 1 }),
+  lockRandomOptionAdviceTemplate(0.5, { remainChanceLowerBound: 8, extraChanceConsume: 1 }),
+  ...createFixedOptionAdvices(0.5, lockFixedOptionAdviceTemplate, { type: 'utillock', remainChanceLowerBound: 8, extraChanceConsume: 1 }),
 
   ...createFixedOptionAdvices(1, lockFixedOptionAdviceTemplate, {}),
   lockSelectedOptionAdviceTemplate(1, { saveChance: true, special: SageTypesTypes.ORDER }),
@@ -104,6 +109,9 @@ export const ADVICES: AdviceBody[] = [
   ...createFixedSubOptionAdvices(1, exchangeLevelBetweenFixedOptionsAdviceTemplate, { n: 2 }),
 
   addExtraAlchemyChanceAdviceTemplate(1, { extraAlchemy: 2, extraChanceConsume: 1 }),
+  addExtraAlchemyChanceAdviceTemplate(1, { extraAlchemy: 2, special: SageTypesTypes.ORDER }),
+
+  saveChanceAdviceTemplate(1),
 ];
 
 function potentialLevelUpFixedOptionAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
@@ -320,16 +328,35 @@ function amplifyFixedOptionBigHitRateAdviceTemplate(odds: number, params: Advice
   };
 }
 
+function amplifySelectedOptionBigHitRateAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
+  const { percentage, special } = params;
+  return {
+    name: `남은 연성에서 선택한 효과의 대성공 확률을 ${percentage}% 높여${Placeholders[I.주겠네]}.`,
+    type: 'util',
+    special,
+    effect: (elixirs, optionIndex) => {
+      const result = elixirs.map((elixir) => ({ ...elixir }));
+      const option = elixirs[optionIndex];
+
+      applyAdvice(option, { bigHitRate: option.bigHitRate + percentage });
+      option.nextBigHitRate = option.bigHitRate;
+
+      return { elixirs: result };
+    },
+    odds,
+  };
+}
+
 function amplifyAllBigHitRateAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
-  const { percentage } = params;
+  const { percentage, special } = params;
   return {
     name: `남은 연성에서 모든 효과의 대성공 확률을 ${percentage}% 높여${Placeholders[I.주겠네]}.`,
     type: 'util',
+    special,
     effect: (elixirs) => {
       const result = elixirs.map((elixir) => ({ ...elixir }));
-      result.forEach((option, idx) => {
+      result.forEach((option) => {
         if (!option.locked) applyAdvice(option, { bigHitRate: option.bigHitRate + percentage });
-
         option.nextBigHitRate = option.bigHitRate;
       });
       return { elixirs: result };
@@ -601,6 +628,29 @@ function exchangeOddEvenAdviceTemplate(odds: number, params: AdviceTemplateProps
   };
 }
 
+function amplifyOddOrEvenBigHitRateAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
+  const { odd, percentage, special } = params;
+  const str = ['2, 4', '1, 3, 5'];
+  return {
+    name: `남은 연성에서 ${str[Number(odd)]} 슬롯의 효과의 대성공 확률을 ${percentage}% 올려${Placeholders[I.주겠네]}.`,
+    type: 'util',
+    special,
+    effect: (elixirs) => {
+      const result = elixirs.map((elixir) => ({ ...elixir }));
+
+      for (let i = 0; i < result.length; i++) {
+        const option = result[i];
+        if ((i % 2 === 0) === odd) applyAdvice(option, { bigHitRate: option.bigHitRate + percentage });
+
+        option.nextBigHitRate = option.bigHitRate;
+      }
+
+      return { elixirs: result };
+    },
+    odds,
+  };
+}
+
 function exchangeLevelBetweenFixedOptionsAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
   const { n, optionIndex, subOptionIndex } = params;
   return {
@@ -619,11 +669,22 @@ function exchangeLevelBetweenFixedOptionsAdviceTemplate(odds: number, params: Ad
 }
 
 function addExtraAlchemyChanceAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
-  const { extraAlchemy, extraChanceConsume } = params;
+  const { extraAlchemy, extraChanceConsume, special } = params;
   return {
-    name: `${getExtraAlchemyText(extraAlchemy)}.${extraChanceConsume ? ` 다만, 기회를 ${extraChanceConsume + 1}번 소모${Placeholders[I.할걸세]}.` : ''}`,
+    name: `${getExtraAlchemyText(extraAlchemy)}${extraChanceConsume ? ` 다만, 기회를 ${extraChanceConsume + 1}번 소모${Placeholders[I.할걸세]}.` : ''}`,
     type: 'util',
+    special,
     effect: (elixirs) => ({ elixirs, extraAlchemy, extraChanceConsume }),
+    odds,
+  };
+}
+
+function saveChanceAdviceTemplate(odds: number): AdviceBody {
+  return {
+    name: `이번 연성은 기회를 소모하지 ${Placeholders[I.않을걸세]}`,
+    type: 'util',
+    special: SageTypesTypes.ORDER,
+    effect: (elixirs) => ({ elixirs, saveChance: true }),
     odds,
   };
 }
