@@ -273,3 +273,10 @@ export function requireLock({ remainChance, lockedCount, extraChanceConsume, adv
   extraChanceConsume ??= 0;
   return remainChance - extraChanceConsume <= OPTION_COUNT - FINAL_OPTION_COUNT - lockedCount - Number(adviceType === 'utillock');
 }
+
+export function getMinLevel(elixirs: ElixirInstance[]) {
+  return elixirs.reduce((acc, cur) => {
+    if (!cur.locked) Math.min(acc, cur.level);
+    return acc;
+  }, MAX_ACTIVE);
+}

@@ -2,7 +2,7 @@ import { DIALOGUE_END_INDEX as I, MAX_ACTIVE, OPTION_COUNT, Placeholders } from 
 import { Advice, AdviceBody, AdviceType } from '../type/advice';
 import { ElixirInstance } from '../type/elixir';
 import { SageKey, SageKeys, SageTypesType, SageTypesTypes } from '../type/sage';
-import { applySafeResult, convertToSignedString, gacha, generateRandomInt, generateRandomNumber, getLockedCount, validateOptionIndex } from '../util';
+import { applySafeResult, convertToSignedString, gacha, generateRandomInt, generateRandomNumber, getLockedCount, getMinLevel, validateOptionIndex } from '../util';
 
 const NO_OPTION_SELECTED_ERROR_MESSAGE = '옵션을 선택해주세요.';
 const getExtraAlchemyText = (extraAlchemy: number) => `이번에 연성되는 효과는 ${1 + extraAlchemy}단계 연성해${Placeholders[I.주겠네]}.`;
@@ -106,6 +106,8 @@ export const ADVICES: AdviceBody[] = [
   lockSelectedOptionAdviceTemplate(1, { extraTarget: 1, special: SageTypesTypes.ORDER }),
   lockSelectedOptionAdviceTemplate(1, { extraAlchemy: 1, special: SageTypesTypes.ORDER }),
   lockSelectedOptionAndRedistributeAdviceTemplate(1, { special: SageTypesTypes.CHAOS }),
+  lockSelectedOptionAndLevelUpRandomOptionAdviceTemplate(1, { special: SageTypesTypes.CHAOS }),
+  lockSelectedOptionAndLevelUpLowestOptionAdviceTemplate(1, { special: SageTypesTypes.CHAOS }),
 
   redistributeAdviceTemplate(2, { special: SageTypesTypes.CHAOS }),
   exchangeOddEvenAdviceTemplate(1, { odd: true, n: 1 }),
@@ -501,6 +503,46 @@ function lockSelectedOptionAndRedistributeAdviceTemplate(odds: number, params: A
       const result = elixirs.map((elixir) => ({ ...elixir }));
       lockOption(result, optionIndex);
       redistribute(result);
+      return { elixirs: result };
+    },
+    odds,
+  };
+}
+
+function lockSelectedOptionAndLevelUpRandomOptionAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
+  const { special } = params;
+  return {
+    name: `선택한 효과를 봉인${Placeholders[I.하겠네]}. 그 후 임의의 효과의 단계를 +1 올려${Placeholders[I.주겠네]}.`,
+    type: 'lock',
+    special,
+    effect: (elixirs, optionIndex) => {
+      const result = elixirs.map((elixir) => ({ ...elixir }));
+      lockOption(result, optionIndex);
+
+      const [lockTargetIndex] = gacha(result);
+      applySafeResult(result[lockTargetIndex], { level: result[lockTargetIndex].level + 1 });
+
+      return { elixirs: result };
+    },
+    odds,
+  };
+}
+
+function lockSelectedOptionAndLevelUpLowestOptionAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
+  const { special } = params;
+  return {
+    name: `선택한 효과를 봉인${Placeholders[I.하겠네]}. 그 후 최하 단계 효과의 단계를 +1 올려${Placeholders[I.주겠네]}.`,
+    type: 'lock',
+    special,
+    effect: (elixirs, optionIndex) => {
+      const result = elixirs.map((elixir) => ({ ...elixir }));
+      lockOption(result, optionIndex);
+
+      const minLevel = getMinLevel(result);
+      const candidate = result.filter((option) => option.level === minLevel);
+      const [lockTargetIndex] = gacha(candidate);
+      applySafeResult(candidate[lockTargetIndex], { level: candidate[lockTargetIndex].level + 1 });
+
       return { elixirs: result };
     },
     odds,
