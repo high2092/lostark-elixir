@@ -28,6 +28,9 @@ class AdviceService {
     ];
 
     const lockedCount = getLockedCount(elixirs);
+
+    if (lockedCount === 0) filterConditions.push((advice: Advice) => advice.type !== 'unlock'); // 봉인된 옵션 없는 경우 봉인 해제 조언 등장 X
+
     if (remainChance <= OPTION_COUNT - FINAL_OPTION_COUNT - lockedCount) filterConditions.push((advice: Advice) => advice.type === 'lock');
     else filterConditions.push((advice: Advice) => advice.type !== 'lock');
 

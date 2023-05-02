@@ -9,15 +9,16 @@ interface GachaProps {
   oddsKey?: 'odds' | 'hitRate';
   count?: number;
   filterConditions?: FilterCondition[];
+  requireLock?: boolean;
 }
 
 export const gacha = (arr: Record<string, any>[], props?: GachaProps) => {
   props ??= {};
-  let { oddsKey, count, filterConditions } = props;
+  let { oddsKey, count, filterConditions, requireLock } = props;
   count ??= 1;
   filterConditions ??= [];
 
-  filterConditions.push((elem) => !elem.locked);
+  filterConditions.push((elem) => !elem.locked === !requireLock);
 
   const _arr = arr.map((elem, idx) => {
     const copy = { ...elem };

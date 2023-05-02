@@ -96,6 +96,8 @@ export const ADVICES: AdviceBody[] = [
   lockRandomOptionAdviceTemplate(0.5, { remainChanceLowerBound: 8, extraChanceConsume: 1 }),
   ...createFixedOptionAdvices(0.5, lockFixedOptionAdviceTemplate, { type: 'utillock', remainChanceLowerBound: 8, extraChanceConsume: 1 }),
 
+  unlockRandomOptionAndLockOtherOptionAdviceTemplate(2),
+
   ...createFixedOptionAdvices(1, lockFixedOptionAdviceTemplate, {}),
   lockSelectedOptionAdviceTemplate(1, { saveChance: true, special: SageTypesTypes.ORDER }),
   lockSelectedOptionAdviceTemplate(1, { extraTarget: 1, special: SageTypesTypes.ORDER }),
@@ -538,6 +540,25 @@ function lockFixedOptionAndRedistributeAdviceTemplate(odds: number, params: Advi
   };
 }
 
+function unlockRandomOptionAndLockOtherOptionAdviceTemplate(odds: number): AdviceBody {
+  return {
+    name: `임의의 효과 1개의 봉인을 해제하고 다른 효과 1개를 봉인해${Placeholders[I.주겠네]}.`,
+    type: 'unlock',
+    special: SageTypesTypes.CHAOS,
+    effect: (elixirs) => {
+      const result = elixirs.map((elixir) => ({ ...elixir }));
+      const [unlockTargetIndex] = gacha(result, { requireLock: true });
+      const [lockTargetIndex] = gacha(result);
+
+      unlockOption(result, unlockTargetIndex);
+      lockOption(result, lockTargetIndex);
+
+      return { elixirs: result };
+    },
+    odds,
+  };
+}
+
 function redistributeAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
   const { special } = params;
 
@@ -708,13 +729,24 @@ function applyAdvice(option: ElixirInstance, props: ApplyAdviceProps) {
 
 function lockOption(elixirs: ElixirInstance[], idx: number) {
   elixirs[idx].locked = true;
-  const lockedCount = elixirs.reduce((acc, cur) => acc + Number(cur.locked), 0);
+  const unlockedCount = OPTION_COUNT - getLockedCount(elixirs);
   for (let i = 0; i < OPTION_COUNT; i++) {
     if (!elixirs[i].locked) {
-      applyAdvice(elixirs[i], { hitRate: elixirs[i].hitRate + elixirs[idx].hitRate / (OPTION_COUNT - lockedCount) });
+      applyAdvice(elixirs[i], { hitRate: elixirs[i].hitRate + elixirs[idx].hitRate / unlockedCount });
       elixirs[i].nextHitRate = elixirs[i].hitRate;
     }
   }
+}
+
+function unlockOption(elixirs: ElixirInstance[], idx: number) {
+  const unlockedCount = OPTION_COUNT - getLockedCount(elixirs);
+  for (let i = 0; i < OPTION_COUNT; i++) {
+    if (!elixirs[i].locked) {
+      applyAdvice(elixirs[i], { hitRate: elixirs[i].hitRate - elixirs[idx].hitRate / unlockedCount });
+      elixirs[i].nextHitRate = elixirs[i].hitRate;
+    }
+  }
+  elixirs[idx].locked = false;
 }
 
 function redistribute(elixirs: ElixirInstance[]) {
