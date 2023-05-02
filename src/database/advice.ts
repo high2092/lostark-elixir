@@ -105,7 +105,7 @@ export const ADVICES: AdviceBody[] = [
   lockSelectedOptionAdviceTemplate(1, { saveChance: true, special: SageTypesTypes.ORDER }),
   lockSelectedOptionAdviceTemplate(1, { extraTarget: 1, special: SageTypesTypes.ORDER }),
   lockSelectedOptionAdviceTemplate(1, { extraAlchemy: 1, special: SageTypesTypes.ORDER }),
-  ...createFixedOptionAdvices(1, lockFixedOptionAndRedistributeAdviceTemplate, { special: SageTypesTypes.CHAOS }),
+  lockSelectedOptionAndRedistributeAdviceTemplate(1, { special: SageTypesTypes.CHAOS }),
 
   redistributeAdviceTemplate(2, { special: SageTypesTypes.CHAOS }),
   exchangeOddEvenAdviceTemplate(1, { odd: true, n: 1 }),
@@ -491,20 +491,19 @@ function lockSelectedOptionAdviceTemplate(odds: number, params: AdviceTemplatePr
   };
 }
 
-function lockFixedOptionAndRedistributeAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
-  const { special, optionIndex } = params;
+function lockSelectedOptionAndRedistributeAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
+  const { special } = params;
   return {
-    name: `${Placeholders.OPTION} 효과를 봉인${Placeholders[I.하겠네]}. 그 후 모든 효과의 단계를 재분배${Placeholders[I.하겠네]}`,
+    name: `선택한 효과를 봉인${Placeholders[I.하겠네]}. 그 후 모든 효과의 단계를 재분배${Placeholders[I.하겠네]}`,
     type: 'lock',
     special,
-    effect: (elixirs) => {
+    effect: (elixirs, optionIndex) => {
       const result = elixirs.map((elixir) => ({ ...elixir }));
       lockOption(result, optionIndex);
       redistribute(result);
       return { elixirs: result };
     },
     odds,
-    optionIndex,
   };
 }
 
