@@ -2,7 +2,7 @@ import { DIALOGUE_END_INDEX as I, MAX_ACTIVE, OPTION_COUNT, Placeholders } from 
 import { Advice, AdviceBody, AdviceType } from '../type/advice';
 import { ElixirInstance } from '../type/elixir';
 import { SageKey, SageKeys, SageTypesType, SageTypesTypes } from '../type/sage';
-import { convertToSignedString, gacha, generateRandomInt, generateRandomNumber, getLockedCount, validateOptionIndex } from '../util';
+import { applySafeResult, convertToSignedString, gacha, generateRandomInt, generateRandomNumber, getLockedCount, validateOptionIndex } from '../util';
 
 const NO_OPTION_SELECTED_ERROR_MESSAGE = '옵션을 선택해주세요.';
 const getExtraAlchemyText = (extraAlchemy: number) => `이번에 연성되는 효과는 ${1 + extraAlchemy}단계 연성해${Placeholders[I.주겠네]}.`;
@@ -668,42 +668,6 @@ function saveChanceAdviceTemplate(odds: number): AdviceBody {
     effect: (elixirs) => ({ elixirs, saveChance: true }),
     odds,
   };
-}
-
-interface ApplyAdviceProps {
-  level?: number;
-  hitRate?: number;
-  bigHitRate?: number;
-  tempHitRate?: number;
-  tempBigHitRate?: number;
-}
-
-function getSafeResult(props: ApplyAdviceProps) {
-  const { level, hitRate, bigHitRate, tempHitRate, tempBigHitRate } = props;
-
-  const result: ApplyAdviceProps = {};
-
-  if (level !== undefined) result.level = Math.max(Math.min(level, MAX_ACTIVE), 0);
-  if (hitRate !== undefined) result.hitRate = Math.max(Math.min(hitRate, 100), 0);
-  if (bigHitRate !== undefined) result.bigHitRate = Math.max(Math.min(bigHitRate, 100), 0);
-  if (tempHitRate !== undefined) result.tempHitRate = Math.max(Math.min(tempHitRate, 100), 0);
-  if (tempBigHitRate !== undefined) result.tempBigHitRate = Math.max(Math.min(tempBigHitRate, 100), 0);
-
-  return result;
-}
-
-function applySafeResult(option: ElixirInstance, props: ApplyAdviceProps) {
-  if (option.locked) return;
-
-  const result = getSafeResult(props);
-  const { level, hitRate, bigHitRate, tempHitRate, tempBigHitRate } = result;
-  console.log(result);
-
-  if (level !== undefined) option.level = level;
-  if (hitRate !== undefined) option.hitRate = hitRate;
-  if (bigHitRate !== undefined) option.bigHitRate = bigHitRate;
-  if (tempHitRate !== undefined) option.tempHitRate = tempHitRate;
-  if (tempBigHitRate !== undefined) option.tempBigHitRate = tempBigHitRate;
 }
 
 function lockOption(elixirs: ElixirInstance[], idx: number) {

@@ -1,7 +1,7 @@
 import { MAX_ACTIVE } from '../constants';
 import { AdviceAfterEffect } from '../type/advice';
 import { ElixirInstance } from '../type/elixir';
-import { gacha, generateRandomNumber, getBigHitRate, playRefineSuccessSound } from '../util';
+import { checkMaxLevel, gacha, generateRandomNumber, getBigHitRate, playRefineSuccessSound } from '../util';
 
 class AlchemyService {
   alchemy(elixirs: ElixirInstance[], adviceAfterResult: AdviceAfterEffect) {
@@ -24,6 +24,7 @@ class AlchemyService {
     }
 
     result.forEach((option, idx) => (result[idx] = { ...option, tempHitRate: null, tempBigHitRate: null }));
+    checkMaxLevel(result);
 
     if (bigHit) playRefineSuccessSound();
 

@@ -18,6 +18,7 @@ export interface ElixirInstanceBody extends Elixir {
   tempBigHitRate: number;
 
   backUpHitRate: number;
+  isMaxLevel: boolean;
 }
 
 export interface ElixirInstance extends ElixirInstanceBody {
