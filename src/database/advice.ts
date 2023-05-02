@@ -249,11 +249,13 @@ function amplifyFixedOptionHitRateTemporarilyAdviceTemplate(odds: number, params
     type: 'util',
     effect: (elixirs) => {
       const result = elixirs.map((elixir) => ({ ...elixir }));
+      const lockedCount = getLockedCount(result);
       result.forEach((option, idx) => {
+        if (option.locked) return;
         option.nextHitRate = option.hitRate;
 
         if (optionIndex === idx) applyAdvice(option, { hitRate: option.hitRate + percentage });
-        else applyAdvice(option, { hitRate: option.hitRate - percentage / (OPTION_COUNT - 1) });
+        else applyAdvice(option, { hitRate: option.hitRate - percentage / (OPTION_COUNT - lockedCount - 1) });
       });
       return { elixirs: result };
     },
@@ -372,12 +374,9 @@ function amplifyFixedOptionBigHitRateTemporarilyAdviceTemplate(odds: number, par
     type: 'util',
     effect: (elixirs) => {
       const result = elixirs.map((elixir) => ({ ...elixir }));
-      result.forEach((option, idx) => {
-        option.nextBigHitRate = option.bigHitRate;
-
-        if (optionIndex === idx) applyAdvice(option, { bigHitRate: option.bigHitRate + percentage });
-        option.bigHitRate = Math.max(Math.min(option.bigHitRate, 100), 0);
-      });
+      const option = result[optionIndex];
+      option.nextBigHitRate = option.bigHitRate;
+      applyAdvice(option, { bigHitRate: option.bigHitRate + percentage });
       return { elixirs: result };
     },
     odds: odds,
@@ -638,12 +637,12 @@ function amplifyOddOrEvenBigHitRateAdviceTemplate(odds: number, params: AdviceTe
     effect: (elixirs) => {
       const result = elixirs.map((elixir) => ({ ...elixir }));
 
-      for (let i = 0; i < result.length; i++) {
-        const option = result[i];
-        if ((i % 2 === 0) === odd) applyAdvice(option, { bigHitRate: option.bigHitRate + percentage });
+      result.forEach((option, idx) => {
+        if (option.locked) return;
+        if ((idx % 2 === 0) === odd) applyAdvice(option, { bigHitRate: option.bigHitRate + percentage });
 
         option.nextBigHitRate = option.bigHitRate;
-      }
+      });
 
       return { elixirs: result };
     },
