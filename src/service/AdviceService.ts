@@ -3,7 +3,7 @@ import { ADVICES } from '../database/advice';
 import { Advice } from '../type/advice';
 import { ElixirInstance } from '../type/elixir';
 import { Sage } from '../type/sage';
-import { checkMaxLevel, gacha, getLockedCount, isFullStack, playRefineFailureSound, playRefineSuccessSound, recalculateHitRate, replaceOptionPlaceholder, requireLock } from '../util';
+import { checkMaxLevel, gacha, getLockedCount, getMinLevel, isFullStack, playRefineFailureSound, playRefineSuccessSound, recalculateHitRate, replaceOptionPlaceholder, requireLock } from '../util';
 
 class AdviceService {
   advices: Advice[] = ADVICES.map((advice, idx) => ({ ...advice, id: idx + 1 }));
@@ -21,7 +21,7 @@ class AdviceService {
     const advicePool = this.getAdvicePool(sage);
     const lockedCount = getLockedCount(elixirs);
 
-    const minLevel = elixirs.reduce((acc, cur) => Math.min(acc, cur.level), MAX_ACTIVE);
+    const minLevel = getMinLevel(elixirs);
 
     const filterConditions = [
       (advice: Advice) => (!advice.remainChanceLowerBound || remainChance >= advice.remainChanceLowerBound) && (!advice.remainChanceUpperBound || remainChance <= advice.remainChanceUpperBound),
