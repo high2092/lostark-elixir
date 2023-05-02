@@ -115,6 +115,10 @@ export const getLockedCount = (elixirs: ElixirInstance[]) => {
   return elixirs.reduce((acc, { locked }) => acc + Number(locked), 0);
 };
 
+export const getLockedOrMaxLevelCount = (elixirs: ElixirInstance[]) => {
+  return elixirs.reduce((acc, { locked, isMaxLevel }) => acc + Number(locked || isMaxLevel), 0);
+};
+
 export function createSage(template: SageTemplate): Sage {
   return {
     name: template.name,
@@ -214,28 +218,32 @@ export function applySafeResult(option: ElixirInstance, props: ApplyAdviceProps)
   const { level, hitRate, bigHitRate, tempHitRate, tempBigHitRate } = result;
 
   if (level !== undefined) option.level = level;
-  if (hitRate !== undefined) option.hitRate = hitRate;
+
   if (bigHitRate !== undefined) option.bigHitRate = bigHitRate;
-  if (tempHitRate !== undefined) option.tempHitRate = tempHitRate;
   if (tempBigHitRate !== undefined) option.tempBigHitRate = tempBigHitRate;
+
+  if (option.isMaxLevel) return;
+
+  if (hitRate !== undefined) option.hitRate = hitRate;
+  if (tempHitRate !== undefined) option.tempHitRate = tempHitRate;
 }
 
 function handleReachMaxLevel(idx: number, elixirs: ElixirInstance[]) {
   const target = elixirs[idx];
   const backUpHitRate = (target.backUpHitRate = target.hitRate);
-  const unlockedCount = OPTION_COUNT - getLockedCount(elixirs);
+  const activeOptionCount = OPTION_COUNT - getLockedOrMaxLevelCount(elixirs);
   elixirs.forEach((option, i) => {
     if (idx === i) applySafeResult(option, { hitRate: 0 });
-    else applySafeResult(option, { hitRate: option.hitRate + backUpHitRate / (unlockedCount - 1) });
+    else applySafeResult(option, { hitRate: option.hitRate + backUpHitRate / (activeOptionCount - 1) });
   });
 }
 
 function handleDemotedFromMaxLevel(idx: number, elixirs: ElixirInstance[]) {
   const target = elixirs[idx];
-  const unlockedCount = OPTION_COUNT - getLockedCount(elixirs);
+  const activeOptionCount = OPTION_COUNT - getLockedOrMaxLevelCount(elixirs);
   elixirs.forEach((option, i) => {
     if (idx === i) applySafeResult(option, { hitRate: target.backUpHitRate });
-    else applySafeResult(option, { hitRate: option.hitRate - target.backUpHitRate / (unlockedCount - 1) });
+    else applySafeResult(option, { hitRate: option.hitRate - target.backUpHitRate / (activeOptionCount - 1) });
   });
 }
 

@@ -2,7 +2,7 @@ import { DIALOGUE_END_INDEX as I, MAX_ACTIVE, OPTION_COUNT, Placeholders } from 
 import { Advice, AdviceBody, AdviceType } from '../type/advice';
 import { ElixirInstance } from '../type/elixir';
 import { SageKey, SageKeys, SageTypesType, SageTypesTypes } from '../type/sage';
-import { applySafeResult, convertToSignedString, gacha, generateRandomInt, generateRandomNumber, getLockedCount, getMinLevel, validateOptionIndex } from '../util';
+import { applySafeResult, convertToSignedString, gacha, generateRandomInt, generateRandomNumber, getLockedCount, getLockedOrMaxLevelCount, getMinLevel, validateOptionIndex } from '../util';
 
 const NO_OPTION_SELECTED_ERROR_MESSAGE = '옵션을 선택해주세요.';
 const getExtraAlchemyText = (extraAlchemy: number) => `이번에 연성되는 효과는 ${1 + extraAlchemy}단계 연성해${Placeholders[I.주겠네]}.`;
@@ -721,14 +721,14 @@ function saveChanceAdviceTemplate(odds: number): AdviceBody {
 function lockOption(elixirs: ElixirInstance[], idx: number) {
   const target = elixirs[idx];
   target.locked = true;
-  const unlockedCount = OPTION_COUNT - getLockedCount(elixirs);
-  elixirs.forEach((option) => applySafeResult(option, { hitRate: option.hitRate + target.hitRate / unlockedCount }));
+  const activeOptionCount = OPTION_COUNT - getLockedOrMaxLevelCount(elixirs);
+  elixirs.forEach((option) => applySafeResult(option, { hitRate: option.hitRate + target.hitRate / activeOptionCount }));
 }
 
 function unlockOption(elixirs: ElixirInstance[], idx: number) {
   const target = elixirs[idx];
-  const unlockedCount = OPTION_COUNT - getLockedCount(elixirs);
-  elixirs.forEach((option) => applySafeResult(option, { hitRate: option.hitRate - target.hitRate / unlockedCount }));
+  const activeOptionCount = OPTION_COUNT - getLockedOrMaxLevelCount(elixirs);
+  elixirs.forEach((option) => applySafeResult(option, { hitRate: option.hitRate - target.hitRate / activeOptionCount }));
   target.locked = false;
 }
 
