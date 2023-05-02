@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { useEffect, useRef, useState } from 'react';
 import * as S from '../style/index.style';
-import { AUDIO_RESOURCE_URL_LIST, ButtonTexts, CENTERED_FLEX_STYLE, FIRST_VISIT_HELP_TEXT, MAX_ACTIVE, MaterialSectionText, OPTION_COUNT, STACK_COUNTER_EXPECTED_HEIGHT, VISITED_COOKIE_KEY } from '../constants';
+import { AUDIO_RESOURCE_URL_LIST, ButtonTexts, CENTERED_FLEX_STYLE, MAX_ACTIVE, MaterialSectionText, OPTION_COUNT, STACK_COUNTER_EXPECTED_HEIGHT, TUTORIALS, TutorialStatus, VISITED_COOKIE_KEY, TutorialTexts } from '../constants';
 import { Activation } from '../components/Activation';
 import { getBigHitRate, getHitRate, getOptionName, playClickSound } from '../util';
 import { LeftTopSection } from '../components/LeftTopSection';
@@ -12,26 +12,25 @@ import { useAppDispatch, useAppSelector } from '../store';
 import { alchemy, clearStatusText, drawAdvices, initElixir, pickAdvice, pickOption } from '../features/elixirSlice';
 import { Gold } from '../components/Gold';
 import { AdviceSection } from '../components/AdviceSection';
-import { setSelectedAdviceIndex, setSelectedOptionIndex } from '../features/uiSlice';
+import { setSelectedAdviceIndex, setSelectedOptionIndex, getNextTutorial, initTutorial } from '../features/uiSlice';
 
 const Home = () => {
   const [cookies, setCookie] = useCookies();
 
   const dispatch = useAppDispatch();
   const { sages, adviceRerollChance, alchemyChance, alchemyStatus, elixirs, pickOptionChance, reset } = useAppSelector((state) => state.elixir);
-  const { selectedAdviceIndex, selectedOptionIndex } = useAppSelector((state) => state.ui);
+  const { selectedAdviceIndex, selectedOptionIndex, tutorialIndex } = useAppSelector((state) => state.ui);
 
   const [loaded, setLoaded] = useState(false);
-  const [isFirstVisit, setIsFirstVisit] = useState(false);
   const statusTextTimeoutRef = useRef<NodeJS.Timeout>();
 
   useEffect(() => {
-    const handleWindowClick = () => setIsFirstVisit(false);
+    const handleWindowClick = () => dispatch(getNextTutorial());
 
-    if (!cookies[VISITED_COOKIE_KEY]) {
-      setIsFirstVisit(true);
-      setCookie(VISITED_COOKIE_KEY, true, { expires: new Date('2030-09-02') });
-    }
+    // if (!cookies[VISITED_COOKIE_KEY]) {
+    dispatch(initTutorial());
+    //   setCookie(VISITED_COOKIE_KEY, true, { expires: new Date('2030-09-02') });
+    // }
 
     window.addEventListener('click', handleWindowClick);
     return () => window.removeEventListener('click', handleWindowClick);
@@ -198,8 +197,8 @@ const Home = () => {
           {ButtonTexts[alchemyStatus]}
         </S.RefineButton>
       </S.DescriptionSection>
-      <LeftTopSection outline={isFirstVisit} />
-      {isFirstVisit && <S.FirstVisitHelpText>{FIRST_VISIT_HELP_TEXT}</S.FirstVisitHelpText>}
+      <LeftTopSection />
+      {tutorialIndex < TUTORIALS.length && <S.FirstVisitHelpText>{TutorialTexts[TUTORIALS[tutorialIndex]]}</S.FirstVisitHelpText>}
     </S.Home>
   );
 };

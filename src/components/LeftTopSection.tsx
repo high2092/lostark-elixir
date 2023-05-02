@@ -4,21 +4,20 @@ import YouTube, { YouTubePlayer } from 'react-youtube';
 import { PauseIcon } from './PauseIcon';
 import { PlayIcon } from './PlayIcon';
 import { ResetIcon } from './ResetIcon';
-import { useAppDispatch } from '../store';
+import { useAppDispatch, useAppSelector } from '../store';
 import { resetUI } from '../features/uiSlice';
 import { resetElixir } from '../features/elixirSlice';
+import { TUTORIALS, TutorialStatus } from '../constants';
 
 const DEFAULT_BGM_VOLUME = 5;
 
-interface BGMPlayerProps {
-  outline: boolean;
-}
+export const LeftTopSection = () => {
+  const dispatch = useAppDispatch();
+  const { tutorialIndex } = useAppSelector((state) => state.ui);
 
-export const LeftTopSection = ({ outline }) => {
   const [playing, setPlaying] = useState(false);
   const youtubePlayerRef = useRef<YouTubePlayer>();
   const [volume, setVolume] = useState(DEFAULT_BGM_VOLUME);
-  const dispatch = useAppDispatch();
 
   useEffect(() => {
     if (!youtubePlayerRef.current) return;
@@ -51,13 +50,13 @@ export const LeftTopSection = ({ outline }) => {
           onEnd={(e) => e.target.playVideo()}
         />
       </S.YouTube>
-      <S.LeftTopSection outline={outline}>
-        <S.BGMPlayer onClick={handlePlayButtonClick}>
+      <S.LeftTopSection>
+        <S.BGMPlayer onClick={handlePlayButtonClick} outline={TUTORIALS[tutorialIndex] === TutorialStatus.PLAY_BGM}>
           <S.PlayButton>
             <div>{playing ? <PauseIcon /> : <PlayIcon />}</div>
           </S.PlayButton>
         </S.BGMPlayer>
-        <S.ResetButton onClick={handleResetButtonClick}>
+        <S.ResetButton onClick={handleResetButtonClick} outline={TUTORIALS[tutorialIndex] === TutorialStatus.RESET}>
           <ResetIcon />
         </S.ResetButton>
       </S.LeftTopSection>

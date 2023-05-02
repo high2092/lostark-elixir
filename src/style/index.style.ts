@@ -121,4 +121,5 @@ export const FirstVisitHelpText = styled.div`
 
   word-break: keep-all;
   font-family: 'Poor Story', cursive;
+  font-weight: bold;
 `;

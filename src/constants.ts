@@ -67,8 +67,6 @@ export const IMAGE_RESOURCE_URL_LIST = ['/image/background.png', '/image/gold', 
 
 export const VISITED_COOKIE_KEY = 'LOSTARK_ELIXIR_VISITED';
 
-export const FIRST_VISIT_HELP_TEXT = '좌측 상단의 버튼을 클릭해 BGM을 켜거나 끌 수 있어요.';
-
 export const ButtonTexts = {
   [AlchemyStatuses.REFINE]: '효과 정제',
   [AlchemyStatuses.ADVICE]: '조언 선택',
@@ -81,3 +79,15 @@ export const MaterialSectionText = {
 };
 
 export const DEFAULT_BIG_HIT_RATE_PERCENT = 10;
+
+export const TutorialStatus = {
+  PLAY_BGM: 1,
+  RESET: 2,
+};
+
+export const TUTORIALS = [TutorialStatus.PLAY_BGM, TutorialStatus.RESET];
+
+export const TutorialTexts = {
+  [TutorialStatus.PLAY_BGM]: '좌측 상단의 버튼을 클릭해 BGM을 켜거나 끌 수 있어요.',
+  [TutorialStatus.RESET]: '좌측 상단의 버튼을 클릭해 연성 상태를 초기화할 수 있어요.',
+};

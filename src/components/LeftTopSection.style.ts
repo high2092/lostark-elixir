@@ -1,12 +1,10 @@
 import styled from '@emotion/styled';
 
-export const LeftTopSection = styled.div<{ outline: boolean }>`
+export const LeftTopSection = styled.div`
   position: fixed;
 
   height: 1rem;
   padding: 0.5rem;
-
-  ${({ outline }) => (outline ? 'outline: 3px solid red;' : '')}
 
   color: white;
   fill: white;
@@ -25,7 +23,9 @@ export const YouTube = styled.div`
   width: 0;
 `;
 
-export const BGMPlayer = styled.div`
+export const BGMPlayer = styled.div<{ outline: boolean }>`
+  ${({ outline }) => (outline ? 'outline: 3px solid red;' : '')}
+
   display: flex;
   align-items: center;
 `;
@@ -35,6 +35,8 @@ export const PlayButton = styled.div`
   cursor: pointer;
 `;
 
-export const ResetButton = styled.div`
+export const ResetButton = styled.div<{ outline: boolean }>`
+  ${({ outline }) => (outline ? 'outline: 3px solid red;' : '')}
+
   cursor: pointer;
 `;
