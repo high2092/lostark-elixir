@@ -388,11 +388,12 @@ function moveUpLevelAdviceTemplate(odds: number, params: AdviceTemplateProps): A
     special,
     effect: (elixirs) => {
       const result = elixirs.map((elixir) => ({ ...elixir }));
-      const firstLevel = result[0].level;
-      for (let i = 0; i < OPTION_COUNT - 1; i++) {
-        result[i].level = result[i + 1].level;
+      const candidate = result.filter((elixir) => !elixir.locked);
+      const firstLevel = candidate[0].level;
+      for (let i = 0; i < candidate.length - 1; i++) {
+        candidate[i].level = candidate[i + 1].level;
       }
-      result[OPTION_COUNT - 1].level = firstLevel;
+      candidate[candidate.length - 1].level = firstLevel;
       return { elixirs: result };
     },
     odds,
@@ -407,11 +408,12 @@ function moveDownLevelAdviceTemplate(odds: number, params: AdviceTemplateProps):
     special,
     effect: (elixirs) => {
       const result = elixirs.map((elixir) => ({ ...elixir }));
-      const lastLevel = result[OPTION_COUNT - 1].level;
-      for (let i = OPTION_COUNT - 1; i > 0; i--) {
-        result[i].level = result[i - 1].level;
+      const candidate = result.filter((elixir) => !elixir.locked);
+      const lastLevel = candidate[candidate.length - 1].level;
+      for (let i = candidate.length - 1; i > 0; i--) {
+        candidate[i].level = candidate[i - 1].level;
       }
-      result[0].level = lastLevel;
+      candidate[0].level = lastLevel;
       return { elixirs: result };
     },
     odds,
