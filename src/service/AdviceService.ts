@@ -1,4 +1,4 @@
-import { FINAL_OPTION_COUNT, OPTION_COUNT } from '../constants';
+import { FINAL_OPTION_COUNT, MAX_ACTIVE, OPTION_COUNT } from '../constants';
 import { ADVICES } from '../database/advice';
 import { Advice } from '../type/advice';
 import { ElixirInstance } from '../type/elixir';
@@ -21,6 +21,8 @@ class AdviceService {
     const advicePool = this.getAdvicePool(sage);
     const lockedCount = getLockedCount(elixirs);
 
+    const minLevel = elixirs.reduce((acc, cur) => Math.min(acc, cur.level), MAX_ACTIVE);
+
     const filterConditions = [
       (advice: Advice) => (!advice.remainChanceLowerBound || remainChance >= advice.remainChanceLowerBound) && (!advice.remainChanceUpperBound || remainChance <= advice.remainChanceUpperBound),
       (advice: Advice) => currentAdvices.find((currentAdvice) => currentAdvice.id === advice.id) === undefined, // 다른 현자와 같은 조언 X
@@ -31,6 +33,7 @@ class AdviceService {
         else return type !== 'lock';
       },
       (advice: Advice) => !elixirs[advice.optionIndex]?.isMaxLevel || advice.type === 'utillock' || advice.type === 'lock', // 최대 활성도 옵션 강화 조언 등장 X
+      (advice: Advice) => !advice.changeLevelLowPoint || (advice.optionIndex ? elixirs[advice.optionIndex].level : minLevel) <= advice.changeLevelLowPoint,
     ];
 
     if (lockedCount === 0) filterConditions.push((advice: Advice) => advice.type !== 'unlock'); // 봉인된 옵션 없는 경우 봉인 해제 조언 등장 X

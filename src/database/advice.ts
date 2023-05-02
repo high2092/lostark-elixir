@@ -47,18 +47,18 @@ export const ADVICES: AdviceBody[] = [
   levelUpRandomOptionAdviceTemplate(1),
 
   // 고정 레벨 변경
-  raiseAllBelowNAdviceTemplate(1, { n: 0, remainChanceUpperBound: 13, remainChanceLowerBound: 10 }),
-  raiseAllBelowNAdviceTemplate(1, { n: 2, remainChanceUpperBound: 10, remainChanceLowerBound: 7 }),
-  raiseAllBelowNAdviceTemplate(1, { n: 4, remainChanceUpperBound: 7, remainChanceLowerBound: 4 }),
-  raiseAllBelowNAdviceTemplate(1, { n: 6, remainChanceUpperBound: 4 }),
+  raiseAllBelowNAdviceTemplate(0.5, { n: 0, remainChanceUpperBound: 14, remainChanceLowerBound: 11 }),
+  raiseAllBelowNAdviceTemplate(0.5, { n: 2, remainChanceUpperBound: 10, remainChanceLowerBound: 7 }),
+  raiseAllBelowNAdviceTemplate(0.5, { n: 4, remainChanceUpperBound: 6, remainChanceLowerBound: 3 }),
+  raiseAllBelowNAdviceTemplate(0.5, { n: 6, remainChanceUpperBound: 2 }),
 
-  ...createFixedOptionAdvices(1, changeFixedOptionToFixedLevelAdviceTemplate, { n: 1, remainChanceUpperBound: 13, remainChanceLowerBound: 10 }),
+  ...createFixedOptionAdvices(1, changeFixedOptionToFixedLevelAdviceTemplate, { n: 1, remainChanceUpperBound: 14, remainChanceLowerBound: 11 }),
   ...createFixedOptionAdvices(1, changeFixedOptionToFixedLevelAdviceTemplate, { n: 2, remainChanceUpperBound: 10, remainChanceLowerBound: 7 }),
-  ...createFixedOptionAdvices(1, changeFixedOptionToFixedLevelAdviceTemplate, { n: 3, remainChanceUpperBound: 7, remainChanceLowerBound: 4 }),
+  ...createFixedOptionAdvices(1, changeFixedOptionToFixedLevelAdviceTemplate, { n: 3, remainChanceUpperBound: 6, remainChanceLowerBound: 3 }),
 
-  changeSelectedOptionToFixedLevelAdviceTemplate(0.5, { n: 1, remainChanceUpperBound: 13, remainChanceLowerBound: 10 }),
+  changeSelectedOptionToFixedLevelAdviceTemplate(0.5, { n: 1, remainChanceUpperBound: 14, remainChanceLowerBound: 11 }),
   changeSelectedOptionToFixedLevelAdviceTemplate(0.5, { n: 2, remainChanceUpperBound: 10, remainChanceLowerBound: 7 }),
-  changeSelectedOptionToFixedLevelAdviceTemplate(0.5, { n: 3, remainChanceUpperBound: 7, remainChanceLowerBound: 4 }),
+  changeSelectedOptionToFixedLevelAdviceTemplate(0.5, { n: 3, remainChanceUpperBound: 6, remainChanceLowerBound: 3 }),
   //
 
   ...createFixedOptionAdvices(1, amplifyFixedOptionHitRateTemporarilyAdviceTemplate, { percentage: 100, name: `이번 연성에서 ${Placeholders.OPTION} 효과를 연성해${Placeholders[I.주겠네]}.` }),
@@ -576,6 +576,7 @@ function changeFixedOptionToFixedLevelAdviceTemplate(odds: number, params: Advic
     },
     odds: odds,
     optionIndex,
+    changeLevelLowPoint: n,
   };
 }
 
@@ -592,6 +593,7 @@ function changeSelectedOptionToFixedLevelAdviceTemplate(odds: number, params: Ad
       return { elixirs: result };
     },
     odds,
+    changeLevelLowPoint: n,
   };
 }
 
