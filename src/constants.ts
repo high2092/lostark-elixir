@@ -73,6 +73,7 @@ export const ButtonTexts = {
   [AlchemyStatuses.REFINE]: '효과 정제',
   [AlchemyStatuses.ADVICE]: '조언 선택',
   [AlchemyStatuses.ALCHEMY]: '연성하기',
+  [AlchemyStatuses.COMPLETE]: '연성 완료',
 };
 
 export const MaterialSectionText = {
