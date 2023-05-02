@@ -408,8 +408,8 @@ function moveDownLevelAdviceTemplate(odds: number, params: AdviceTemplateProps):
     effect: (elixirs) => {
       const result = elixirs.map((elixir) => ({ ...elixir }));
       const lastLevel = result[OPTION_COUNT - 1].level;
-      for (let i = 0; i < OPTION_COUNT - 1; i++) {
-        result[i + 1].level = result[i].level;
+      for (let i = OPTION_COUNT - 1; i > 0; i--) {
+        result[i].level = result[i - 1].level;
       }
       result[0].level = lastLevel;
       return { elixirs: result };
