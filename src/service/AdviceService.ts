@@ -30,6 +30,7 @@ class AdviceService {
         if (requireLock({ remainChance, lockedCount, extraChanceConsume, adviceType: type })) return type === 'lock';
         else return type !== 'lock';
       },
+      (advice: Advice) => !elixirs[advice.optionIndex]?.isMaxLevel || advice.type === 'utillock' || advice.type === 'lock', // 최대 활성도 옵션 강화 조언 등장 X
     ];
 
     if (lockedCount === 0) filterConditions.push((advice: Advice) => advice.type !== 'unlock'); // 봉인된 옵션 없는 경우 봉인 해제 조언 등장 X
