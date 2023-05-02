@@ -2,7 +2,7 @@ import { DIALOGUE_END_INDEX as I, MAX_ACTIVE, OPTION_COUNT, Placeholders } from 
 import { Advice, AdviceBody, AdviceType } from '../type/advice';
 import { ElixirInstance } from '../type/elixir';
 import { SageKey, SageKeys, SageTypesType, SageTypesTypes } from '../type/sage';
-import { applySafeResult, convertToSignedString, gacha, generateRandomInt, generateRandomNumber, getLockedCount, getLockedOrMaxLevelCount, getMinLevel, validateOptionIndex } from '../util';
+import { applySafeResult, convertToSignedString, gacha, generateRandomInt, generateRandomNumber, getLockedCount, getLockedOrMaxLevelCount, getMaxLevel, getMinLevel, validateOptionIndex } from '../util';
 
 const NO_OPTION_SELECTED_ERROR_MESSAGE = '옵션을 선택해주세요.';
 const getExtraAlchemyText = (extraAlchemy: number) => `이번에 연성되는 효과는 ${1 + extraAlchemy}단계 연성해${Placeholders[I.주겠네]}.`;
@@ -173,7 +173,7 @@ function levelUpHighestOptionAdviceTemplate(odds: number): AdviceBody {
     type: 'util',
     effect: (elixirs) => {
       const result = elixirs.map((elixir) => ({ ...elixir }));
-      const maxLevel = result.reduce((acc, cur) => Math.max(cur.level, acc), result[0].level);
+      const maxLevel = getMaxLevel(result);
       const [upTargetIndex] = gacha(result, { filterConditions: [(option) => option.level === maxLevel] });
       const [downTargetIndex] = gacha(result, { filterConditions: [(option, idx) => idx !== upTargetIndex] });
       applySafeResult(result[upTargetIndex], { level: result[upTargetIndex].level + 1 });
@@ -190,7 +190,8 @@ function levelUpLowestOptionAdviceTemplate(odds: number): AdviceBody {
     type: 'util',
     effect: (elixirs) => {
       const result = elixirs.map((elixir) => ({ ...elixir }));
-      const [minLevel, maxLevel] = result.reduce((acc, cur) => [Math.min(cur.level, acc[0]), Math.max(cur.level, acc[1])], [result[0].level, result[0].level]);
+      const minLevel = getMinLevel(result);
+      const maxLevel = getMaxLevel(result);
       const [upTargetIndex] = gacha(result, { filterConditions: [(option) => option.level === minLevel] });
       const [downTargetIndex] = gacha(result, { filterConditions: [(option, idx) => idx !== upTargetIndex && option.level === maxLevel] });
       applySafeResult(result[upTargetIndex], { level: result[upTargetIndex].level + 1 });

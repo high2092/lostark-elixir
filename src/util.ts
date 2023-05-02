@@ -288,3 +288,10 @@ export function getMinLevel(elixirs: ElixirInstance[]) {
     return acc;
   }, MAX_ACTIVE);
 }
+
+export function getMaxLevel(elixirs: ElixirInstance[]) {
+  return elixirs.reduce((acc, cur) => {
+    if (!cur.locked) Math.max(acc, cur.level);
+    return acc;
+  }, 0);
+}
