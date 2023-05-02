@@ -2,7 +2,7 @@ import { DIALOGUE_END_INDEX as I, MAX_ACTIVE, OPTION_COUNT, Placeholders } from 
 import { Advice, AdviceBody, AdviceType } from '../type/advice';
 import { ElixirInstance } from '../type/elixir';
 import { SageKey, SageKeys, SageTypesType, SageTypesTypes } from '../type/sage';
-import { convertToSignedString, gacha, getLockedCount, validateOptionIndex } from '../util';
+import { convertToSignedString, gacha, generateRandomInt, generateRandomNumber, getLockedCount, validateOptionIndex } from '../util';
 
 const NO_OPTION_SELECTED_ERROR_MESSAGE = '옵션을 선택해주세요.';
 const getExtraAlchemyText = (extraAlchemy: number) => `이번에 연성되는 효과는 ${1 + extraAlchemy}단계 연성해${Placeholders[I.주겠네]}.`;
@@ -121,7 +121,7 @@ function potentialLevelUpFixedOptionAdviceTemplate(odds: number, params: AdviceT
     type: 'potential',
     effect: (elixirs) => {
       const result = elixirs.map((elixir) => ({ ...elixir }));
-      if (Math.random() * 100 <= percentage) applyAdvice(result[optionIndex], { level: result[optionIndex].level + 1 });
+      if (generateRandomNumber(0, 100) <= percentage) applyAdvice(result[optionIndex], { level: result[optionIndex].level + 1 });
       return { elixirs: result };
     },
     odds,
@@ -137,7 +137,7 @@ function potentialLevelSelectedOptionAdviceTemplate(odds: number, params: Advice
     effect: (elixirs, optionIndex) => {
       const result = elixirs.map((elixir) => ({ ...elixir }));
       if (typeof optionIndex !== 'number') throw new Error(NO_OPTION_SELECTED_ERROR_MESSAGE);
-      if (Math.random() * 100 <= percentage) applyAdvice(result[optionIndex], { level: result[optionIndex].level + 1 });
+      if (generateRandomNumber(0, 100) <= percentage) applyAdvice(result[optionIndex], { level: result[optionIndex].level + 1 });
       return { elixirs: result };
     },
     odds,
@@ -151,7 +151,7 @@ function potentialChangeLevelFixedOptionAdviceTemplate(odds: number, params: Adv
     type: 'potential',
     effect: (elixirs) => {
       const result = elixirs.map((elixir) => ({ ...elixir }));
-      const diff = Math.floor(Math.random() * maxReturn + maxRisk + 1) - maxRisk;
+      const diff = generateRandomInt(-maxRisk, maxReturn + 1);
       applyAdvice(result[optionIndex], { level: result[optionIndex].level + diff });
       return { elixirs: result };
     },
@@ -203,7 +203,7 @@ function levelUpRandomOptionAdviceTemplate(odds: number): AdviceBody {
     effect: (elixirs) => {
       const result = elixirs.map((elixir) => ({ ...elixir }));
       const candidate = result.filter((option) => !option.locked);
-      const targetIndex = Math.floor(Math.random()) * candidate.length;
+      const targetIndex = generateRandomInt(0, candidate.length);
       applyAdvice(candidate[targetIndex], { level: candidate[targetIndex].level + 1 });
       return { elixirs: result };
     },
@@ -233,7 +233,7 @@ function potentialChangeLevelSelectedOptionAdviceTemplate(odds: number, props?: 
     sage,
     effect: (elixirs, optionIndex) => {
       const result = elixirs.map((elixir) => ({ ...elixir }));
-      const diff = Math.floor(Math.random() * (maxReturn + maxRisk + 1)) - maxRisk;
+      const diff = generateRandomInt(-maxRisk, maxReturn + 1);
       applyAdvice(result[optionIndex], { level: result[optionIndex].level + diff });
       return { elixirs: result, enterMeditation };
     },
@@ -583,7 +583,7 @@ function changeFixedOptionToFixedLevelAdviceTemplate(odds: number, params: Advic
     remainChanceLowerBound,
     effect: (elixirs) => {
       const result = elixirs.map((elixir) => ({ ...elixir }));
-      applyAdvice(result[optionIndex], { level: n + Math.floor(Math.random() * 2) });
+      applyAdvice(result[optionIndex], { level: n + generateRandomInt(0, 2) });
       return { elixirs: result };
     },
     odds: odds,
@@ -600,7 +600,7 @@ function changeSelectedOptionToFixedLevelAdviceTemplate(odds: number, params: Ad
     remainChanceLowerBound,
     effect: (elixirs, optionIndex) => {
       const result = elixirs.map((elixir) => ({ ...elixir }));
-      applyAdvice(result[optionIndex], { level: n + Math.floor(Math.random() * 2) });
+      applyAdvice(result[optionIndex], { level: n + generateRandomInt(0, 2) });
       return { elixirs: result };
     },
     odds,
@@ -727,7 +727,7 @@ function redistribute(elixirs: ElixirInstance[]) {
   const shares = Array.from({ length: OPTION_COUNT - lockedCount }).map((_) => 0);
 
   while (levelSum) {
-    const idx = Math.floor(Math.random() * (OPTION_COUNT - lockedCount));
+    const idx = generateRandomInt(0, shares.length);
     shares[idx]++;
     levelSum--;
   }

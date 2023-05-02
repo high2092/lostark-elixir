@@ -1,7 +1,7 @@
 import { MAX_ACTIVE } from '../constants';
 import { AdviceAfterEffect } from '../type/advice';
 import { ElixirInstance } from '../type/elixir';
-import { gacha, playRefineSuccessSound } from '../util';
+import { gacha, generateRandomNumber, playRefineSuccessSound } from '../util';
 
 class AlchemyService {
   alchemy(elixirs: ElixirInstance[], adviceAfterResult: AdviceAfterEffect) {
@@ -12,8 +12,8 @@ class AlchemyService {
 
     let bigHit = false;
     for (const idx of targetIndexList) {
-      const randomNumber = Math.random() * 100;
-      const bonus = Number(randomNumber <= result[idx].bigHitRate);
+      const randomBigHitRate = generateRandomNumber(0, 100);
+      const bonus = Number(randomBigHitRate <= result[idx].bigHitRate);
       if (bonus) {
         bigHit = true;
         result[idx].statusText = '연성 대성공';

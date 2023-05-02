@@ -1,5 +1,6 @@
 import { ADVICE_COUNT, FINAL_OPTION_COUNT, OPTION_COUNT } from '../constants';
 import { ELIXIRS } from '../database/elixir';
+import { generateRandomInt } from '../util';
 
 export const elixirOddsSumTest = () => {
   const sum = ELIXIRS.reduce((acc, { odds }) => {
@@ -16,4 +17,12 @@ export const elixirLengthTest = () => {
 
 export const safeLockTest = () => {
   if (OPTION_COUNT < FINAL_OPTION_COUNT + ADVICE_COUNT) throw Error('초기 옵션 수는 현자 수와 최종 옵션 수의 합보다 커야 합니다.');
+};
+
+export const randomTest = () => {
+  console.log(
+    Array.from({ length: 10000 })
+      .map((_) => generateRandomInt(-200, 200))
+      .reduce((acc, cur) => [Math.max(acc[0], cur), Math.min(acc[1], cur)], [0, 2200000])
+  );
 };

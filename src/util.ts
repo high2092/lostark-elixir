@@ -48,7 +48,7 @@ const gachaInternal = (arr: Record<string, any>[]) => {
 
   if (oddsSum === 0) throw new Error('gacha: 뽑을 수 있는 아이템이 없습니다.');
 
-  const randomNumber = Math.random() * oddsSum;
+  const randomNumber = generateRandomNumber(0, oddsSum);
 
   let oddsCur = 0;
   for (let i = 0; i < arr.length; i++) {
@@ -135,4 +135,26 @@ export function replaceOptionPlaceholder(advice: Advice, elixirs: ElixirInstance
 export function getOptionName(option: ElixirInstance) {
   if (!option) return 'null';
   return `${option.name}${option.type ? ` (${option.type})` : ''}`;
+}
+
+/**
+ *
+ * @param min 실수
+ * @param max 실수
+ * @returns min 이상 max 미만의 실수
+ */
+export function generateRandomNumber(min: number, max: number) {
+  const randomValue = new Uint32Array(1);
+  window.crypto.getRandomValues(randomValue);
+  return min + (randomValue[0] / 0xffffffff) * (max - min);
+}
+
+/**
+ *
+ * @param min 정수
+ * @param max 정수
+ * @returns min 이상 max 미만의 정수
+ */
+export function generateRandomInt(min: number, max: number) {
+  return Math.floor(generateRandomNumber(min, max));
 }

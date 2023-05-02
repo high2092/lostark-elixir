@@ -1,10 +1,11 @@
 import { useEffect } from 'react';
-import { elixirLengthTest, elixirOddsSumTest } from '../test/elixir';
+import { elixirLengthTest, elixirOddsSumTest, randomTest } from '../test/elixir';
 
 const Test = () => {
   useEffect(() => {
     elixirLengthTest();
     elixirOddsSumTest();
+    randomTest();
   }, []);
   return <></>;
 };
