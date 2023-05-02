@@ -284,14 +284,14 @@ export function requireLock({ remainChance, lockedCount, extraChanceConsume, adv
 
 export function getMinLevel(elixirs: ElixirInstance[]) {
   return elixirs.reduce((acc, cur) => {
-    if (!cur.locked) Math.min(acc, cur.level);
+    if (!cur.locked) acc = Math.min(acc, cur.level);
     return acc;
   }, MAX_ACTIVE);
 }
 
 export function getMaxLevel(elixirs: ElixirInstance[]) {
   return elixirs.reduce((acc, cur) => {
-    if (!cur.locked) Math.max(acc, cur.level);
+    if (!cur.locked) acc = Math.max(acc, cur.level);
     return acc;
   }, 0);
 }
