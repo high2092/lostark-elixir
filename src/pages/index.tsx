@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import * as S from '../style/index.style';
 import { AUDIO_RESOURCE_URL_LIST, ButtonTexts, CENTERED_FLEX_STYLE, FIRST_VISIT_HELP_TEXT, MAX_ACTIVE, MaterialSectionText, OPTION_COUNT, STACK_COUNTER_EXPECTED_HEIGHT, VISITED_COOKIE_KEY } from '../constants';
 import { Activation } from '../components/Activation';
-import { getOptionName, playClickSound } from '../util';
+import { getBigHitRate, getHitRate, getOptionName, playClickSound } from '../util';
 import { LeftTopSection } from '../components/LeftTopSection';
 import { Loading } from '../components/Loading';
 import { useCookies } from 'react-cookie';
@@ -137,10 +137,10 @@ const Home = () => {
       <S.MainSection>
         <S.ElixirOptionSection>
           {elixirs.map((elixir, idx) => {
-            const { name, part, level, hitRate, bigHitRate, statusText, locked } = elixir;
+            const { name, part, level, statusText, locked } = elixir;
             return (
               <S.ElixirOption key={`elixirOption-${idx}`} onClick={(e) => handleElixirOptionClick(e, idx)} selected={selectedOptionIndex === idx} locked={locked}>
-                <div css={[CENTERED_FLEX_STYLE, { flex: 2 }]}>{locked ? '봉인' : `${hitRate.toFixed(1)}%`}</div>
+                <div css={[CENTERED_FLEX_STYLE, { flex: 2 }]}>{locked ? '봉인' : `${getHitRate(elixir).toFixed(1)}%`}</div>
                 <div css={{ flex: 7, paddingRight: '1rem', display: 'flex', justifyContent: 'center', flexDirection: 'column' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <span>{getOptionName(elixir)}</span>
@@ -149,7 +149,7 @@ const Home = () => {
                   <Activation percentage={level / MAX_ACTIVE} />
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <div>{statusText}</div>
-                    <div>{`${bigHitRate}%`}</div>
+                    <div>{`${getBigHitRate(elixir)}%`}</div>
                   </div>
                 </div>
               </S.ElixirOption>

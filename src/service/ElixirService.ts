@@ -1,5 +1,6 @@
 import { OPTION_COUNT } from '../constants';
 import { ELIXIRS } from '../database/elixir';
+import { ElixirInstance } from '../type/elixir';
 import { gacha } from '../util';
 
 const DEFAULT_BIG_HIT_RATE_PERCENT = 10;
@@ -8,10 +9,10 @@ const hitRate = 100 / OPTION_COUNT;
 const bigHitRate = DEFAULT_BIG_HIT_RATE_PERCENT;
 
 class ElixirService {
-  elixirs = ELIXIRS.map((elixir, idx) => ({ ...elixir, id: idx, level: 0, locked: false, hitRate, bigHitRate, statusText: null, nextHitRate: hitRate, nextBigHitRate: bigHitRate }));
+  elixirs: ElixirInstance[] = ELIXIRS.map((elixir, idx) => ({ ...elixir, id: idx, level: 0, locked: false, hitRate, bigHitRate, tempHitRate: null, tempBigHitRate: null, statusText: null, nextHitRate: hitRate, nextBigHitRate: bigHitRate }));
 
   reset() {
-    this.elixirs = ELIXIRS.map((elixir, idx) => ({ ...elixir, id: idx, level: 0, locked: false, hitRate, bigHitRate, statusText: null, nextHitRate: hitRate, nextBigHitRate: bigHitRate }));
+    this.elixirs = ELIXIRS.map((elixir, idx) => ({ ...elixir, id: idx, level: 0, locked: false, hitRate, bigHitRate, tempHitRate: null, tempBigHitRate: null, statusText: null, nextHitRate: hitRate, nextBigHitRate: bigHitRate }));
   }
 
   drawOptions() {

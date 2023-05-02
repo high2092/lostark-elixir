@@ -1,12 +1,13 @@
 import { OPTION_COUNT, Placeholders, SageTypes } from './constants';
 import { Advice } from './type/advice';
+import { OddsKey } from './type/common';
 import { ElixirInstance } from './type/elixir';
 import { Sage, SageTemplate, SageTypesType } from './type/sage';
 
 type FilterCondition = (elem: Record<string, any>, idx: number) => boolean;
 
 interface GachaProps {
-  oddsKey?: 'odds' | 'hitRate';
+  oddsKey?: OddsKey;
   count?: number;
   filterConditions?: FilterCondition[];
   requireLock?: boolean;
@@ -158,4 +159,14 @@ export function generateRandomNumber(min: number, max: number) {
  */
 export function generateRandomInt(min: number, max: number) {
   return Math.floor(generateRandomNumber(min, max));
+}
+
+export function getHitRate(option: ElixirInstance) {
+  if (option.tempHitRate !== null) return option.tempHitRate;
+  return option.hitRate;
+}
+
+export function getBigHitRate(option: ElixirInstance) {
+  if (option.tempBigHitRate !== null) return option.tempBigHitRate;
+  return option.bigHitRate;
 }

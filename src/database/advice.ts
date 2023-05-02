@@ -126,7 +126,7 @@ function potentialLevelUpFixedOptionAdviceTemplate(odds: number, params: AdviceT
     type: 'potential',
     effect: (elixirs) => {
       const result = elixirs.map((elixir) => ({ ...elixir }));
-      if (generateRandomNumber(0, 100) <= percentage) applyAdvice(result[optionIndex], { level: result[optionIndex].level + 1 });
+      if (generateRandomNumber(0, 100) <= percentage) applySafeResult(result[optionIndex], { level: result[optionIndex].level + 1 });
       return { elixirs: result };
     },
     odds,
@@ -142,7 +142,7 @@ function potentialLevelSelectedOptionAdviceTemplate(odds: number, params: Advice
     effect: (elixirs, optionIndex) => {
       const result = elixirs.map((elixir) => ({ ...elixir }));
       if (typeof optionIndex !== 'number') throw new Error(NO_OPTION_SELECTED_ERROR_MESSAGE);
-      if (generateRandomNumber(0, 100) <= percentage) applyAdvice(result[optionIndex], { level: result[optionIndex].level + 1 });
+      if (generateRandomNumber(0, 100) <= percentage) applySafeResult(result[optionIndex], { level: result[optionIndex].level + 1 });
       return { elixirs: result };
     },
     odds,
@@ -157,7 +157,7 @@ function potentialChangeLevelFixedOptionAdviceTemplate(odds: number, params: Adv
     effect: (elixirs) => {
       const result = elixirs.map((elixir) => ({ ...elixir }));
       const diff = generateRandomInt(-maxRisk, maxReturn + 1);
-      applyAdvice(result[optionIndex], { level: result[optionIndex].level + diff });
+      applySafeResult(result[optionIndex], { level: result[optionIndex].level + diff });
       return { elixirs: result };
     },
     odds,
@@ -171,13 +171,11 @@ function levelUpHighestOptionAdviceTemplate(odds: number): AdviceBody {
     type: 'util',
     effect: (elixirs) => {
       const result = elixirs.map((elixir) => ({ ...elixir }));
-      const maxLevel = result.reduce((acc, cur) => {
-        return Math.max(cur.level, acc);
-      }, result[0].level);
+      const maxLevel = result.reduce((acc, cur) => Math.max(cur.level, acc), result[0].level);
       const [upTargetIndex] = gacha(result, { filterConditions: [(option) => option.level === maxLevel] });
       const [downTargetIndex] = gacha(result, { filterConditions: [(option, idx) => idx !== upTargetIndex] });
-      applyAdvice(result[upTargetIndex], { level: result[upTargetIndex].level + 1 });
-      applyAdvice(result[downTargetIndex], { level: result[downTargetIndex].level - 2 });
+      applySafeResult(result[upTargetIndex], { level: result[upTargetIndex].level + 1 });
+      applySafeResult(result[downTargetIndex], { level: result[downTargetIndex].level - 2 });
       return { elixirs: result };
     },
     odds,
@@ -193,8 +191,8 @@ function levelUpLowestOptionAdviceTemplate(odds: number): AdviceBody {
       const [minLevel, maxLevel] = result.reduce((acc, cur) => [Math.min(cur.level, acc[0]), Math.max(cur.level, acc[1])], [result[0].level, result[0].level]);
       const [upTargetIndex] = gacha(result, { filterConditions: [(option) => option.level === minLevel] });
       const [downTargetIndex] = gacha(result, { filterConditions: [(option, idx) => idx !== upTargetIndex && option.level === maxLevel] });
-      applyAdvice(result[upTargetIndex], { level: result[upTargetIndex].level + 1 });
-      applyAdvice(result[downTargetIndex], { level: result[downTargetIndex].level - 2 });
+      applySafeResult(result[upTargetIndex], { level: result[upTargetIndex].level + 1 });
+      applySafeResult(result[downTargetIndex], { level: result[downTargetIndex].level - 2 });
       return { elixirs: result };
     },
     odds,
@@ -209,7 +207,7 @@ function levelUpRandomOptionAdviceTemplate(odds: number): AdviceBody {
       const result = elixirs.map((elixir) => ({ ...elixir }));
       const candidate = result.filter((option) => !option.locked);
       const targetIndex = generateRandomInt(0, candidate.length);
-      applyAdvice(candidate[targetIndex], { level: candidate[targetIndex].level + 1 });
+      applySafeResult(candidate[targetIndex], { level: candidate[targetIndex].level + 1 });
       return { elixirs: result };
     },
     odds,
@@ -239,7 +237,7 @@ function potentialChangeLevelSelectedOptionAdviceTemplate(odds: number, props?: 
     effect: (elixirs, optionIndex) => {
       const result = elixirs.map((elixir) => ({ ...elixir }));
       const diff = generateRandomInt(-maxRisk, maxReturn + 1);
-      applyAdvice(result[optionIndex], { level: result[optionIndex].level + diff });
+      applySafeResult(result[optionIndex], { level: result[optionIndex].level + diff });
       return { elixirs: result, enterMeditation };
     },
     odds,
@@ -256,11 +254,8 @@ function amplifyFixedOptionHitRateTemporarilyAdviceTemplate(odds: number, params
       const result = elixirs.map((elixir) => ({ ...elixir }));
       const lockedCount = getLockedCount(result);
       result.forEach((option, idx) => {
-        if (option.locked) return;
-        option.nextHitRate = option.hitRate;
-
-        if (optionIndex === idx) applyAdvice(option, { hitRate: option.hitRate + percentage });
-        else applyAdvice(option, { hitRate: option.hitRate - percentage / (OPTION_COUNT - lockedCount - 1) });
+        if (optionIndex === idx) applySafeResult(option, { tempHitRate: option.hitRate + percentage });
+        else applySafeResult(option, { tempHitRate: option.hitRate - percentage / (OPTION_COUNT - lockedCount - 1) });
       });
       return { elixirs: result };
     },
@@ -278,12 +273,8 @@ function amplifyFixedOptionHitRateAdviceTemplate(odds: number, params: AdviceTem
       const result = elixirs.map((elixir) => ({ ...elixir }));
       const lockedCount = getLockedCount(result);
       result.forEach((option, idx) => {
-        if (option.locked) return;
-
-        if (optionIndex === idx) applyAdvice(option, { hitRate: option.hitRate + percentage });
-        else applyAdvice(option, { hitRate: option.hitRate - percentage / (OPTION_COUNT - lockedCount - 1) });
-
-        option.nextHitRate = option.hitRate;
+        if (optionIndex === idx) applySafeResult(option, { hitRate: option.hitRate + percentage });
+        else applySafeResult(option, { hitRate: option.hitRate - percentage / (OPTION_COUNT - lockedCount - 1) });
       });
       return { elixirs: result };
     },
@@ -305,10 +296,8 @@ function amplifySelectedHitRateAdviceTemplate(odds: number, props?: AdviceTempla
       const lockedCount = getLockedCount(result);
       validateOptionIndex(optionIndex);
       result.forEach((option, idx) => {
-        if (optionIndex === idx) applyAdvice(option, { hitRate: option.hitRate + percentage });
-        else applyAdvice(option, { hitRate: option.hitRate - percentage / (OPTION_COUNT - lockedCount - 1) });
-
-        option.nextHitRate = option.hitRate;
+        if (optionIndex === idx) applySafeResult(option, { hitRate: option.hitRate + percentage });
+        else applySafeResult(option, { hitRate: option.hitRate - percentage / (OPTION_COUNT - lockedCount - 1) });
       });
       return { elixirs: result };
     },
@@ -323,11 +312,8 @@ function amplifyFixedOptionBigHitRateAdviceTemplate(odds: number, params: Advice
     type: 'util',
     effect: (elixirs) => {
       const result = elixirs.map((elixir) => ({ ...elixir }));
-      result.forEach((option, idx) => {
-        if (optionIndex === idx) applyAdvice(option, { bigHitRate: option.bigHitRate + percentage });
+      applySafeResult(result[optionIndex], { bigHitRate: result[optionIndex].bigHitRate + percentage });
 
-        option.nextBigHitRate = option.bigHitRate;
-      });
       return { elixirs: result };
     },
     odds,
@@ -343,10 +329,8 @@ function amplifySelectedOptionBigHitRateAdviceTemplate(odds: number, params: Adv
     special,
     effect: (elixirs, optionIndex) => {
       const result = elixirs.map((elixir) => ({ ...elixir }));
-      const option = elixirs[optionIndex];
 
-      applyAdvice(option, { bigHitRate: option.bigHitRate + percentage });
-      option.nextBigHitRate = option.bigHitRate;
+      applySafeResult(result[optionIndex], { bigHitRate: result[optionIndex].bigHitRate + percentage });
 
       return { elixirs: result };
     },
@@ -362,10 +346,7 @@ function amplifyAllBigHitRateAdviceTemplate(odds: number, params: AdviceTemplate
     special,
     effect: (elixirs) => {
       const result = elixirs.map((elixir) => ({ ...elixir }));
-      result.forEach((option) => {
-        if (!option.locked) applyAdvice(option, { bigHitRate: option.bigHitRate + percentage });
-        option.nextBigHitRate = option.bigHitRate;
-      });
+      result.forEach((option) => applySafeResult(option, { bigHitRate: option.bigHitRate + percentage }));
       return { elixirs: result };
     },
     odds,
@@ -379,9 +360,7 @@ function amplifyFixedOptionBigHitRateTemporarilyAdviceTemplate(odds: number, par
     type: 'util',
     effect: (elixirs) => {
       const result = elixirs.map((elixir) => ({ ...elixir }));
-      const option = result[optionIndex];
-      option.nextBigHitRate = option.bigHitRate;
-      applyAdvice(option, { bigHitRate: option.bigHitRate + percentage });
+      applySafeResult(result[optionIndex], { tempBigHitRate: result[optionIndex].bigHitRate + percentage });
       return { elixirs: result };
     },
     odds: odds,
@@ -461,14 +440,8 @@ function lockRandomOptionAdviceTemplate(odds: number, params: AdviceTemplateProp
     effect: (elixirs) => {
       const result = elixirs.map((elixir) => ({ ...elixir }));
       const [idx] = gacha(result);
-      result[idx].locked = true;
-      const lockedCount = result.reduce((acc, cur) => acc + Number(cur.locked), 0);
-      for (let i = 0; i < OPTION_COUNT; i++) {
-        if (!result[i].locked) {
-          applyAdvice(result[i], { hitRate: result[i].hitRate + result[idx].hitRate / (OPTION_COUNT - lockedCount) });
-          result[i].nextHitRate = result[i].hitRate;
-        }
-      }
+
+      lockOption(result, idx);
 
       return { elixirs: result, saveChance, extraChanceConsume };
     },
@@ -483,14 +456,8 @@ function lockFixedOptionAdviceTemplate(odds: number, params: AdviceTemplateProps
     type: type ?? 'lock',
     effect: (elixirs) => {
       const result = elixirs.map((elixir) => ({ ...elixir }));
-      result[optionIndex].locked = true;
-      const lockedCount = result.reduce((acc, cur) => acc + Number(cur.locked), 0);
-      for (let i = 0; i < OPTION_COUNT; i++) {
-        if (!result[i].locked) {
-          applyAdvice(result[i], { hitRate: result[i].hitRate + result[optionIndex].hitRate / (OPTION_COUNT - lockedCount) });
-          result[i].nextHitRate = result[i].hitRate;
-        }
-      }
+
+      lockOption(result, optionIndex);
 
       return { elixirs: result, extraChanceConsume };
     },
@@ -511,14 +478,8 @@ function lockSelectedOptionAdviceTemplate(odds: number, params: AdviceTemplatePr
     special,
     effect: (elixirs, optionIndex) => {
       const result = elixirs.map((elixir) => ({ ...elixir }));
-      result[optionIndex].locked = true;
-      const lockedCount = result.reduce((acc, cur) => acc + Number(cur.locked), 0);
-      for (let i = 0; i < OPTION_COUNT; i++) {
-        if (!result[i].locked) {
-          applyAdvice(result[i], { hitRate: result[i].hitRate + result[optionIndex].hitRate / (OPTION_COUNT - lockedCount) });
-          result[i].nextHitRate = result[i].hitRate;
-        }
-      }
+
+      lockOption(result, optionIndex);
 
       return { elixirs: result, saveChance, extraChanceConsume, extraAlchemy, extraTarget };
     },
@@ -587,10 +548,11 @@ function raiseAllBelowNAdviceTemplate(odds: number, params: AdviceTemplateProps)
     remainChanceLowerBound,
     effect: (elixirs) => {
       const result = elixirs.map((elixir) => ({ ...elixir }));
-      const candidate = result.filter((option) => option.level <= n && !option.locked);
-      for (const option of candidate) {
-        applyAdvice(option, { level: option.level + 1 });
-      }
+      const candidate = result.filter((option) => option.level <= n);
+      candidate.forEach((option) => {
+        applySafeResult(option, { level: option.level + 1 });
+      });
+
       return { elixirs: result };
     },
     odds,
@@ -606,7 +568,7 @@ function changeFixedOptionToFixedLevelAdviceTemplate(odds: number, params: Advic
     remainChanceLowerBound,
     effect: (elixirs) => {
       const result = elixirs.map((elixir) => ({ ...elixir }));
-      applyAdvice(result[optionIndex], { level: n + generateRandomInt(0, 2) });
+      applySafeResult(result[optionIndex], { level: n + generateRandomInt(0, 2) });
       return { elixirs: result };
     },
     odds: odds,
@@ -623,7 +585,7 @@ function changeSelectedOptionToFixedLevelAdviceTemplate(odds: number, params: Ad
     remainChanceLowerBound,
     effect: (elixirs, optionIndex) => {
       const result = elixirs.map((elixir) => ({ ...elixir }));
-      applyAdvice(result[optionIndex], { level: n + generateRandomInt(0, 2) });
+      applySafeResult(result[optionIndex], { level: n + generateRandomInt(0, 2) });
       return { elixirs: result };
     },
     odds,
@@ -639,11 +601,10 @@ function exchangeOddEvenAdviceTemplate(odds: number, params: AdviceTemplateProps
     effect: (elixirs) => {
       const result = elixirs.map((elixir) => ({ ...elixir }));
 
-      for (let i = 0; i < result.length; i++) {
-        const option = result[i];
-        if ((i % 2 === 0) === odd) applyAdvice(option, { level: option.level + 1 });
-        else applyAdvice(option, { level: option.level - 1 });
-      }
+      result.forEach((option, idx) => {
+        if ((idx % 2 === 0) === odd) applySafeResult(option, { level: option.level + 1 });
+        else applySafeResult(option, { level: option.level - 1 });
+      });
 
       return { elixirs: result };
     },
@@ -660,12 +621,9 @@ function amplifyOddOrEvenBigHitRateAdviceTemplate(odds: number, params: AdviceTe
     special,
     effect: (elixirs) => {
       const result = elixirs.map((elixir) => ({ ...elixir }));
-
-      result.forEach((option, idx) => {
-        if (option.locked) return;
-        if ((idx % 2 === 0) === odd) applyAdvice(option, { bigHitRate: option.bigHitRate + percentage });
-
-        option.nextBigHitRate = option.bigHitRate;
+      const candidate = result.filter((_, idx) => (idx % 2 === 0) === odd);
+      candidate.forEach((option) => {
+        applySafeResult(option, { bigHitRate: option.bigHitRate + percentage });
       });
 
       return { elixirs: result };
@@ -681,8 +639,8 @@ function exchangeLevelBetweenFixedOptionsAdviceTemplate(odds: number, params: Ad
     type: 'util',
     effect: (elixirs) => {
       const result = elixirs.map((elixir) => ({ ...elixir }));
-      applyAdvice(result[optionIndex], { level: result[optionIndex].level + 1 });
-      applyAdvice(result[subOptionIndex], { level: result[subOptionIndex].level - n });
+      applySafeResult(result[optionIndex], { level: result[optionIndex].level + 1 });
+      applySafeResult(result[subOptionIndex], { level: result[subOptionIndex].level - n });
       return { elixirs: result };
     },
     odds,
@@ -716,40 +674,50 @@ interface ApplyAdviceProps {
   level?: number;
   hitRate?: number;
   bigHitRate?: number;
-  nextHitRate?: number;
-  nextBigHitRate?: number;
+  tempHitRate?: number;
+  tempBigHitRate?: number;
 }
 
-function applyAdvice(option: ElixirInstance, props: ApplyAdviceProps) {
+function getSafeResult(props: ApplyAdviceProps) {
+  const { level, hitRate, bigHitRate, tempHitRate, tempBigHitRate } = props;
+
+  const result: ApplyAdviceProps = {};
+
+  if (level !== undefined) result.level = Math.max(Math.min(level, MAX_ACTIVE), 0);
+  if (hitRate !== undefined) result.hitRate = Math.max(Math.min(hitRate, 100), 0);
+  if (bigHitRate !== undefined) result.bigHitRate = Math.max(Math.min(bigHitRate, 100), 0);
+  if (tempHitRate !== undefined) result.tempHitRate = Math.max(Math.min(tempHitRate, 100), 0);
+  if (tempBigHitRate !== undefined) result.tempBigHitRate = Math.max(Math.min(tempBigHitRate, 100), 0);
+
+  return result;
+}
+
+function applySafeResult(option: ElixirInstance, props: ApplyAdviceProps) {
   if (option.locked) return;
-  const { level, hitRate, bigHitRate, nextHitRate, nextBigHitRate } = props;
-  if (level !== undefined) option.level = Math.max(Math.min(level, MAX_ACTIVE), 0);
-  if (hitRate !== undefined) option.hitRate = Math.max(Math.min(hitRate, 100), 0);
-  if (bigHitRate !== undefined) option.bigHitRate = Math.max(Math.min(bigHitRate, 100), 0);
-  if (nextHitRate !== undefined) option.nextHitRate = Math.max(Math.min(nextHitRate, 100), 0);
-  if (nextBigHitRate !== undefined) option.nextBigHitRate = Math.max(Math.min(nextBigHitRate, 100), 0);
+
+  const result = getSafeResult(props);
+  const { level, hitRate, bigHitRate, tempHitRate, tempBigHitRate } = result;
+  console.log(result);
+
+  if (level !== undefined) option.level = level;
+  if (hitRate !== undefined) option.hitRate = hitRate;
+  if (bigHitRate !== undefined) option.bigHitRate = bigHitRate;
+  if (tempHitRate !== undefined) option.tempHitRate = tempHitRate;
+  if (tempBigHitRate !== undefined) option.tempBigHitRate = tempBigHitRate;
 }
 
 function lockOption(elixirs: ElixirInstance[], idx: number) {
-  elixirs[idx].locked = true;
+  const target = elixirs[idx];
+  target.locked = true;
   const unlockedCount = OPTION_COUNT - getLockedCount(elixirs);
-  for (let i = 0; i < OPTION_COUNT; i++) {
-    if (!elixirs[i].locked) {
-      applyAdvice(elixirs[i], { hitRate: elixirs[i].hitRate + elixirs[idx].hitRate / unlockedCount });
-      elixirs[i].nextHitRate = elixirs[i].hitRate;
-    }
-  }
+  elixirs.forEach((option) => applySafeResult(option, { hitRate: option.hitRate + target.hitRate / unlockedCount }));
 }
 
 function unlockOption(elixirs: ElixirInstance[], idx: number) {
+  const target = elixirs[idx];
   const unlockedCount = OPTION_COUNT - getLockedCount(elixirs);
-  for (let i = 0; i < OPTION_COUNT; i++) {
-    if (!elixirs[i].locked) {
-      applyAdvice(elixirs[i], { hitRate: elixirs[i].hitRate - elixirs[idx].hitRate / unlockedCount });
-      elixirs[i].nextHitRate = elixirs[i].hitRate;
-    }
-  }
-  elixirs[idx].locked = false;
+  elixirs.forEach((option) => applySafeResult(option, { hitRate: option.hitRate - target.hitRate / unlockedCount }));
+  target.locked = false;
 }
 
 function redistribute(elixirs: ElixirInstance[]) {
@@ -758,6 +726,8 @@ function redistribute(elixirs: ElixirInstance[]) {
     if (!cur.locked) acc += cur.level;
     return acc;
   }, 0);
+
+  // TODO: fix
   const shares = Array.from({ length: OPTION_COUNT - lockedCount }).map((_) => 0);
 
   while (levelSum) {
@@ -767,10 +737,10 @@ function redistribute(elixirs: ElixirInstance[]) {
   }
 
   let i = 0;
-  for (const option of elixirs) {
-    if (option.locked) continue;
-    applyAdvice(option, { level: shares[i++] });
-  }
+  elixirs.forEach((option) => {
+    if (option.locked) return;
+    applySafeResult(option, { level: shares[i++] });
+  });
 }
 
 interface AdviceTemplateProps {

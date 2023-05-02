@@ -6,3 +6,5 @@ export const AlchemyStatuses = {
 } as const;
 
 export type AlchemyStatus = (typeof AlchemyStatuses)[keyof typeof AlchemyStatuses];
+
+export type OddsKey = 'odds' | 'hitRate' | 'tempHitRate';

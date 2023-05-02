@@ -14,6 +14,7 @@ export interface ElixirInstance extends Elixir {
   hitRate: number;
   bigHitRate: number;
   statusText: AlchemyStatusText;
-  nextHitRate: number;
-  nextBigHitRate: number;
+
+  tempHitRate: number;
+  tempBigHitRate: number;
 }
