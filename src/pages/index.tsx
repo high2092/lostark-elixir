@@ -98,6 +98,7 @@ const Home = () => {
       case AlchemyStatuses.REFINE: {
         const { id } = sages[selectedAdviceIndex].elixir;
         dispatch(pickOption(id));
+        dispatch(setSelectedAdviceIndex(null));
         break;
       }
       case AlchemyStatuses.ADVICE: {
@@ -116,13 +117,13 @@ const Home = () => {
       }
       case AlchemyStatuses.ALCHEMY: {
         dispatch(alchemy());
+        dispatch(setSelectedAdviceIndex(null));
         break;
       }
     }
 
     setStatusTextTimeout();
 
-    dispatch(setSelectedAdviceIndex(null));
     dispatch(setSelectedOptionIndex(null));
   };
 
