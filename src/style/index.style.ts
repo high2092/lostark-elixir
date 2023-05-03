@@ -13,26 +13,34 @@ export const Home = styled.div`
   user-select: none;
 
   @media (max-width: ${MOBILE_CRITERIA_MAX_WIDTH}) {
+    height: 80vh;
     * {
       font-size: 0.6rem;
     }
   }
 `;
 
+const ELIXIR_OPTION_HEIGHT = '9vh';
+const ELIXIR_OPTION_HEIGHT_MOBILE = '7vh';
+const ELIXIR_OPTION_SECTION_TOP_FACTOR = 3.6;
 export const ElixirOptionSection = styled.div`
   position: absolute;
 
   z-index: 1;
 
-  top: 35vh;
+  top: calc(${ELIXIR_OPTION_HEIGHT} * ${ELIXIR_OPTION_SECTION_TOP_FACTOR});
   right: 0;
 
   transform: translateY(-50%);
+
+  @media (max-width: ${MOBILE_CRITERIA_MAX_WIDTH}) {
+    top: calc(${ELIXIR_OPTION_HEIGHT_MOBILE} * ${ELIXIR_OPTION_SECTION_TOP_FACTOR});
+  }
 `;
 
 export const ElixirOption = styled.div<{ selected?: boolean; locked?: boolean }>`
   width: 21rem;
-  height: 9vh;
+  height: ${ELIXIR_OPTION_HEIGHT};
 
   background-color: ${({ locked }) => (locked ? '#999999' : '#c8b6a6')};
 
@@ -44,6 +52,10 @@ export const ElixirOption = styled.div<{ selected?: boolean; locked?: boolean }>
 
   display: flex;
   align-content: center;
+
+  @media (max-width: ${MOBILE_CRITERIA_MAX_WIDTH}) {
+    height: ${ELIXIR_OPTION_HEIGHT_MOBILE};
+  }
 `;
 
 const MAIN_SECTION_HEIGHT_PERCENT = 77;
