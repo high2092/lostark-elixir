@@ -1,5 +1,5 @@
 import * as S from './AdviceSection.style';
-import { Placeholders, DIALOGUE_END_INDEX as I, ADVICE_COUNT, STACK_COUNTER_EXPECTED_HEIGHT } from '../constants';
+import { Placeholders, DIALOGUE_END_INDEX as I, ADVICE_COUNT } from '../constants';
 import { drawAdvices } from '../features/elixirSlice';
 import { setSelectedAdviceIndex } from '../features/uiSlice';
 import { useAppDispatch, useAppSelector } from '../store';
@@ -39,19 +39,18 @@ export const AdviceSection = () => {
         const sage = sages[idx];
         const special = alchemyStatus === AlchemyStatuses.ADVICE && isFullStack(sage) ? sage.type : null;
         return (
-          <S.Advice key={`advice-${idx}`} onClick={(e) => handleAdviceClick(e, idx)}>
-            <div style={{ height: STACK_COUNTER_EXPECTED_HEIGHT }}>
-              <SageTypeStackCounter sage={sage} />
-            </div>
-            <S.AdviceDialogue disabled={getAdviceButtonDisabled(sage)} special={special} selected={selectedAdviceIndex === idx}>
+          <S.AdviceContainer key={`advice-${idx}`} onClick={(e) => handleAdviceClick(e, idx)}>
+            <SageTypeStackCounter sage={sage} />
+            <S.Advice disabled={getAdviceButtonDisabled(sage)} special={special} selected={selectedAdviceIndex === idx}>
               <AdviceDialogue sage={sage} />
-            </S.AdviceDialogue>
-          </S.Advice>
+            </S.Advice>
+          </S.AdviceContainer>
         );
       })}
-      <S.AdviceRerollButtonSection onClick={handleRerollButtonClick}>
+      <S.AdviceContainer onClick={handleRerollButtonClick}>
+        <SageTypeStackCounter />
         <S.AdviceRerollButton disabled={adviceRerollChance <= 0}>{getAdviceRerollButtonText(adviceRerollChance)}</S.AdviceRerollButton>
-      </S.AdviceRerollButtonSection>
+      </S.AdviceContainer>
     </S.AdviceSection>
   );
 };
@@ -70,7 +69,7 @@ const AdviceDialogue = ({ sage }: AdviceDialogueProps) => {
   } else if (elixir) {
     const { name, part, type } = elixir;
     return (
-      <div style={{ height: '100%', padding: '1rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div>
         <div>
           <span>{`${name}${type ? ` (${type})` : ''}`}</span>
           <span>{` 효과를 정제하는건 ${sage.dialogueEnds[I.어떤가]}?`}</span>

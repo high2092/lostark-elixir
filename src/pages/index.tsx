@@ -14,6 +14,7 @@ import {
   VISITED_COOKIE_KEY,
   TutorialTexts,
   IMAGE_RESOURCE_URL_LIST,
+  MOBILE_CRITERIA_MAX_WIDTH,
 } from '../constants';
 import { Activation } from '../components/Activation';
 import { getBigHitRate, getHitRate, getOptionName, playClickSound } from '../util';
@@ -176,26 +177,24 @@ const Home = () => {
           <S.MaterialSectionText>{MaterialSectionText.SELECT_OPTION}</S.MaterialSectionText>
           <S.MaterialInfo>
             <S.MaterialInfoSubSection>
-              <label>필요 재료</label>
-              <div style={{ padding: '1rem' }}>
+              <div style={{ flex: 1, textAlign: 'left' }}>필요 재료</div>
+              <div style={{ flex: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <div style={{ flex: 1 }}>
-                    <img style={{ width: '30px', height: '30px', background: '#0b2447' }} src="image/material.png" />
-                  </div>
-                  <div style={{ flex: 4, padding: '0.5rem' }}>안정된 연성 촉매</div>
-                  <div style={{ flex: 4, padding: '0.5rem', textAlign: 'right' }}>413 / 5</div>
+                  <img style={{ width: '30px', height: '30px', background: '#0b2447' }} src="image/material.png" />
+                  <div>안정된 연성 촉매</div>
                 </div>
+                <div>41/2</div>
               </div>
             </S.MaterialInfoSubSection>
-            <S.VerticalRule height="3rem" />
+            <S.VerticalRule height="4rem" />
             <S.MaterialInfoSubSection>
-              <label>필요 비용</label>
-              <div style={{ padding: '1rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <div style={{ flex: 1, textAlign: 'left' }}>필요 비용</div>
+              <div style={{ flex: 4, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between' }}>
                   <div>정제 비용</div>
                   <Gold amount={280} />
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between' }}>
                   <div>소지 금액</div>
                   <Gold amount={26741} />
                 </div>

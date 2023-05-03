@@ -91,3 +91,5 @@ export const TutorialTexts = {
   [TutorialStatus.PLAY_BGM]: '좌측 상단의 버튼을 클릭해 BGM을 켜거나 끌 수 있어요.',
   [TutorialStatus.RESET]: '좌측 상단의 버튼을 클릭해 연성 상태를 초기화할 수 있어요.',
 };
+
+export const MOBILE_CRITERIA_MAX_WIDTH = '600px';

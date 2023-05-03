@@ -5,13 +5,20 @@ import { ActiveChaosStackIcon } from './ActiveChaosStackIcon';
 import { ActiveOrderStackIcon } from './ActiveOrderStackIcon';
 import { InactiveChaosStackIcon } from './InactiveChaosStackIcon';
 import { InactiveOrderStackIcon } from './InactiveOrderStackIcon';
+import { BlankIcon } from './BlankStackIcon';
 
 interface SageTypeStackCounterProps {
-  sage: Sage;
+  sage?: Sage;
 }
 
 export const SageTypeStackCounter = ({ sage }: SageTypeStackCounterProps) => {
-  if (!sage.viewStack || sage.meditation) return <div></div>;
+  if (!sage || !sage.viewStack || sage.meditation)
+    return (
+      <S.SageTypeStackCounter>
+        <BlankIcon />
+      </S.SageTypeStackCounter>
+    );
+
   const { type, stack } = sage.viewStack;
   const maxStack = SageTypes[type].fullStack;
 

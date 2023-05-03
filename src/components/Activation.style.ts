@@ -2,13 +2,13 @@ import styled from '@emotion/styled';
 import { CENTERED_FLEX_STYLE, MAX_ACTIVE } from '../constants';
 
 export const ANIMATION_DURATION_SECOND = 1;
-const ACTIVATION_WIDTH_VW = 17;
+const ACTIVATION_WIDTH_REM = 15;
 const BORDER_WIDTH_PX = 3;
 export const Activation = styled.div<{ percentage: number }>`
   position: relative;
 
-  width: ${ACTIVATION_WIDTH_VW}vw;
-  height: ${ACTIVATION_WIDTH_VW / MAX_ACTIVE}vw;
+  width: ${ACTIVATION_WIDTH_REM}rem;
+  height: ${ACTIVATION_WIDTH_REM / MAX_ACTIVE}rem;
   background-color: transparent;
 
   overflow: hidden;
@@ -22,10 +22,10 @@ export const Activation = styled.div<{ percentage: number }>`
     top: 0;
     left: 0;
     width: 100%;
-    height: ${ACTIVATION_WIDTH_VW / MAX_ACTIVE}vw;
+    height: ${ACTIVATION_WIDTH_REM / MAX_ACTIVE}rem;
     background-color: #ffd966;
     transition: left 1s;
-    left: -${({ percentage }) => ACTIVATION_WIDTH_VW * (1 - percentage)}vw;
+    left: -${({ percentage }) => ACTIVATION_WIDTH_REM * (1 - percentage)}rem;
   }
 
   div {

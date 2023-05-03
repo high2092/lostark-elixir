@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { DEFAULT_BORDER_RADIUS_PX } from '../constants';
+import { DEFAULT_BORDER_RADIUS_PX, MOBILE_CRITERIA_MAX_WIDTH } from '../constants';
 
 export const Home = styled.div`
   width: 100vw;
@@ -11,6 +11,12 @@ export const Home = styled.div`
   flex-direction: column;
 
   user-select: none;
+
+  @media (max-width: ${MOBILE_CRITERIA_MAX_WIDTH}) {
+    * {
+      font-size: 0.6rem;
+    }
+  }
 `;
 
 export const ElixirOptionSection = styled.div`
@@ -18,19 +24,19 @@ export const ElixirOptionSection = styled.div`
 
   z-index: 1;
 
-  top: 45%;
+  top: 35vh;
   right: 0;
 
   transform: translateY(-50%);
 `;
 
 export const ElixirOption = styled.div<{ selected?: boolean; locked?: boolean }>`
-  width: 23vw;
+  width: 21rem;
   height: 9vh;
 
   background-color: ${({ locked }) => (locked ? '#999999' : '#c8b6a6')};
 
-  margin: 1.5rem;
+  margin: 3vh;
 
   ${({ selected }) => (selected ? 'outline: 3px solid #FF8400;' : '')}
 
@@ -40,6 +46,7 @@ export const ElixirOption = styled.div<{ selected?: boolean; locked?: boolean }>
   align-content: center;
 `;
 
+const MAIN_SECTION_HEIGHT_PERCENT = 77;
 export const MainSection = styled.div`
   position: relative;
 
@@ -47,7 +54,7 @@ export const MainSection = styled.div`
   left: 0;
 
   width: 100%;
-  height: 80%;
+  height: ${MAIN_SECTION_HEIGHT_PERCENT}%;
 
   background: url('image/background.png');
   background-size: cover;
@@ -56,35 +63,42 @@ export const MainSection = styled.div`
 
 export const DescriptionSection = styled.div`
   width: 100%;
+  height: calc(100% - ${MAIN_SECTION_HEIGHT_PERCENT}%);
 
   background-color: #a4907c;
 
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
 `;
 
 export const MaterialSection = styled.div`
   width: 60%;
-
+  height: 60%;
   text-align: center;
+
+  @media (max-width: ${MOBILE_CRITERIA_MAX_WIDTH}) {
+    width: 100%;
+  }
 `;
 
 export const MaterialSectionText = styled.div``;
 
 export const MaterialInfo = styled.div`
-  padding: 0.5rem;
-
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+  height: 100%;
 `;
 
+const MATERIAL_INFO_SUB_SECTION_PADDING_VERTICAL = '1rem';
 export const MaterialInfoSubSection = styled.div`
   flex: 1;
+  height: calc(100% - ${MATERIAL_INFO_SUB_SECTION_PADDING_VERTICAL});
 
-  padding: 0.5rem;
+  padding: ${MATERIAL_INFO_SUB_SECTION_PADDING_VERTICAL} 2rem;
 
   text-align: initial;
 
