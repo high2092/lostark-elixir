@@ -61,6 +61,7 @@ export const ADVICES: AdviceBody[] = [
   levelUpHighestOptionAdviceTemplate(1),
   levelUpLowestOptionAdviceTemplate(1),
   levelUpRandomOptionAdviceTemplate(1),
+  levelUpSelectedOptionAdviceTemplate(1, { special: SageTypesTypes.ORDER, n: 1 }),
 
   // 고정 레벨 변경
   raiseAllBelowNAdviceTemplate(0.5, { n: 0, remainChanceUpperBound: 14, remainChanceLowerBound: 11 }),
@@ -214,6 +215,22 @@ function levelUpLowestOptionAdviceTemplate(odds: number): AdviceBody {
       const [downTargetIndex] = gacha(result, { filterConditions: [(option, idx) => idx !== upTargetIndex && option.level === maxLevel] });
       applySafeResult(result[upTargetIndex], { level: result[upTargetIndex].level + 1 });
       applySafeResult(result[downTargetIndex], { level: result[downTargetIndex].level - 2 });
+      return { elixirs: result };
+    },
+    odds,
+  };
+}
+
+function levelUpSelectedOptionAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
+  const { special, n } = params;
+  return {
+    name: `${Placeholders[I.자네]}가 ${Placeholders[I.선택한]} 효과의 단계를 ${n} 올려${Placeholders[I.주겠네]}.`,
+    type: 'util',
+    special,
+    effect: (elixirs, optionIndex) => {
+      if (optionIndex === null) throw new NoOptionSelectedError();
+      const result = elixirs.map((elixir) => ({ ...elixir }));
+      applySafeResult(result[optionIndex], { level: result[optionIndex].level + 1 });
       return { elixirs: result };
     },
     odds,
