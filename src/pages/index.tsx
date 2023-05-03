@@ -52,14 +52,6 @@ const Home = () => {
 
   useEffect(() => {
     const promises: Promise<void>[] = [
-      ...AUDIO_RESOURCE_URL_LIST.map(
-        (url) =>
-          new Promise<void>((resolve) => {
-            const audio = new Audio();
-            audio.oncanplay = () => resolve();
-            audio.src = url;
-          })
-      ),
       ...IMAGE_RESOURCE_URL_LIST.map(
         (url) =>
           new Promise<void>((resolve) => {
@@ -69,6 +61,11 @@ const Home = () => {
           })
       ),
     ];
+
+    AUDIO_RESOURCE_URL_LIST.forEach((url) => {
+      const audio = new Audio();
+      audio.src = url;
+    });
 
     Promise.all(promises).then(() => setLoaded(true));
   }, []);
