@@ -132,8 +132,9 @@ export const ADVICES: AdviceBody[] = [
   ...createFixedSubOptionAdvices(1, exchangeLevelBetweenFixedOptionsAdviceTemplate, { n: 1 }),
   ...createFixedSubOptionAdvices(1, exchangeLevelBetweenFixedOptionsAdviceTemplate, { n: 2 }),
 
-  addExtraAlchemyChanceAdviceTemplate(1, { extraAlchemy: 2, extraChanceConsume: 1 }),
-  addExtraAlchemyChanceAdviceTemplate(1, { extraAlchemy: 2, special: SageTypesTypes.ORDER }),
+  extraAlchemyAdviceTemplate(1, { extraAlchemy: 1 }),
+  extraAlchemyAdviceTemplate(1, { extraAlchemy: 2, extraChanceConsume: 1 }),
+  extraAlchemyAdviceTemplate(1, { extraAlchemy: 2, special: SageTypesTypes.ORDER }),
 
   saveChanceAdviceTemplate(1),
 ];
@@ -725,7 +726,7 @@ function exchangeLevelBetweenFixedOptionsAdviceTemplate(odds: number, params: Ad
   };
 }
 
-function addExtraAlchemyChanceAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
+function extraAlchemyAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
   const { extraAlchemy, extraChanceConsume, special } = params;
   return {
     name: `${getExtraAlchemyText(extraAlchemy)}${extraChanceConsume ? ` 다만, 기회를 ${extraChanceConsume + 1}번 소모${Placeholders[I.할걸세]}.` : ''}`,
