@@ -3,6 +3,8 @@ import styled from '@emotion/styled';
 export const LeftTopSection = styled.div`
   position: fixed;
 
+  z-index: 5;
+
   height: 1rem;
   padding: 0.5rem;
 

@@ -13,7 +13,7 @@ export const Home = styled.div`
   user-select: none;
 
   @media (max-width: ${MOBILE_CRITERIA_MAX_WIDTH}) {
-    height: 80vh;
+    height: 83vh;
     * {
       font-size: 0.6rem;
     }
@@ -54,6 +54,7 @@ export const ElixirOption = styled.div<{ selected?: boolean; locked?: boolean }>
   align-content: center;
 
   @media (max-width: ${MOBILE_CRITERIA_MAX_WIDTH}) {
+    width: 18rem;
     height: ${ELIXIR_OPTION_HEIGHT_MOBILE};
   }
 `;
@@ -138,6 +139,9 @@ export const Material = styled.div`
 
 export const FirstVisitHelpText = styled.div`
   position: fixed;
+
+  z-index: 5;
+
   color: red;
 
   top: 2rem;
