@@ -2,7 +2,22 @@ import { DIALOGUE_END_INDEX as I, MAX_ACTIVE, OPTION_COUNT, Placeholders } from 
 import { Advice, AdviceBody, AdviceType } from '../type/advice';
 import { ElixirInstance } from '../type/elixir';
 import { SageKey, SageKeys, SageTypesType, SageTypesTypes } from '../type/sage';
-import { applySafeResult, convertToSignedString, gacha, generateRandomInt, generateRandomNumber, getLockedCount, getLockedOrMaxLevelCount, getMaxLevel, getMinLevel, validateOptionIndex } from '../util';
+import {
+  applySafeResult,
+  changeHitRate,
+  convertToSignedString,
+  gacha,
+  generateRandomInt,
+  generateRandomNumber,
+  getLockedCount,
+  getLockedOrMaxLevelCount,
+  getMaxLevel,
+  getMinLevel,
+  lockOption,
+  redistribute,
+  unlockOption,
+  validateOptionIndex,
+} from '../util';
 
 const NO_OPTION_SELECTED_ERROR_MESSAGE = '옵션을 선택해주세요.';
 const getExtraAlchemyText = (extraAlchemy: number) => `이번에 연성되는 효과는 ${1 + extraAlchemy}단계 연성해${Placeholders[I.주겠네]}.`;
@@ -255,11 +270,7 @@ function amplifyFixedOptionHitRateTemporarilyAdviceTemplate(odds: number, params
     type: 'util',
     effect: (elixirs) => {
       const result = elixirs.map((elixir) => ({ ...elixir }));
-      const lockedCount = getLockedCount(result);
-      result.forEach((option, idx) => {
-        if (optionIndex === idx) applySafeResult(option, { tempHitRate: option.hitRate + percentage });
-        else applySafeResult(option, { tempHitRate: option.hitRate - percentage / (OPTION_COUNT - lockedCount - 1) });
-      });
+      changeHitRate(optionIndex, percentage, result, { temp: true });
       return { elixirs: result };
     },
     odds,
@@ -274,11 +285,7 @@ function amplifyFixedOptionHitRateAdviceTemplate(odds: number, params: AdviceTem
     type: 'util',
     effect: (elixirs) => {
       const result = elixirs.map((elixir) => ({ ...elixir }));
-      const lockedCount = getLockedCount(result);
-      result.forEach((option, idx) => {
-        if (optionIndex === idx) applySafeResult(option, { hitRate: option.hitRate + percentage });
-        else applySafeResult(option, { hitRate: option.hitRate - percentage / (OPTION_COUNT - lockedCount - 1) });
-      });
+      changeHitRate(optionIndex, percentage, result);
       return { elixirs: result };
     },
     odds,
@@ -296,12 +303,7 @@ function amplifySelectedHitRateAdviceTemplate(odds: number, props?: AdviceTempla
     sage,
     effect: (elixirs, optionIndex) => {
       const result = elixirs.map((elixir) => ({ ...elixir }));
-      const lockedCount = getLockedCount(result);
-      validateOptionIndex(optionIndex);
-      result.forEach((option, idx) => {
-        if (optionIndex === idx) applySafeResult(option, { hitRate: option.hitRate + percentage });
-        else applySafeResult(option, { hitRate: option.hitRate - percentage / (OPTION_COUNT - lockedCount - 1) });
-      });
+      changeHitRate(optionIndex, percentage, result);
       return { elixirs: result };
     },
     odds,
@@ -717,43 +719,6 @@ function saveChanceAdviceTemplate(odds: number): AdviceBody {
     effect: (elixirs) => ({ elixirs, saveChance: true }),
     odds,
   };
-}
-
-function lockOption(elixirs: ElixirInstance[], idx: number) {
-  const target = elixirs[idx];
-  target.locked = true;
-  const activeOptionCount = OPTION_COUNT - getLockedOrMaxLevelCount(elixirs);
-  elixirs.forEach((option) => applySafeResult(option, { hitRate: option.hitRate + target.hitRate / activeOptionCount }));
-}
-
-function unlockOption(elixirs: ElixirInstance[], idx: number) {
-  const target = elixirs[idx];
-  const activeOptionCount = OPTION_COUNT - getLockedOrMaxLevelCount(elixirs);
-  elixirs.forEach((option) => applySafeResult(option, { hitRate: option.hitRate - target.hitRate / activeOptionCount }));
-  target.locked = false;
-}
-
-function redistribute(elixirs: ElixirInstance[]) {
-  const lockedCount = getLockedCount(elixirs);
-  let levelSum = elixirs.reduce((acc, cur) => {
-    if (!cur.locked) acc += cur.level;
-    return acc;
-  }, 0);
-
-  // TODO: fix
-  const shares = Array.from({ length: OPTION_COUNT - lockedCount }).map((_) => 0);
-
-  while (levelSum) {
-    const idx = generateRandomInt(0, shares.length);
-    shares[idx]++;
-    levelSum--;
-  }
-
-  let i = 0;
-  elixirs.forEach((option) => {
-    if (option.locked) return;
-    applySafeResult(option, { level: shares[i++] });
-  });
 }
 
 interface AdviceTemplateProps {

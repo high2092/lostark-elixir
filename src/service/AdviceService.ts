@@ -3,7 +3,7 @@ import { ADVICES } from '../database/advice';
 import { Advice } from '../type/advice';
 import { ElixirInstance } from '../type/elixir';
 import { Sage } from '../type/sage';
-import { checkMaxLevel, gacha, getLockedCount, getMinLevel, isFullStack, playRefineFailureSound, playRefineSuccessSound, recalculateHitRate, replaceOptionPlaceholder, requireLock } from '../util';
+import { checkMaxLevel, gacha, getLockedCount, getMinLevel, isFullStack, playRefineFailureSound, playRefineSuccessSound, replaceOptionPlaceholder, requireLock } from '../util';
 
 class AdviceService {
   advices: Advice[] = ADVICES.map((advice, idx) => ({ ...advice, id: idx + 1 }));
@@ -80,7 +80,6 @@ class AdviceService {
     const levelUp = result.elixirs.reduce((acc, cur, i) => acc || cur.level - elixirs[i].level > 0, false);
 
     checkMaxLevel(result.elixirs);
-    recalculateHitRate(result.elixirs);
 
     if (advice.type !== 'potential' || levelUp) playRefineSuccessSound();
     else playRefineFailureSound();

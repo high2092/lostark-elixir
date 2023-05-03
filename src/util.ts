@@ -228,45 +228,68 @@ export function applySafeResult(option: ElixirInstance, props: ApplyAdviceProps)
   if (tempHitRate !== undefined) option.tempHitRate = tempHitRate;
 }
 
-function handleReachMaxLevel(idx: number, elixirs: ElixirInstance[]) {
-  const target = elixirs[idx];
-  const backUpHitRate = (target.backUpHitRate = target.hitRate);
-  const activeOptionCount = OPTION_COUNT - getLockedOrMaxLevelCount(elixirs);
-  elixirs.forEach((option, i) => {
-    if (idx === i) applySafeResult(option, { hitRate: 0 });
-    else applySafeResult(option, { hitRate: option.hitRate + backUpHitRate / (activeOptionCount - 1) });
+export function redistribute(elixirs: ElixirInstance[]) {
+  const lockedCount = getLockedCount(elixirs);
+  let levelSum = elixirs.reduce((acc, cur) => {
+    if (!cur.locked) acc += cur.level;
+    return acc;
+  }, 0);
+
+  // TODO: fix
+  const shares = Array.from({ length: OPTION_COUNT - lockedCount }).map((_) => 0);
+
+  while (levelSum) {
+    const idx = generateRandomInt(0, shares.length);
+    shares[idx]++;
+    levelSum--;
+  }
+
+  let i = 0;
+  elixirs.forEach((option) => {
+    if (option.locked) return;
+    applySafeResult(option, { level: shares[i++] });
   });
 }
 
-function handleDemotedFromMaxLevel(idx: number, elixirs: ElixirInstance[]) {
+export function lockOption(elixirs: ElixirInstance[], idx: number) {
   const target = elixirs[idx];
-  const activeOptionCount = OPTION_COUNT - getLockedOrMaxLevelCount(elixirs);
+  target.locked = true;
+  changeHitRate(idx, -target.hitRate, elixirs, { lock: true });
+}
+
+export function unlockOption(elixirs: ElixirInstance[], idx: number) {
+  const target = elixirs[idx];
+  changeHitRate(idx, target.hitRate, elixirs, { lock: true });
+  target.locked = false;
+}
+
+interface ChangeHitRateProps {
+  lock?: boolean; // lock, unlock 시에만 true
+  temp?: boolean; // 이번 연성에만 적용
+}
+
+export function changeHitRate(idx: number, hitRateDiff: number, elixirs: ElixirInstance[], props?: ChangeHitRateProps) {
+  props ??= {};
+  const { lock, temp } = props;
+  const remainHitRateSum = elixirs.reduce((acc, cur, i) => (idx === i || cur.locked || cur.isMaxLevel ? acc : acc + cur.hitRate), 0);
+  const hitRateKey = temp ? 'tempHitRate' : 'hitRate';
   elixirs.forEach((option, i) => {
-    if (idx === i) applySafeResult(option, { hitRate: target.backUpHitRate });
-    else applySafeResult(option, { hitRate: option.hitRate - target.backUpHitRate / (activeOptionCount - 1) });
+    if (option.isMaxLevel) return;
+    if (idx === i && !lock) applySafeResult(option, { [hitRateKey]: option.hitRate + hitRateDiff });
+    else applySafeResult(option, { [hitRateKey]: option.hitRate - hitRateDiff * (option.hitRate / remainHitRateSum) });
   });
 }
 
 export function checkMaxLevel(elixirs: ElixirInstance[]) {
   elixirs.forEach((option, idx) => {
     if (!option.isMaxLevel && option.level === MAX_ACTIVE) {
-      handleReachMaxLevel(idx, elixirs);
+      option.backUpHitRate = option.hitRate;
+      changeHitRate(idx, -option.hitRate, elixirs);
       option.isMaxLevel = true;
     } else if (option.isMaxLevel && option.level !== MAX_ACTIVE) {
-      handleDemotedFromMaxLevel(idx, elixirs);
+      changeHitRate(idx, option.backUpHitRate, elixirs);
       option.isMaxLevel = false;
     }
-  });
-}
-
-export function recalculateHitRate(elixirs: ElixirInstance[]) {
-  const unlocked = elixirs.filter((elixir) => !elixir.locked);
-  const hitRateSum = calculateOddsSum(unlocked, 'hitRate') / 100;
-  const tempHitRateSum = calculateOddsSum(unlocked, 'tempHitRate') / 100;
-
-  elixirs.forEach((option) => {
-    option.hitRate /= hitRateSum;
-    if (tempHitRateSum) option.tempHitRate /= tempHitRateSum;
   });
 }
 
