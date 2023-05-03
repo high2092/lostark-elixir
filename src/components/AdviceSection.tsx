@@ -1,12 +1,12 @@
 import * as S from './AdviceSection.style';
-import { Placeholders, DIALOGUE_END_INDEX as I, ADVICE_COUNT } from '../constants';
+import { Placeholders, ADVICE_COUNT } from '../constants';
 import { drawAdvices } from '../features/elixirSlice';
 import { setSelectedAdviceIndex } from '../features/uiSlice';
 import { useAppDispatch, useAppSelector } from '../store';
 import { AlchemyStatuses } from '../type/common';
 import { isFullStack, playClickSound } from '../util';
 import { SageTypeStackCounter } from './SageTypeStackCounter';
-import { Sage } from '../type/sage';
+import { DialogueEndTypes, Sage } from '../type/sage';
 
 interface AdviceDialogueProps {
   sage: Sage;
@@ -62,7 +62,7 @@ const AdviceDialogue = ({ sage }: AdviceDialogueProps) => {
   const { elixir, advice } = sage;
 
   if (advice) {
-    const name = Object.values(I).reduce((acc, cur) => {
+    const name = Object.values(DialogueEndTypes).reduce((acc, cur) => {
       return acc.replaceAll(Placeholders[cur], sage.dialogueEnds[cur]);
     }, advice.name);
     return <div>{name}</div>;
@@ -72,7 +72,7 @@ const AdviceDialogue = ({ sage }: AdviceDialogueProps) => {
       <div>
         <div>
           <span>{`${name}${type ? ` (${type})` : ''}`}</span>
-          <span>{` 효과를 정제하는건 ${sage.dialogueEnds[I.어떤가]}?`}</span>
+          <span>{` 효과를 정제하는건 ${sage.dialogueEnds.어떤가}?`}</span>
         </div>
         <div>{`(${part ? `${part} 전용` : '공용'})`}</div>
       </div>

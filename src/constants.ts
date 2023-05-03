@@ -1,5 +1,5 @@
 import { css } from '@emotion/react';
-import { SageTypesTypes } from './type/sage';
+import { SageTypesTypes, DialogueEndTypes as D, DialogueEndTypes } from './type/sage';
 import { AlchemyStatuses } from './type/common';
 
 export const OPTION_COUNT = 5;
@@ -29,30 +29,23 @@ export const SageTypes = {
     color: 'blue',
   },
 };
-export const DIALOGUE_END_INDEX = {
-  어떤가: 0,
-  주겠네: 1,
-  올릴걸세: 2,
-  내: 3,
-  하겠네: 4,
-  자네가: 5,
-  선택한: 6,
-  할걸세: 7,
-  않을걸세: 8,
+
+type Placeholders = {
+  [key in DialogueEndTypes | 'OPTION' | 'SUB_OPTION']: string;
 };
 
-export const Placeholders = {
+export const Placeholders: Placeholders = {
   OPTION: '?{option}',
   SUB_OPTION: '?{subOption}',
-  [DIALOGUE_END_INDEX.어떤가]: '?{어떤가}',
-  [DIALOGUE_END_INDEX.주겠네]: '?{주겠네}',
-  [DIALOGUE_END_INDEX.올릴걸세]: '?{올릴걸세}',
-  [DIALOGUE_END_INDEX.내]: '?{내}',
-  [DIALOGUE_END_INDEX.하겠네]: '?{하겠네}',
-  [DIALOGUE_END_INDEX.자네가]: '?{자네가}',
-  [DIALOGUE_END_INDEX.선택한]: '?{선택한}',
-  [DIALOGUE_END_INDEX.할걸세]: '?{할걸세}',
-  [DIALOGUE_END_INDEX.않을걸세]: '?{않을걸세}',
+  어떤가: '?{어떤가}',
+  주겠네: '?{주겠네}',
+  올릴걸세: '?{올릴걸세}',
+  내: '?{내}',
+  하겠네: '?{하겠네}',
+  자네가: '?{자네가}',
+  선택한: '?{선택한}',
+  할걸세: '?{할걸세}',
+  않을걸세: '?{않을걸세}',
 };
 
 export const SAGE_TYPE_STACK_SIZE = '1.4vw';

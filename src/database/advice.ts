@@ -1,36 +1,17 @@
-import { DIALOGUE_END_INDEX as I, MAX_ACTIVE, OPTION_COUNT, Placeholders } from '../constants';
+import { OPTION_COUNT, Placeholders as P } from '../constants';
 import { NoOptionSelectedError } from '../error/NoOptionSelectedError';
-import { Advice, AdviceBody, AdviceType } from '../type/advice';
-import { ElixirInstance } from '../type/elixir';
+import { AdviceBody, AdviceType } from '../type/advice';
 import { SageKey, SageKeys, SageTypesType, SageTypesTypes } from '../type/sage';
-import {
-  applySafeResult,
-  changeHitRate,
-  convertToSignedString,
-  gacha,
-  generateRandomInt,
-  generateRandomNumber,
-  getLockedCount,
-  getLockedOrMaxLevelCount,
-  getMaxLevel,
-  getMinLevel,
-  lockOption,
-  redistribute,
-  unlockOption,
-  validateOptionIndex,
-} from '../util';
+import { applySafeResult, changeHitRate, convertToSignedString, gacha, generateRandomInt, generateRandomNumber, getMaxLevel, getMinLevel, lockOption, redistribute, unlockOption } from '../util';
 
-const NO_OPTION_SELECTED_ERROR_MESSAGE = '옵션을 선택해주세요.';
-const getExtraAlchemyText = (extraAlchemy: number) => `이번에 연성되는 효과는 ${1 + extraAlchemy}단계 연성해${Placeholders[I.주겠네]}.`;
-const getExtraTargetText = (extraTarget: number) => `이번 연성에서 ${extraTarget + 1}개의 효과를 동시에 연성해${Placeholders[I.주겠네]}.`;
+const getExtraAlchemyText = (extraAlchemy: number) => `이번에 연성되는 효과는 ${1 + extraAlchemy}단계 연성해${P.주겠네}.`;
+const getExtraTargetText = (extraTarget: number) => `이번 연성에서 ${extraTarget + 1}개의 효과를 동시에 연성해${P.주겠네}.`;
 
 /** TODO: 봉인된 옵션에 대한 처리 방식 조사하기
  * 1. 단계 위/아래로 한칸씩 이동
  * 2. 재분배
  * 3. 뒤섞기
  */
-
-const INF = 2147483647;
 
 type AdviceTemplate = (odds: number, params: AdviceTemplateProps) => AdviceBody;
 
@@ -78,7 +59,7 @@ export const ADVICES: AdviceBody[] = [
   changeSelectedOptionToFixedLevelAdviceTemplate(0.5, { n: 3, remainChanceUpperBound: 6, remainChanceLowerBound: 3 }),
   //
 
-  ...createFixedOptionAdvices(1, amplifyFixedOptionHitRateTemporarilyAdviceTemplate, { percentage: 100, name: `이번 연성에서 ${Placeholders.OPTION} 효과를 연성해${Placeholders[I.주겠네]}.` }),
+  ...createFixedOptionAdvices(1, amplifyFixedOptionHitRateTemporarilyAdviceTemplate, { percentage: 100, name: `이번 연성에서 ${P.OPTION} 효과를 연성해${P.주겠네}.` }),
   ...createFixedOptionAdvices(1, amplifyFixedOptionHitRateTemporarilyAdviceTemplate, { percentage: 70 }),
   ...createFixedOptionAdvices(1, amplifyFixedOptionHitRateTemporarilyAdviceTemplate, { percentage: 30 }),
   ...createFixedOptionAdvices(1, amplifyFixedOptionHitRateTemporarilyAdviceTemplate, { percentage: -20 }),
@@ -143,7 +124,7 @@ export const ADVICES: AdviceBody[] = [
 function potentialLevelUpFixedOptionAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
   const { percentage, optionIndex } = params;
   return {
-    name: `${Placeholders.OPTION} 효과를 ${percentage}% 확률로 +1 올려${Placeholders[I.주겠네]}.`,
+    name: `${P.OPTION} 효과를 ${percentage}% 확률로 +1 올려${P.주겠네}.`,
     type: 'potential',
     effect: (elixirs) => {
       const result = elixirs.map((elixir) => ({ ...elixir }));
@@ -158,7 +139,7 @@ function potentialLevelUpFixedOptionAdviceTemplate(odds: number, params: AdviceT
 function potentialLevelSelectedOptionAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
   const { percentage } = params;
   return {
-    name: `선택한 효과를 ${percentage}% 확률로 +1 올려${Placeholders[I.주겠네]}.`,
+    name: `선택한 효과를 ${percentage}% 확률로 +1 올려${P.주겠네}.`,
     type: 'potential',
     effect: (elixirs, optionIndex) => {
       if (optionIndex === null) throw new NoOptionSelectedError();
@@ -173,7 +154,7 @@ function potentialLevelSelectedOptionAdviceTemplate(odds: number, params: Advice
 function potentialChangeLevelFixedOptionAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
   const { maxRisk, maxReturn, optionIndex } = params;
   return {
-    name: `${Placeholders.OPTION} 효과를 [${convertToSignedString(-maxRisk)}~${convertToSignedString(maxReturn)}] 중 하나만큼 올려${Placeholders[I.주겠네]}.`,
+    name: `${P.OPTION} 효과를 [${convertToSignedString(-maxRisk)}~${convertToSignedString(maxReturn)}] 중 하나만큼 올려${P.주겠네}.`,
     type: 'potential',
     effect: (elixirs) => {
       const result = elixirs.map((elixir) => ({ ...elixir }));
@@ -188,7 +169,7 @@ function potentialChangeLevelFixedOptionAdviceTemplate(odds: number, params: Adv
 
 function levelUpHighestOptionAdviceTemplate(odds: number): AdviceBody {
   return {
-    name: `최고 단계 효과를 +1 올려${Placeholders[I.주겠네]}. 대신 다른 효과 1개의 단계는 2 감소${Placeholders[I.할걸세]}.`,
+    name: `최고 단계 효과를 +1 올려${P.주겠네}. 대신 다른 효과 1개의 단계는 2 감소${P.할걸세}.`,
     type: 'util',
     effect: (elixirs) => {
       const result = elixirs.map((elixir) => ({ ...elixir }));
@@ -205,7 +186,7 @@ function levelUpHighestOptionAdviceTemplate(odds: number): AdviceBody {
 
 function levelUpLowestOptionAdviceTemplate(odds: number): AdviceBody {
   return {
-    name: `최하 단계 효과를 +1 올려${Placeholders[I.주겠네]}. 대신 최고 단계의 효과가 2 감소${Placeholders[I.할걸세]}.`,
+    name: `최하 단계 효과를 +1 올려${P.주겠네}. 대신 최고 단계의 효과가 2 감소${P.할걸세}.`,
     type: 'util',
     effect: (elixirs) => {
       const result = elixirs.map((elixir) => ({ ...elixir }));
@@ -224,7 +205,7 @@ function levelUpLowestOptionAdviceTemplate(odds: number): AdviceBody {
 function levelUpSelectedOptionAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
   const { special, n } = params;
   return {
-    name: `${Placeholders[I.자네가]} ${Placeholders[I.선택한]} 효과의 단계를 ${n} 올려${Placeholders[I.주겠네]}.`,
+    name: `${P.자네가} ${P.선택한} 효과의 단계를 ${n} 올려${P.주겠네}.`,
     type: 'util',
     special,
     effect: (elixirs, optionIndex) => {
@@ -239,7 +220,7 @@ function levelUpSelectedOptionAdviceTemplate(odds: number, params: AdviceTemplat
 
 function levelUpRandomOptionAdviceTemplate(odds: number): AdviceBody {
   return {
-    name: `임의 효과를 +1 올려${Placeholders[I.주겠네]}.`,
+    name: `임의 효과를 +1 올려${P.주겠네}.`,
     type: 'util',
     effect: (elixirs) => {
       const result = elixirs.map((elixir) => ({ ...elixir }));
@@ -265,10 +246,8 @@ function potentialChangeLevelSelectedOptionAdviceTemplate(odds: number, props?: 
   const { special, sage, maxRisk, maxReturn, enterMeditation } = props;
   return {
     name: special
-      ? `${Placeholders[I.내]} 힘을 모두 소진${Placeholders[I.하겠네]}. 대신 ${Placeholders[I.자네가]} ${Placeholders[I.선택한]} 효과의 단계를 [${convertToSignedString(-maxRisk)}~${convertToSignedString(maxReturn)}] 중 하나만큼 ${
-          Placeholders[I.올릴걸세]
-        }.`
-      : `선택한 효과를 [${convertToSignedString(-maxRisk)}~${convertToSignedString(maxReturn)}] 중 하나만큼 올려${Placeholders[I.주겠네]}.`,
+      ? `${P.내} 힘을 모두 소진${P.하겠네}. 대신 ${P.자네가} ${P.선택한} 효과의 단계를 [${convertToSignedString(-maxRisk)}~${convertToSignedString(maxReturn)}] 중 하나만큼 ${P.올릴걸세}.`
+      : `선택한 효과를 [${convertToSignedString(-maxRisk)}~${convertToSignedString(maxReturn)}] 중 하나만큼 올려${P.주겠네}.`,
     type: 'potential',
     special,
     sage,
@@ -287,7 +266,7 @@ function potentialChangeLevelSelectedOptionAdviceTemplate(odds: number, props?: 
 function amplifyFixedOptionHitRateTemporarilyAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
   const { percentage, name, optionIndex } = params;
   return {
-    name: name ?? `이번 연성에서 ${Placeholders.OPTION} 효과의 연성 확률을 ${Math.abs(percentage)}% ${percentage >= 0 ? '높여' : '낮춰'}${Placeholders[I.주겠네]}.`,
+    name: name ?? `이번 연성에서 ${P.OPTION} 효과의 연성 확률을 ${Math.abs(percentage)}% ${percentage >= 0 ? '높여' : '낮춰'}${P.주겠네}.`,
     type: 'util',
     effect: (elixirs) => {
       const result = elixirs.map((elixir) => ({ ...elixir }));
@@ -303,7 +282,7 @@ function amplifySelectedOptionHitRateTemporarilyAdviceTemplate(odds: number, par
   const { extraAlchemy, extraChanceConsume } = params;
   const percentage = 100;
   return {
-    name: `이번에는 ${Placeholders[I.자네가]} ${Placeholders[I.선택한]} 효과를 ${1 + extraAlchemy}단계 연성해${Placeholders[I.주겠네]}. 다만 기회를 ${1 + extraChanceConsume}번 소모${Placeholders[I.할걸세]}.`,
+    name: `이번에는 ${P.자네가} ${P.선택한} 효과를 ${1 + extraAlchemy}단계 연성해${P.주겠네}. 다만 기회를 ${1 + extraChanceConsume}번 소모${P.할걸세}.`,
     type: 'util',
     effect: (elixirs, optionIndex) => {
       if (optionIndex === null) throw new NoOptionSelectedError();
@@ -318,7 +297,7 @@ function amplifySelectedOptionHitRateTemporarilyAdviceTemplate(odds: number, par
 function amplifyFixedOptionHitRateAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
   const { percentage, optionIndex } = params;
   return {
-    name: `남은 연성에서 ${Placeholders.OPTION} 효과의 연성 확률을 ${Math.abs(percentage)}% ${percentage >= 0 ? '높여' : '낮춰'}${Placeholders[I.주겠네]}.`,
+    name: `남은 연성에서 ${P.OPTION} 효과의 연성 확률을 ${Math.abs(percentage)}% ${percentage >= 0 ? '높여' : '낮춰'}${P.주겠네}.`,
     type: 'util',
     effect: (elixirs) => {
       const result = elixirs.map((elixir) => ({ ...elixir }));
@@ -334,7 +313,7 @@ function amplifySelectedHitRateAdviceTemplate(odds: number, props?: AdviceTempla
   props ??= {};
   const { special, sage, percentage } = props;
   return {
-    name: `남은 연성에서 선택한 효과의 연성 확률을 ${Math.abs(percentage)}% ${percentage >= 0 ? '높여' : '낮춰'}${Placeholders[I.주겠네]}.`,
+    name: `남은 연성에서 선택한 효과의 연성 확률을 ${Math.abs(percentage)}% ${percentage >= 0 ? '높여' : '낮춰'}${P.주겠네}.`,
     type: 'util',
     special,
     sage,
@@ -351,7 +330,7 @@ function amplifySelectedHitRateAdviceTemplate(odds: number, props?: AdviceTempla
 function amplifyFixedOptionBigHitRateAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
   const { percentage, optionIndex } = params;
   return {
-    name: `남은 연성에서 ${Placeholders.OPTION} 효과의 대성공 확률을 ${percentage}% 높여${Placeholders[I.주겠네]}.`,
+    name: `남은 연성에서 ${P.OPTION} 효과의 대성공 확률을 ${percentage}% 높여${P.주겠네}.`,
     type: 'util',
     effect: (elixirs) => {
       const result = elixirs.map((elixir) => ({ ...elixir }));
@@ -367,7 +346,7 @@ function amplifyFixedOptionBigHitRateAdviceTemplate(odds: number, params: Advice
 function amplifySelectedOptionBigHitRateAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
   const { percentage, special } = params;
   return {
-    name: `남은 연성에서 선택한 효과의 대성공 확률을 ${percentage}% 높여${Placeholders[I.주겠네]}.`,
+    name: `남은 연성에서 선택한 효과의 대성공 확률을 ${percentage}% 높여${P.주겠네}.`,
     type: 'util',
     special,
     effect: (elixirs, optionIndex) => {
@@ -385,7 +364,7 @@ function amplifySelectedOptionBigHitRateAdviceTemplate(odds: number, params: Adv
 function amplifyAllBigHitRateAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
   const { percentage, special } = params;
   return {
-    name: `남은 연성에서 모든 효과의 대성공 확률을 ${percentage}% 높여${Placeholders[I.주겠네]}.`,
+    name: `남은 연성에서 모든 효과의 대성공 확률을 ${percentage}% 높여${P.주겠네}.`,
     type: 'util',
     special,
     effect: (elixirs) => {
@@ -400,7 +379,7 @@ function amplifyAllBigHitRateAdviceTemplate(odds: number, params: AdviceTemplate
 function amplifyFixedOptionBigHitRateTemporarilyAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
   const { percentage, optionIndex } = params;
   return {
-    name: `이번 연성에서 ${Placeholders.OPTION} 효과의 대성공 확률을 ${percentage}% 높여${Placeholders[I.주겠네]}.`,
+    name: `이번 연성에서 ${P.OPTION} 효과의 대성공 확률을 ${percentage}% 높여${P.주겠네}.`,
     type: 'util',
     effect: (elixirs) => {
       const result = elixirs.map((elixir) => ({ ...elixir }));
@@ -416,7 +395,7 @@ function addExtraTargetAdviceTemplate(odds: number, params?: AdviceTemplateProps
   params ??= {};
   const { extraTarget, extraChanceConsume } = params;
   return {
-    name: `이번 연성에서 ${extraTarget + 1}개의 효과를 동시에 연성해${Placeholders[I.주겠네]}.${extraChanceConsume ? ` 다만, 기회를 ${extraChanceConsume + 1}번 소모${Placeholders[I.할걸세]}.` : ''}`,
+    name: `이번 연성에서 ${extraTarget + 1}개의 효과를 동시에 연성해${P.주겠네}.${extraChanceConsume ? ` 다만, 기회를 ${extraChanceConsume + 1}번 소모${P.할걸세}.` : ''}`,
     type: 'util',
     effect: (elixirs) => ({ elixirs, extraTarget, extraChanceConsume }),
     odds,
@@ -427,7 +406,7 @@ function addExtraTargetAdviceTemplate(odds: number, params?: AdviceTemplateProps
 function addRerollChanceAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
   const { addRerollChance, special } = params;
   return {
-    name: `다른 조언 보기 횟수를 ${addRerollChance}회 늘려${Placeholders[I.주겠네]}.`,
+    name: `다른 조언 보기 횟수를 ${addRerollChance}회 늘려${P.주겠네}.`,
     type: 'util',
     special,
     effect: (elixirs) => ({ elixirs, addRerollChance }),
@@ -438,7 +417,7 @@ function addRerollChanceAdviceTemplate(odds: number, params: AdviceTemplateProps
 function moveUpLevelAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
   const { special } = params;
   return {
-    name: `모든 효과의 단계를 위로 1 슬롯 씩 올려${Placeholders[I.주겠네]}.`,
+    name: `모든 효과의 단계를 위로 1 슬롯 씩 올려${P.주겠네}.`,
     type: 'util',
     special,
     effect: (elixirs) => {
@@ -458,7 +437,7 @@ function moveUpLevelAdviceTemplate(odds: number, params: AdviceTemplateProps): A
 function moveDownLevelAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
   const { special } = params;
   return {
-    name: `모든 효과의 단계를 아래로 1 슬롯 씩 내려${Placeholders[I.주겠네]}.`,
+    name: `모든 효과의 단계를 아래로 1 슬롯 씩 내려${P.주겠네}.`,
     type: 'util',
     special,
     effect: (elixirs) => {
@@ -478,7 +457,7 @@ function moveDownLevelAdviceTemplate(odds: number, params: AdviceTemplateProps):
 function lockRandomOptionAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
   const { extraChanceConsume, saveChance, special, remainChanceUpperBound } = params;
   return {
-    name: `임의의 효과 하나를 봉인${Placeholders[I.하겠네]}.${extraChanceConsume ? ` 다만, 기회를 ${1 + extraChanceConsume}번 소모${Placeholders[I.할걸세]}.` : ''}${saveChance ? ` 이번 연성은 기회를 소모하지 ${Placeholders[I.않을걸세]}.` : ''}`,
+    name: `임의의 효과 하나를 봉인${P.하겠네}.${extraChanceConsume ? ` 다만, 기회를 ${1 + extraChanceConsume}번 소모${P.할걸세}.` : ''}${saveChance ? ` 이번 연성은 기회를 소모하지 ${P.않을걸세}.` : ''}`,
     type: 'utillock',
     special,
     remainChanceUpperBound,
@@ -498,7 +477,7 @@ function lockRandomOptionAdviceTemplate(odds: number, params: AdviceTemplateProp
 function lockFixedOptionAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
   const { extraChanceConsume, optionIndex, type } = params;
   return {
-    name: `${Placeholders.OPTION} 효과를 봉인${Placeholders[I.하겠네]}.${extraChanceConsume ? ` 다만, 이번 연성에서 기회를 ${1 + extraChanceConsume}번 소모${Placeholders[I.할걸세]}.` : ''}`,
+    name: `${P.OPTION} 효과를 봉인${P.하겠네}.${extraChanceConsume ? ` 다만, 이번 연성에서 기회를 ${1 + extraChanceConsume}번 소모${P.할걸세}.` : ''}`,
     type: type ?? 'lock',
     effect: (elixirs) => {
       const result = elixirs.map((elixir) => ({ ...elixir }));
@@ -516,9 +495,9 @@ function lockFixedOptionAdviceTemplate(odds: number, params: AdviceTemplateProps
 function lockSelectedOptionAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
   const { extraChanceConsume, saveChance, special, extraAlchemy, extraTarget } = params;
   return {
-    name: `선택한 효과 하나를 봉인${Placeholders[I.하겠네]}.
-    ${extraChanceConsume ? ` 다만, 기회를 ${1 + extraChanceConsume}번 소모${Placeholders[I.할걸세]}.` : ''}
-    ${saveChance ? ` 이번 연성은 기회를 소모하지 ${Placeholders[I.않을걸세]}.` : ''}
+    name: `선택한 효과 하나를 봉인${P.하겠네}.
+    ${extraChanceConsume ? ` 다만, 기회를 ${1 + extraChanceConsume}번 소모${P.할걸세}.` : ''}
+    ${saveChance ? ` 이번 연성은 기회를 소모하지 ${P.않을걸세}.` : ''}
     ${extraAlchemy ? ` ${getExtraAlchemyText(extraAlchemy)}` : ''}
     ${extraTarget ? ` ${getExtraTargetText(extraTarget)}` : ''}`,
     type: 'lock',
@@ -539,7 +518,7 @@ function lockSelectedOptionAdviceTemplate(odds: number, params: AdviceTemplatePr
 function lockSelectedOptionAndRedistributeAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
   const { special } = params;
   return {
-    name: `선택한 효과를 봉인${Placeholders[I.하겠네]}. 그 후 모든 효과의 단계를 재분배${Placeholders[I.하겠네]}`,
+    name: `선택한 효과를 봉인${P.하겠네}. 그 후 모든 효과의 단계를 재분배${P.하겠네}.`,
     type: 'lock',
     special,
     effect: (elixirs, optionIndex) => {
@@ -556,7 +535,7 @@ function lockSelectedOptionAndRedistributeAdviceTemplate(odds: number, params: A
 function lockSelectedOptionAndLevelUpRandomOptionAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
   const { special } = params;
   return {
-    name: `선택한 효과를 봉인${Placeholders[I.하겠네]}. 그 후 임의의 효과의 단계를 +1 올려${Placeholders[I.주겠네]}.`,
+    name: `선택한 효과를 봉인${P.하겠네}. 그 후 임의의 효과의 단계를 +1 올려${P.주겠네}.`,
     type: 'lock',
     special,
     effect: (elixirs, optionIndex) => {
@@ -576,7 +555,7 @@ function lockSelectedOptionAndLevelUpRandomOptionAdviceTemplate(odds: number, pa
 function lockSelectedOptionAndLevelUpLowestOptionAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
   const { special } = params;
   return {
-    name: `선택한 효과를 봉인${Placeholders[I.하겠네]}. 그 후 최하 단계 효과의 단계를 +1 올려${Placeholders[I.주겠네]}.`,
+    name: `선택한 효과를 봉인${P.하겠네}. 그 후 최하 단계 효과의 단계를 +1 올려${P.주겠네}.`,
     type: 'lock',
     special,
     effect: (elixirs, optionIndex) => {
@@ -597,7 +576,7 @@ function lockSelectedOptionAndLevelUpLowestOptionAdviceTemplate(odds: number, pa
 
 function unlockRandomOptionAndLockOtherOptionAdviceTemplate(odds: number): AdviceBody {
   return {
-    name: `임의의 효과 1개의 봉인을 해제하고 다른 효과 1개를 봉인해${Placeholders[I.주겠네]}.`,
+    name: `임의의 효과 1개의 봉인을 해제하고 다른 효과 1개를 봉인해${P.주겠네}.`,
     type: 'unlock',
     special: SageTypesTypes.CHAOS,
     effect: (elixirs) => {
@@ -618,7 +597,7 @@ function redistributeAdviceTemplate(odds: number, params: AdviceTemplateProps): 
   const { special } = params;
 
   return {
-    name: `모든 효과의 단계를 재분배${Placeholders[I.하겠네]}.`,
+    name: `모든 효과의 단계를 재분배${P.하겠네}.`,
     type: 'util',
     special,
     effect: (elixirs) => {
@@ -633,7 +612,7 @@ function redistributeAdviceTemplate(odds: number, params: AdviceTemplateProps): 
 function raiseAllBelowNAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
   const { n, remainChanceUpperBound, remainChanceLowerBound } = params;
   return {
-    name: `${n === 0 ? '연성되지 않은' : `${n}단계 이하의`} 모든 효과를 +1 올려${Placeholders[I.주겠네]}.`,
+    name: `${n === 0 ? '연성되지 않은' : `${n}단계 이하의`} 모든 효과를 +1 올려${P.주겠네}.`,
     type: 'util',
     remainChanceUpperBound,
     remainChanceLowerBound,
@@ -653,7 +632,7 @@ function raiseAllBelowNAdviceTemplate(odds: number, params: AdviceTemplateProps)
 function changeFixedOptionToFixedLevelAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
   const { n, remainChanceUpperBound, remainChanceLowerBound, optionIndex } = params;
   return {
-    name: `${Placeholders.OPTION} 효과의 단계를 [${n}~${n + 1}] 중 하나로 변경해${Placeholders[I.주겠네]}.`,
+    name: `${P.OPTION} 효과의 단계를 [${n}~${n + 1}] 중 하나로 변경해${P.주겠네}.`,
     type: 'util',
     remainChanceUpperBound,
     remainChanceLowerBound,
@@ -671,7 +650,7 @@ function changeFixedOptionToFixedLevelAdviceTemplate(odds: number, params: Advic
 function changeSelectedOptionToFixedLevelAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
   const { n, remainChanceUpperBound, remainChanceLowerBound } = params;
   return {
-    name: `선택한 효과의 단계를 [${n}~${n + 1}] 중 하나로 변경해${Placeholders[I.주겠네]}.`,
+    name: `선택한 효과의 단계를 [${n}~${n + 1}] 중 하나로 변경해${P.주겠네}.`,
     type: 'util',
     remainChanceUpperBound,
     remainChanceLowerBound,
@@ -690,7 +669,7 @@ function exchangeOddEvenAdviceTemplate(odds: number, params: AdviceTemplateProps
   const { odd } = params;
   const str = ['2, 4', '1, 3, 5'];
   return {
-    name: `${str[Number(odd)]} 슬롯의 효과를 +1 올려${Placeholders[I.주겠네]}. 대신 ${str[Number(!odd)]} 슬롯의 효과가 1 감소${Placeholders[I.할걸세]}.`,
+    name: `${str[Number(odd)]} 슬롯의 효과를 +1 올려${P.주겠네}. 대신 ${str[Number(!odd)]} 슬롯의 효과가 1 감소${P.할걸세}.`,
     type: 'util',
     effect: (elixirs) => {
       const result = elixirs.map((elixir) => ({ ...elixir }));
@@ -710,7 +689,7 @@ function amplifyOddOrEvenBigHitRateAdviceTemplate(odds: number, params: AdviceTe
   const { odd, percentage, special } = params;
   const str = ['2, 4', '1, 3, 5'];
   return {
-    name: `남은 연성에서 ${str[Number(odd)]} 슬롯의 효과의 대성공 확률을 ${percentage}% 올려${Placeholders[I.주겠네]}.`,
+    name: `남은 연성에서 ${str[Number(odd)]} 슬롯의 효과의 대성공 확률을 ${percentage}% 올려${P.주겠네}.`,
     type: 'util',
     special,
     effect: (elixirs) => {
@@ -729,7 +708,7 @@ function amplifyOddOrEvenBigHitRateAdviceTemplate(odds: number, params: AdviceTe
 function exchangeLevelBetweenFixedOptionsAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
   const { n, optionIndex, subOptionIndex } = params;
   return {
-    name: `${Placeholders.OPTION} 효과의 단계를 +1 올려${Placeholders[I.주겠네]}. 대신 ${Placeholders.SUB_OPTION} 효과의 단계가 ${n} 감소${Placeholders[I.할걸세]}.`,
+    name: `${P.OPTION} 효과의 단계를 +1 올려${P.주겠네}. 대신 ${P.SUB_OPTION} 효과의 단계가 ${n} 감소${P.할걸세}.`,
     type: 'util',
     effect: (elixirs) => {
       const result = elixirs.map((elixir) => ({ ...elixir }));
@@ -746,7 +725,7 @@ function exchangeLevelBetweenFixedOptionsAdviceTemplate(odds: number, params: Ad
 function extraAlchemyAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
   const { extraAlchemy, extraChanceConsume, special } = params;
   return {
-    name: `${getExtraAlchemyText(extraAlchemy)}${extraChanceConsume ? ` 다만, 기회를 ${extraChanceConsume + 1}번 소모${Placeholders[I.할걸세]}.` : ''}`,
+    name: `${getExtraAlchemyText(extraAlchemy)}${extraChanceConsume ? ` 다만, 기회를 ${extraChanceConsume + 1}번 소모${P.할걸세}.` : ''}`,
     type: 'util',
     special,
     effect: (elixirs) => ({ elixirs, extraAlchemy, extraChanceConsume }),
@@ -757,7 +736,7 @@ function extraAlchemyAdviceTemplate(odds: number, params: AdviceTemplateProps): 
 
 function saveChanceAdviceTemplate(odds: number): AdviceBody {
   return {
-    name: `이번 연성은 기회를 소모하지 ${Placeholders[I.않을걸세]}`,
+    name: `이번 연성은 기회를 소모하지 ${P.않을걸세}.`,
     type: 'util',
     special: SageTypesTypes.ORDER,
     effect: (elixirs) => ({ elixirs, saveChance: true }),
