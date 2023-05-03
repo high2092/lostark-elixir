@@ -1,4 +1,5 @@
 import { DIALOGUE_END_INDEX as I, MAX_ACTIVE, OPTION_COUNT, Placeholders } from '../constants';
+import { NoOptionSelectedError } from '../error/NoOptionSelectedError';
 import { Advice, AdviceBody, AdviceType } from '../type/advice';
 import { ElixirInstance } from '../type/elixir';
 import { SageKey, SageKeys, SageTypesType, SageTypesTypes } from '../type/sage';
@@ -157,8 +158,8 @@ function potentialLevelSelectedOptionAdviceTemplate(odds: number, params: Advice
     name: `선택한 효과를 ${percentage}% 확률로 +1 올려${Placeholders[I.주겠네]}.`,
     type: 'potential',
     effect: (elixirs, optionIndex) => {
+      if (optionIndex === null) throw new NoOptionSelectedError();
       const result = elixirs.map((elixir) => ({ ...elixir }));
-      if (typeof optionIndex !== 'number') throw new Error(NO_OPTION_SELECTED_ERROR_MESSAGE);
       if (generateRandomNumber(0, 100) <= percentage) applySafeResult(result[optionIndex], { level: result[optionIndex].level + 1 });
       return { elixirs: result };
     },
@@ -253,6 +254,7 @@ function potentialChangeLevelSelectedOptionAdviceTemplate(odds: number, props?: 
     special,
     sage,
     effect: (elixirs, optionIndex) => {
+      if (optionIndex === null) throw new NoOptionSelectedError();
       const result = elixirs.map((elixir) => ({ ...elixir }));
       const diff = generateRandomInt(-maxRisk, maxReturn + 1);
       applySafeResult(result[optionIndex], { level: result[optionIndex].level + diff });
@@ -302,6 +304,7 @@ function amplifySelectedHitRateAdviceTemplate(odds: number, props?: AdviceTempla
     special,
     sage,
     effect: (elixirs, optionIndex) => {
+      if (optionIndex === null) throw new NoOptionSelectedError();
       const result = elixirs.map((elixir) => ({ ...elixir }));
       changeHitRate(optionIndex, percentage, result);
       return { elixirs: result };
@@ -333,6 +336,7 @@ function amplifySelectedOptionBigHitRateAdviceTemplate(odds: number, params: Adv
     type: 'util',
     special,
     effect: (elixirs, optionIndex) => {
+      if (optionIndex === null) throw new NoOptionSelectedError();
       const result = elixirs.map((elixir) => ({ ...elixir }));
 
       applySafeResult(result[optionIndex], { bigHitRate: result[optionIndex].bigHitRate + percentage });
@@ -485,6 +489,7 @@ function lockSelectedOptionAdviceTemplate(odds: number, params: AdviceTemplatePr
     type: 'lock',
     special,
     effect: (elixirs, optionIndex) => {
+      if (optionIndex === null) throw new NoOptionSelectedError();
       const result = elixirs.map((elixir) => ({ ...elixir }));
 
       lockOption(result, optionIndex);
@@ -503,6 +508,7 @@ function lockSelectedOptionAndRedistributeAdviceTemplate(odds: number, params: A
     type: 'lock',
     special,
     effect: (elixirs, optionIndex) => {
+      if (optionIndex === null) throw new NoOptionSelectedError();
       const result = elixirs.map((elixir) => ({ ...elixir }));
       lockOption(result, optionIndex);
       redistribute(result);
@@ -519,6 +525,7 @@ function lockSelectedOptionAndLevelUpRandomOptionAdviceTemplate(odds: number, pa
     type: 'lock',
     special,
     effect: (elixirs, optionIndex) => {
+      if (optionIndex === null) throw new NoOptionSelectedError();
       const result = elixirs.map((elixir) => ({ ...elixir }));
       lockOption(result, optionIndex);
 
@@ -538,6 +545,7 @@ function lockSelectedOptionAndLevelUpLowestOptionAdviceTemplate(odds: number, pa
     type: 'lock',
     special,
     effect: (elixirs, optionIndex) => {
+      if (optionIndex === null) throw new NoOptionSelectedError();
       const result = elixirs.map((elixir) => ({ ...elixir }));
       lockOption(result, optionIndex);
 
@@ -633,6 +641,7 @@ function changeSelectedOptionToFixedLevelAdviceTemplate(odds: number, params: Ad
     remainChanceUpperBound,
     remainChanceLowerBound,
     effect: (elixirs, optionIndex) => {
+      if (optionIndex === null) throw new NoOptionSelectedError();
       const result = elixirs.map((elixir) => ({ ...elixir }));
       applySafeResult(result[optionIndex], { level: n + generateRandomInt(0, 2) });
       return { elixirs: result };

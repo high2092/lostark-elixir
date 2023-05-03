@@ -27,6 +27,7 @@ import { alchemy, clearStatusText, drawAdvices, initElixir, pickAdvice, pickOpti
 import { Gold } from '../components/Gold';
 import { AdviceSection } from '../components/AdviceSection';
 import { setSelectedAdviceIndex, setSelectedOptionIndex, getNextTutorial, initTutorial } from '../features/uiSlice';
+import { NoOptionSelectedError } from '../error/NoOptionSelectedError';
 
 const Home = () => {
   const [cookies, setCookie] = useCookies();
@@ -103,8 +104,12 @@ const Home = () => {
         try {
           dispatch(pickAdvice({ selectedAdviceIndex, selectedOptionIndex }));
         } catch (e) {
-          console.error(e);
-          alert('옵션을 선택해주세요.');
+          if (e instanceof NoOptionSelectedError) {
+            alert('옵션을 선택해주세요.');
+          } else {
+            throw e;
+          }
+
           return;
         }
         break;
