@@ -1,4 +1,4 @@
-import { ElixirInstance } from './elixir';
+import { OptionInstance } from './option';
 import { SageKey, SageTypesType } from './sage';
 
 export interface AdviceBody {
@@ -23,7 +23,7 @@ export interface Advice extends AdviceBody {
 }
 
 export interface AdviceEffectResult {
-  elixirs: ElixirInstance[];
+  options: OptionInstance[];
   extraTarget?: number;
   extraAlchemy?: number;
   saveChance?: boolean;
@@ -33,7 +33,7 @@ export interface AdviceEffectResult {
   enterMeditation?: boolean;
 }
 
-export type AdviceEffect = (beforeElixirs: ElixirInstance[], optionIdx?: number) => AdviceEffectResult;
+export type AdviceEffect = (options: OptionInstance[], optionIdx?: number) => AdviceEffectResult;
 
 export type AdviceType = 'potential' | 'util' | 'lock' | 'utillock' | 'unlock';
 

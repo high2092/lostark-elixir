@@ -33,7 +33,7 @@ const Home = () => {
   const [cookies, setCookie] = useCookies();
 
   const dispatch = useAppDispatch();
-  const { sages, adviceRerollChance, alchemyChance, alchemyStatus, elixirs, pickOptionChance, reset } = useAppSelector((state) => state.elixir);
+  const { sages, alchemyChance, alchemyStatus, options, reset } = useAppSelector((state) => state.elixir);
   const { selectedAdviceIndex, selectedOptionIndex, tutorialIndex } = useAppSelector((state) => state.ui);
 
   const [loaded, setLoaded] = useState(false);
@@ -96,7 +96,7 @@ const Home = () => {
 
     switch (alchemyStatus) {
       case AlchemyStatuses.REFINE: {
-        const { id } = sages[selectedAdviceIndex].elixir;
+        const { id } = sages[selectedAdviceIndex].option;
         dispatch(pickOption(id));
         dispatch(setSelectedAdviceIndex(null));
         break;
@@ -129,7 +129,7 @@ const Home = () => {
 
   const handleElixirOptionClick = (e: React.MouseEvent, idx: number) => {
     if (alchemyStatus === AlchemyStatuses.ALCHEMY || getDisabled()) return;
-    if (elixirs[idx].locked) return;
+    if (options[idx].locked) return;
     dispatch(setSelectedOptionIndex(idx));
     playClickSound();
   };
@@ -150,26 +150,26 @@ const Home = () => {
     <S.Home>
       <S.MainSection>
         <S.ElixirOptionSection>
-          {elixirs.map((elixir, idx) => {
-            const { name, part, level, statusText, locked } = elixir;
+          {options.map((option, idx) => {
+            const { name, part, level, statusText, locked } = option;
             return (
               <S.ElixirOption key={`elixirOption-${idx}`} onClick={(e) => handleElixirOptionClick(e, idx)} selected={selectedOptionIndex === idx} locked={locked}>
-                <div css={[CENTERED_FLEX_STYLE, { flex: 2 }]}>{locked ? '봉인' : `${getHitRate(elixir).toFixed(1)}%`}</div>
+                <div css={[CENTERED_FLEX_STYLE, { flex: 2 }]}>{locked ? '봉인' : `${getHitRate(option).toFixed(1)}%`}</div>
                 <div css={{ flex: 7, paddingRight: '1rem', display: 'flex', justifyContent: 'center', flexDirection: 'column' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span>{getOptionName(elixir)}</span>
+                    <span>{getOptionName(option)}</span>
                     <span>{`(${part ? `${part} 전용` : '공용'})`}</span>
                   </div>
                   <Activation percentage={level / MAX_ACTIVE} />
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <div>{statusText}</div>
-                    <div>{`${getBigHitRate(elixir)}%`}</div>
+                    <div>{`${getBigHitRate(option)}%`}</div>
                   </div>
                 </div>
               </S.ElixirOption>
             );
           })}
-          {Array.from({ length: OPTION_COUNT - elixirs.length }).map((_, idx) => (
+          {Array.from({ length: OPTION_COUNT - options.length }).map((_, idx) => (
             <S.ElixirOption key={`elixirOptionEmpty-${idx}`} />
           ))}
         </S.ElixirOptionSection>

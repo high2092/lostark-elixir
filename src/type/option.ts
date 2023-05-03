@@ -1,4 +1,4 @@
-export interface Elixir {
+export interface Option {
   name: string;
   type?: '혼돈' | '질서';
   part?: '투구' | '상의' | '하의' | '어깨' | '장갑';
@@ -7,7 +7,7 @@ export interface Elixir {
 
 type AlchemyStatusText = '연성 대성공' | '연성 성공' | '연성 단계 상승' | '연성 단계 하락';
 
-export interface ElixirInstanceBody extends Elixir {
+export interface OptionInstanceBody extends Option {
   level: number;
   locked: boolean;
   hitRate: number;
@@ -21,6 +21,6 @@ export interface ElixirInstanceBody extends Elixir {
   isMaxLevel: boolean;
 }
 
-export interface ElixirInstance extends ElixirInstanceBody {
+export interface OptionInstance extends OptionInstanceBody {
   id: number;
 }

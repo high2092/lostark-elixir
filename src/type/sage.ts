@@ -1,5 +1,5 @@
 import { Advice } from './advice';
-import { ElixirInstance } from './elixir';
+import { OptionInstance } from './option';
 
 export interface SageTemplate {
   name: string;
@@ -31,7 +31,7 @@ export interface Sage {
     stack: number;
   };
   advice: Advice;
-  elixir: ElixirInstance;
+  option: OptionInstance;
   meditation: boolean;
 }
 

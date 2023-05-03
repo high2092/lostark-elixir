@@ -1,6 +1,6 @@
-import { Elixir } from '../type/elixir';
+import { Option } from '../type/option';
 
-export const ELIXIRS: Elixir[] = [
+export const OPTIONS: Option[] = [
   { name: '강맹', type: '질서', part: '투구', odds: 0.555555555555555 },
   { name: '달인', type: '질서', part: '투구', odds: 0.555555555555555 },
   { name: '선각자', type: '질서', part: '투구', odds: 0.555555555555555 },

@@ -1,16 +1,16 @@
 import { MAX_ACTIVE } from '../constants';
 import { AdviceAfterEffect } from '../type/advice';
-import { ElixirInstance } from '../type/elixir';
+import { OptionInstance } from '../type/option';
 import { checkMaxLevel, gacha, generateRandomNumber, getBigHitRate, playRefineSuccessSound } from '../util';
 
 class AlchemyService {
-  alchemy(elixirs: ElixirInstance[], adviceAfterResult: AdviceAfterEffect) {
+  alchemy(options: OptionInstance[], adviceAfterResult: AdviceAfterEffect) {
     const { extraTarget, extraAlchemy } = adviceAfterResult;
     const delta = 1 + (extraAlchemy ?? 0);
-    const result = [...elixirs];
+    const result = [...options];
     const oddsKey = result[0].tempHitRate !== null ? 'tempHitRate' : 'hitRate';
 
-    const targetIndexList = gacha(elixirs, { oddsKey, count: 1 + (extraTarget ?? 0) });
+    const targetIndexList = gacha(options, { oddsKey, count: 1 + (extraTarget ?? 0) });
 
     let bigHit = false;
     for (const idx of targetIndexList) {

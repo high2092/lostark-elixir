@@ -59,15 +59,15 @@ const MEDITATION_TEXT = '(현자는 사색에 빠져 있습니다.)';
 const AdviceDialogue = ({ sage }: AdviceDialogueProps) => {
   if (sage.meditation) return <div>{MEDITATION_TEXT}</div>;
 
-  const { elixir, advice } = sage;
+  const { option, advice } = sage;
 
   if (advice) {
     const name = Object.values(DialogueEndTypes).reduce((acc, cur) => {
       return acc.replaceAll(Placeholders[cur], sage.dialogueEnds[cur]);
     }, advice.name);
     return <div>{name}</div>;
-  } else if (elixir) {
-    const { name, part, type } = elixir;
+  } else if (option) {
+    const { name, part, type } = option;
     return (
       <div>
         <div>

@@ -2,18 +2,18 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Sage, SageKeys, SageTypesTypes } from '../type/sage';
 import { SageTemplates } from '../database/sage';
 import { DEFAULT_ADVICE_REROLL_CHANCE, OPTION_COUNT } from '../constants';
-import { ElixirInstance } from '../type/elixir';
+import { OptionInstance } from '../type/option';
 import { AdviceAfterEffect } from '../type/advice';
 import { adviceService } from '../service/AdviceService';
 import { alchemyService } from '../service/AlchemyService';
 import { ALCHEMY_CHANCE } from '../constants';
-import { elixirService } from '../service/ElixirService';
+import { optionService } from '../service/OptionService';
 import { AlchemyStatus, AlchemyStatuses } from '../type/common';
 import { createSage, isFullStack } from '../util';
 
 interface ElixirState {
   sages: Sage[];
-  elixirs: ElixirInstance[];
+  options: OptionInstance[];
   adviceRerollChance: number;
   pickOptionChance: number;
   alchemyChance: number;
@@ -26,7 +26,7 @@ const initialSages: Sage[] = [createSage(SageTemplates[SageKeys.L]), createSage(
 
 const initialState: ElixirState = {
   sages: initialSages,
-  elixirs: [],
+  options: [],
   adviceRerollChance: DEFAULT_ADVICE_REROLL_CHANCE,
   pickOptionChance: OPTION_COUNT,
   alchemyChance: ALCHEMY_CHANCE,
@@ -41,15 +41,15 @@ export const elixirSlice = createSlice({
   reducers: {
     pickOption(state, action: PayloadAction<number>) {
       const id = action.payload;
-      state.elixirs.push(elixirService.pickOption(id));
-      const elixirs = elixirService.drawOptions();
-      state.sages.forEach((sage, i) => (sage.elixir = elixirs[i]));
+      state.options.push(optionService.pickOption(id));
+      const options = optionService.drawOptions();
+      state.sages.forEach((sage, i) => (sage.option = options[i]));
       if (--state.pickOptionChance === 0) state.alchemyStatus = AlchemyStatuses.ADVICE;
     },
 
     drawAdvices(state, action: PayloadAction<{ reroll: boolean }>) {
       const { reroll } = action.payload ?? {};
-      const advices = adviceService.getAdvices(state.sages, state.elixirs, state.alchemyChance);
+      const advices = adviceService.getAdvices(state.sages, state.options, state.alchemyChance);
       state.sages.forEach((sage, i) => (sage.advice = advices[i]));
       if (reroll) state.adviceRerollChance--;
     },
@@ -57,8 +57,8 @@ export const elixirSlice = createSlice({
     pickAdvice(state, action: PayloadAction<{ selectedAdviceIndex: number; selectedOptionIndex: number }>) {
       const { selectedAdviceIndex, selectedOptionIndex } = action.payload;
       const { advice } = state.sages[selectedAdviceIndex];
-      const { elixirs, extraTarget, extraAlchemy, extraChanceConsume, saveChance, enterMeditation, addRerollChance } = adviceService.executeAdvice(advice, state.elixirs, selectedOptionIndex);
-      state.elixirs = elixirs;
+      const { options, extraTarget, extraAlchemy, extraChanceConsume, saveChance, enterMeditation, addRerollChance } = adviceService.executeAdvice(advice, state.options, selectedOptionIndex);
+      state.options = options;
       state.adviceAfterEffect = { extraTarget, extraAlchemy, extraChanceConsume, saveChance };
 
       if (addRerollChance) state.adviceRerollChance += addRerollChance;
@@ -81,8 +81,8 @@ export const elixirSlice = createSlice({
     },
 
     alchemy(state) {
-      const { elixirs, adviceAfterEffect } = state;
-      state.elixirs = alchemyService.alchemy(elixirs, adviceAfterEffect);
+      const { options, adviceAfterEffect } = state;
+      state.options = alchemyService.alchemy(options, adviceAfterEffect);
 
       for (const sage of state.sages) {
         const { type, stack } = sage;
@@ -96,11 +96,11 @@ export const elixirSlice = createSlice({
     },
 
     clearStatusText(state) {
-      state.elixirs.forEach((elixir) => (elixir.statusText = null));
+      state.options.forEach((option) => (option.statusText = null));
     },
 
     resetElixir(state) {
-      elixirService.reset();
+      optionService.reset();
       adviceService.reset();
       Object.entries(initialState).forEach(([key, value]) => {
         state[key] = value;
@@ -109,8 +109,8 @@ export const elixirSlice = createSlice({
     },
 
     initElixir(state) {
-      const elixirs = elixirService.drawOptions();
-      state.sages.forEach((sage, i) => (sage.elixir = elixirs[i]));
+      const options = optionService.drawOptions();
+      state.sages.forEach((sage, i) => (sage.option = options[i]));
       state.reset = false;
     },
   },

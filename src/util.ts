@@ -1,7 +1,7 @@
 import { DEFAULT_BIG_HIT_RATE_PERCENT, FINAL_OPTION_COUNT, MAX_ACTIVE, OPTION_COUNT, Placeholders, SageTypes } from './constants';
 import { Advice, AdviceType } from './type/advice';
 import { OddsKey } from './type/common';
-import { Elixir, ElixirInstance, ElixirInstanceBody } from './type/elixir';
+import { Option, OptionInstance, OptionInstanceBody } from './type/option';
 import { Sage, SageTemplate, SageTypesType } from './type/sage';
 
 type FilterCondition = (elem: Record<string, any>, idx: number) => boolean;
@@ -111,12 +111,12 @@ export const convertToSignedString = (n: number) => {
   return `${n}`;
 };
 
-export const getLockedCount = (elixirs: ElixirInstance[]) => {
-  return elixirs.reduce((acc, { locked }) => acc + Number(locked), 0);
+export const getLockedCount = (options: OptionInstance[]) => {
+  return options.reduce((acc, { locked }) => acc + Number(locked), 0);
 };
 
-export const getLockedOrMaxLevelCount = (elixirs: ElixirInstance[]) => {
-  return elixirs.reduce((acc, { locked, isMaxLevel }) => acc + Number(locked || isMaxLevel), 0);
+export const getLockedOrMaxLevelCount = (options: OptionInstance[]) => {
+  return options.reduce((acc, { locked, isMaxLevel }) => acc + Number(locked || isMaxLevel), 0);
 };
 
 export function createSage(template: SageTemplate): Sage {
@@ -127,18 +127,18 @@ export function createSage(template: SageTemplate): Sage {
     stack: 0,
     viewStack: null,
     advice: null,
-    elixir: null,
+    option: null,
     meditation: false,
   };
 }
 
-export function replaceOptionPlaceholder(advice: Advice, elixirs: ElixirInstance[]) {
-  const option = elixirs[advice.optionIndex];
-  const subOption = elixirs[advice.subOptionIndex];
+export function replaceOptionPlaceholder(advice: Advice, options: OptionInstance[]) {
+  const option = options[advice.optionIndex];
+  const subOption = options[advice.subOptionIndex];
   advice.name = advice.name.replaceAll(Placeholders.OPTION, getOptionName(option)).replaceAll(Placeholders.SUB_OPTION, getOptionName(subOption));
 }
 
-export function getOptionName(option: ElixirInstance) {
+export function getOptionName(option: OptionInstance) {
   if (!option) return 'null';
   return `${option.name}${option.type ? ` (${option.type})` : ''}`;
 }
@@ -165,19 +165,19 @@ export function generateRandomInt(min: number, max: number) {
   return Math.floor(generateRandomNumber(min, max));
 }
 
-export function getHitRate(option: ElixirInstance) {
+export function getHitRate(option: OptionInstance) {
   if (option.tempHitRate !== null) return option.tempHitRate;
   return option.hitRate;
 }
 
-export function getBigHitRate(option: ElixirInstance) {
+export function getBigHitRate(option: OptionInstance) {
   if (option.tempBigHitRate !== null) return option.tempBigHitRate;
   return option.bigHitRate;
 }
 
-export function createElixirInstanceBody(elixir: Elixir): ElixirInstanceBody {
+export function createOptionInstanceBody(option: Option): OptionInstanceBody {
   return {
-    ...elixir,
+    ...option,
     level: 0,
     locked: false,
     hitRate: 100 / OPTION_COUNT,
@@ -190,12 +190,12 @@ export function createElixirInstanceBody(elixir: Elixir): ElixirInstanceBody {
   };
 }
 
-export function extractElixirDefaultProps(elixir: ElixirInstance): Elixir {
+export function extractOptionDefaultProps(option: OptionInstance): Option {
   return {
-    name: elixir.name,
-    type: elixir.type,
-    part: elixir.part,
-    odds: elixir.odds,
+    name: option.name,
+    type: option.type,
+    part: option.part,
+    odds: option.odds,
   };
 }
 
@@ -221,7 +221,7 @@ function getSafeResult(props: ApplyAdviceProps) {
   return result;
 }
 
-export function applySafeResult(option: ElixirInstance, props: ApplyAdviceProps) {
+export function applySafeResult(option: OptionInstance, props: ApplyAdviceProps) {
   if (option.locked) return;
 
   const result = getSafeResult(props);
@@ -238,9 +238,9 @@ export function applySafeResult(option: ElixirInstance, props: ApplyAdviceProps)
   if (tempHitRate !== undefined) option.tempHitRate = tempHitRate;
 }
 
-export function redistribute(elixirs: ElixirInstance[]) {
-  const lockedCount = getLockedCount(elixirs);
-  let levelSum = elixirs.reduce((acc, cur) => {
+export function redistribute(options: OptionInstance[]) {
+  const lockedCount = getLockedCount(options);
+  let levelSum = options.reduce((acc, cur) => {
     if (!cur.locked) acc += cur.level;
     return acc;
   }, 0);
@@ -255,21 +255,21 @@ export function redistribute(elixirs: ElixirInstance[]) {
   }
 
   let i = 0;
-  elixirs.forEach((option) => {
+  options.forEach((option) => {
     if (option.locked) return;
     applySafeResult(option, { level: shares[i++] });
   });
 }
 
-export function lockOption(elixirs: ElixirInstance[], idx: number) {
-  const target = elixirs[idx];
+export function lockOption(options: OptionInstance[], idx: number) {
+  const target = options[idx];
   target.locked = true;
-  changeHitRate(idx, -target.hitRate, elixirs, { lock: true });
+  changeHitRate(idx, -target.hitRate, options, { lock: true });
 }
 
-export function unlockOption(elixirs: ElixirInstance[], idx: number) {
-  const target = elixirs[idx];
-  changeHitRate(idx, target.hitRate, elixirs, { lock: true });
+export function unlockOption(options: OptionInstance[], idx: number) {
+  const target = options[idx];
+  changeHitRate(idx, target.hitRate, options, { lock: true });
   target.locked = false;
 }
 
@@ -278,26 +278,26 @@ interface ChangeHitRateProps {
   temp?: boolean; // 이번 연성에만 적용
 }
 
-export function changeHitRate(idx: number, hitRateDiff: number, elixirs: ElixirInstance[], props?: ChangeHitRateProps) {
+export function changeHitRate(idx: number, hitRateDiff: number, options: OptionInstance[], props?: ChangeHitRateProps) {
   props ??= {};
   const { lock, temp } = props;
-  const remainHitRateSum = elixirs.reduce((acc, cur, i) => (idx === i || cur.locked || cur.isMaxLevel ? acc : acc + cur.hitRate), 0);
+  const remainHitRateSum = options.reduce((acc, cur, i) => (idx === i || cur.locked || cur.isMaxLevel ? acc : acc + cur.hitRate), 0);
   const hitRateKey = temp ? 'tempHitRate' : 'hitRate';
-  elixirs.forEach((option, i) => {
+  options.forEach((option, i) => {
     if (option.isMaxLevel) return;
     if (idx === i && !lock) applySafeResult(option, { [hitRateKey]: option.hitRate + hitRateDiff });
     else applySafeResult(option, { [hitRateKey]: option.hitRate - hitRateDiff * (option.hitRate / remainHitRateSum) });
   });
 }
 
-export function checkMaxLevel(elixirs: ElixirInstance[]) {
-  elixirs.forEach((option, idx) => {
+export function checkMaxLevel(options: OptionInstance[]) {
+  options.forEach((option, idx) => {
     if (!option.isMaxLevel && option.level === MAX_ACTIVE) {
       option.backUpHitRate = option.hitRate;
-      changeHitRate(idx, -option.hitRate, elixirs);
+      changeHitRate(idx, -option.hitRate, options);
       option.isMaxLevel = true;
     } else if (option.isMaxLevel && option.level !== MAX_ACTIVE) {
-      changeHitRate(idx, option.backUpHitRate, elixirs);
+      changeHitRate(idx, option.backUpHitRate, options);
       option.isMaxLevel = false;
     }
   });
@@ -315,15 +315,15 @@ export function requireLock({ remainChance, lockedCount, extraChanceConsume, adv
   return remainChance - extraChanceConsume <= OPTION_COUNT - FINAL_OPTION_COUNT - lockedCount - Number(adviceType === 'utillock');
 }
 
-export function getMinLevel(elixirs: ElixirInstance[]) {
-  return elixirs.reduce((acc, cur) => {
+export function getMinLevel(options: OptionInstance[]) {
+  return options.reduce((acc, cur) => {
     if (!cur.locked) acc = Math.min(acc, cur.level);
     return acc;
   }, MAX_ACTIVE);
 }
 
-export function getMaxLevel(elixirs: ElixirInstance[]) {
-  return elixirs.reduce((acc, cur) => {
+export function getMaxLevel(options: OptionInstance[]) {
+  return options.reduce((acc, cur) => {
     if (!cur.locked) acc = Math.max(acc, cur.level);
     return acc;
   }, 0);
