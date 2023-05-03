@@ -224,7 +224,7 @@ function levelUpLowestOptionAdviceTemplate(odds: number): AdviceBody {
 function levelUpSelectedOptionAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
   const { special, n } = params;
   return {
-    name: `${Placeholders[I.자네]}가 ${Placeholders[I.선택한]} 효과의 단계를 ${n} 올려${Placeholders[I.주겠네]}.`,
+    name: `${Placeholders[I.자네가]} ${Placeholders[I.선택한]} 효과의 단계를 ${n} 올려${Placeholders[I.주겠네]}.`,
     type: 'util',
     special,
     effect: (elixirs, optionIndex) => {
@@ -265,7 +265,7 @@ function potentialChangeLevelSelectedOptionAdviceTemplate(odds: number, props?: 
   const { special, sage, maxRisk, maxReturn, enterMeditation } = props;
   return {
     name: special
-      ? `${Placeholders[I.내]} 힘을 모두 소진${Placeholders[I.하겠네]}. 대신 ${Placeholders[I.자네]}가 ${Placeholders[I.선택한]} 효과의 단계를 [${convertToSignedString(-maxRisk)}~${convertToSignedString(maxReturn)}] 중 하나만큼 ${
+      ? `${Placeholders[I.내]} 힘을 모두 소진${Placeholders[I.하겠네]}. 대신 ${Placeholders[I.자네가]} ${Placeholders[I.선택한]} 효과의 단계를 [${convertToSignedString(-maxRisk)}~${convertToSignedString(maxReturn)}] 중 하나만큼 ${
           Placeholders[I.올릴걸세]
         }.`
       : `선택한 효과를 [${convertToSignedString(-maxRisk)}~${convertToSignedString(maxReturn)}] 중 하나만큼 올려${Placeholders[I.주겠네]}.`,
@@ -303,7 +303,7 @@ function amplifySelectedOptionHitRateTemporarilyAdviceTemplate(odds: number, par
   const { extraAlchemy, extraChanceConsume } = params;
   const percentage = 100;
   return {
-    name: `이번에는 ${Placeholders[I.자네]}가 ${Placeholders[I.선택한]} 효과를 ${1 + extraAlchemy}단계 연성해${Placeholders[I.주겠네]}. 다만 기회를 ${1 + extraChanceConsume}번 소모${Placeholders[I.할걸세]}.`,
+    name: `이번에는 ${Placeholders[I.자네가]} ${Placeholders[I.선택한]} 효과를 ${1 + extraAlchemy}단계 연성해${Placeholders[I.주겠네]}. 다만 기회를 ${1 + extraChanceConsume}번 소모${Placeholders[I.할걸세]}.`,
     type: 'util',
     effect: (elixirs, optionIndex) => {
       if (optionIndex === null) throw new NoOptionSelectedError();
