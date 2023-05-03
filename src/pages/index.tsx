@@ -1,7 +1,20 @@
 /** @jsxImportSource @emotion/react */
 import { useEffect, useRef, useState } from 'react';
 import * as S from '../style/index.style';
-import { AUDIO_RESOURCE_URL_LIST, ButtonTexts, CENTERED_FLEX_STYLE, MAX_ACTIVE, MaterialSectionText, OPTION_COUNT, STACK_COUNTER_EXPECTED_HEIGHT, TUTORIALS, TutorialStatus, VISITED_COOKIE_KEY, TutorialTexts } from '../constants';
+import {
+  AUDIO_RESOURCE_URL_LIST,
+  ButtonTexts,
+  CENTERED_FLEX_STYLE,
+  MAX_ACTIVE,
+  MaterialSectionText,
+  OPTION_COUNT,
+  STACK_COUNTER_EXPECTED_HEIGHT,
+  TUTORIALS,
+  TutorialStatus,
+  VISITED_COOKIE_KEY,
+  TutorialTexts,
+  IMAGE_RESOURCE_URL_LIST,
+} from '../constants';
 import { Activation } from '../components/Activation';
 import { getBigHitRate, getHitRate, getOptionName, playClickSound } from '../util';
 import { LeftTopSection } from '../components/LeftTopSection';
@@ -37,29 +50,27 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    const promises: Promise<void>[] = [];
-    promises.concat(
-      AUDIO_RESOURCE_URL_LIST.map(
+    const promises: Promise<void>[] = [
+      ...AUDIO_RESOURCE_URL_LIST.map(
         (url) =>
-          new Promise((resolve) => {
-            const audio = new Audio(url);
-            audio.onload = () => resolve();
+          new Promise<void>((resolve) => {
+            const audio = new Audio();
+            audio.oncanplay = () => resolve();
+            audio.src = url;
           })
-      )
-    );
-    promises.concat(
-      AUDIO_RESOURCE_URL_LIST.map(
+      ),
+      ...IMAGE_RESOURCE_URL_LIST.map(
         (url) =>
-          new Promise((resolve) => {
+          new Promise<void>((resolve) => {
             const image = new Image();
-            image.src = url;
             image.onload = () => resolve();
+            image.src = url;
           })
-      )
-    );
+      ),
+    ];
 
     Promise.all(promises).then(() => setLoaded(true));
-  });
+  }, []);
 
   useEffect(() => {
     switch (alchemyStatus) {
