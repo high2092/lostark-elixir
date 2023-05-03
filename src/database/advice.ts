@@ -81,6 +81,7 @@ export const ADVICES: AdviceBody[] = [
   ...createFixedOptionAdvices(1, amplifyFixedOptionHitRateTemporarilyAdviceTemplate, { percentage: 70 }),
   ...createFixedOptionAdvices(1, amplifyFixedOptionHitRateTemporarilyAdviceTemplate, { percentage: 30 }),
   ...createFixedOptionAdvices(1, amplifyFixedOptionHitRateTemporarilyAdviceTemplate, { percentage: -20 }),
+  amplifySelectedOptionHitRateTemporarilyAdviceTemplate(1, { extraChanceConsume: 1, extraAlchemy: 1 }),
 
   ...createFixedOptionAdvices(1, amplifyFixedOptionHitRateAdviceTemplate, { percentage: 5 }),
   ...createFixedOptionAdvices(1, amplifyFixedOptionHitRateAdviceTemplate, { percentage: 10 }),
@@ -277,6 +278,22 @@ function amplifyFixedOptionHitRateTemporarilyAdviceTemplate(odds: number, params
     },
     odds,
     optionIndex,
+  };
+}
+
+function amplifySelectedOptionHitRateTemporarilyAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
+  const { extraAlchemy, extraChanceConsume } = params;
+  const percentage = 100;
+  return {
+    name: `이번에는 ${Placeholders[I.자네]}가 ${Placeholders[I.선택한]} 효과를 ${1 + extraAlchemy}단계 연성해${Placeholders[I.주겠네]}. 다만 기회를 ${1 + extraChanceConsume}번 소모${Placeholders[I.할걸세]}.`,
+    type: 'util',
+    effect: (elixirs, optionIndex) => {
+      if (optionIndex === null) throw new NoOptionSelectedError();
+      const result = elixirs.map((elixir) => ({ ...elixir }));
+      changeHitRate(optionIndex, percentage, result, { temp: true });
+      return { elixirs: result, extraAlchemy, extraChanceConsume };
+    },
+    odds,
   };
 }
 
