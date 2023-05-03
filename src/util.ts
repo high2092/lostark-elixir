@@ -189,6 +189,16 @@ export function createElixirInstanceBody(elixir: Elixir): ElixirInstanceBody {
     isMaxLevel: false,
   };
 }
+
+export function extractElixirDefaultProps(elixir: ElixirInstance): Elixir {
+  return {
+    name: elixir.name,
+    type: elixir.type,
+    part: elixir.part,
+    odds: elixir.odds,
+  };
+}
+
 interface ApplyAdviceProps {
   level?: number;
   hitRate?: number;

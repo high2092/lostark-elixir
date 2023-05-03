@@ -18,11 +18,21 @@ class ElixirService {
 
   pickOption(id: number) {
     const idx = this.elixirs.findIndex((elixir) => elixir.id === id);
-    if (idx === null) throw new Error('CPU.pickOption: could not find id');
+    if (idx === -1) throw new Error('CPU.pickOption: could not find id');
     const [elixir] = this.elixirs.splice(idx, 1);
     const { part } = elixir;
     if (part) this.elixirs = this.elixirs.filter((elixir) => elixir.part !== part);
     return elixir;
+  }
+
+  /** warning
+   *
+   * @param id 임의의 값을 넣을 경우 추후 문제가 발생할 수 있음
+   */
+  exchangeOption(elixir: ElixirInstance) {
+    const [idx] = gacha(this.elixirs); // 균등 확률
+    this.elixirs.push({ ...createElixirInstanceBody(elixir), id: elixir.id });
+    return this.pickOption(this.elixirs[idx].id);
   }
 }
 

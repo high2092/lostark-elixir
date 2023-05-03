@@ -1,8 +1,9 @@
 import { OPTION_COUNT, Placeholders as P } from '../constants';
 import { NoOptionSelectedError } from '../error/NoOptionSelectedError';
+import { elixirService } from '../service/ElixirService';
 import { AdviceBody, AdviceType } from '../type/advice';
 import { SageKey, SageKeys, SageTypesType, SageTypesTypes } from '../type/sage';
-import { applySafeResult, changeHitRate, convertToSignedString, gacha, generateRandomInt, generateRandomNumber, getMaxLevel, getMinLevel, lockOption, redistribute, unlockOption } from '../util';
+import { applySafeResult, changeHitRate, convertToSignedString, extractElixirDefaultProps, gacha, generateRandomInt, generateRandomNumber, getMaxLevel, getMinLevel, lockOption, redistribute, unlockOption } from '../util';
 
 const getExtraAlchemyText = (extraAlchemy: number) => `이번에 연성되는 효과는 ${1 + extraAlchemy}단계 연성해${P.주겠네}.`;
 const getExtraTargetText = (extraTarget: number) => `이번 연성에서 ${extraTarget + 1}개의 효과를 동시에 연성해${P.주겠네}.`;
@@ -119,6 +120,8 @@ export const ADVICES: AdviceBody[] = [
   extraAlchemyAdviceTemplate(1, { extraAlchemy: 2, special: SageTypesTypes.ORDER }),
 
   saveChanceAdviceTemplate(1),
+
+  changeOptionSelectedSlotAdviceTemplate(1),
 ];
 
 function potentialLevelUpFixedOptionAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
@@ -740,6 +743,26 @@ function saveChanceAdviceTemplate(odds: number): AdviceBody {
     type: 'util',
     special: SageTypesTypes.ORDER,
     effect: (elixirs) => ({ elixirs, saveChance: true }),
+    odds,
+  };
+}
+
+function changeOptionSelectedSlotAdviceTemplate(odds: number): AdviceBody {
+  return {
+    name: `${P.자네가} ${P.선택한} 슬롯의 효과를 변경${P.하겠네}. 좋은 결과가 나오길 ${P.바라네}.`,
+    type: 'util',
+    special: SageTypesTypes.CHAOS,
+    effect: (elixirs, optionIndex) => {
+      if (!optionIndex) throw new NoOptionSelectedError();
+      const result = elixirs.map((elixir) => ({ ...elixir }));
+      const newOption = elixirService.exchangeOption(result[optionIndex]);
+      result[optionIndex] = {
+        ...result[optionIndex],
+        ...extractElixirDefaultProps(newOption),
+      };
+
+      return { elixirs: result };
+    },
     odds,
   };
 }
