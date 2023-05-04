@@ -34,6 +34,7 @@ class AdviceService {
       },
       (advice: Advice) => !options[advice.optionIndex]?.isMaxLevel || advice.type === 'utillock' || advice.type === 'lock', // 최대 활성도 옵션 강화 조언 등장 X
       (advice: Advice) => !advice.changeLevelLowPoint || (advice.optionIndex ? options[advice.optionIndex].level : minLevel) <= advice.changeLevelLowPoint,
+      (advice: Advice) => 1 + (advice.extraChanceConsume ?? 0) <= remainChance, // 남은 연성 횟수보다 많은 기회를 소모하는 조언 등장 X
     ];
 
     if (lockedCount === 0) filterConditions.push((advice: Advice) => advice.type !== 'unlock'); // 봉인된 옵션 없는 경우 봉인 해제 조언 등장 X
