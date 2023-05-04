@@ -107,8 +107,8 @@ export const ADVICES: AdviceBody[] = [
   lockSelectedOptionAndLevelUpLowestOptionAdviceTemplate(1, { special: SageTypesTypes.CHAOS }),
 
   redistributeAdviceTemplate(2, { special: SageTypesTypes.CHAOS }),
-  exchangeOddEvenAdviceTemplate(1, { odd: true, n: 1, remainChanceUpperBound: 12 }),
-  exchangeOddEvenAdviceTemplate(1, { odd: false, n: 1, remainChanceUpperBound: 12 }),
+  exchangeOddEvenAdviceTemplate(0.5, { odd: true, n: 1, remainChanceUpperBound: 12 }),
+  exchangeOddEvenAdviceTemplate(0.5, { odd: false, n: 1, remainChanceUpperBound: 12 }),
   ...createFixedSubOptionAdvices(1, exchangeLevelBetweenFixedOptionsAdviceTemplate, { n: 1 }),
   ...createFixedSubOptionAdvices(1, exchangeLevelBetweenFixedOptionsAdviceTemplate, { n: 2 }),
 
@@ -116,9 +116,9 @@ export const ADVICES: AdviceBody[] = [
 
   addExtraTargetAdviceTemplate(1, { extraTarget: 1, extraChanceConsume: 1, remainChanceUpperBound: 11 }),
 
-  extraAlchemyAdviceTemplate(1, { extraAlchemy: 1 }),
+  extraAlchemyAdviceTemplate(0.5, { extraAlchemy: 1 }),
   extraAlchemyAdviceTemplate(1, { extraAlchemy: 2, extraChanceConsume: 1, remainChanceUpperBound: 11 }),
-  extraAlchemyAdviceTemplate(1, { extraAlchemy: 2, special: SageTypesTypes.ORDER }),
+  extraAlchemyAdviceTemplate(0.5, { extraAlchemy: 2, special: SageTypesTypes.ORDER }),
 
   saveChanceAdviceTemplate(1),
 
