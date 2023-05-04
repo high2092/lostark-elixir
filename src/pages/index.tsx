@@ -107,6 +107,7 @@ const Home = () => {
       case AlchemyStatuses.REFINE: {
         const { id } = sages[selectedAdviceIndex].option;
         dispatch(pickOption(id));
+        dispatch(chargeCost());
         dispatch(setSelectedAdviceIndex(null));
         break;
       }
@@ -133,7 +134,6 @@ const Home = () => {
     }
 
     setStatusTextTimeout();
-
     dispatch(setSelectedOptionIndex(null));
   };
 
@@ -194,7 +194,7 @@ const Home = () => {
             </div>
           ) : (
             <>
-              <S.MaterialSectionText>{REFINE_DESCRIPTION_TEXT}</S.MaterialSectionText>
+              <S.MaterialSectionText>{alchemyStatus === AlchemyStatuses.REFINE ? REFINE_DESCRIPTION_TEXT : ''}</S.MaterialSectionText>
               <S.MaterialInfo>
                 <S.MaterialInfoSubSection>
                   <div style={{ flex: 1, textAlign: 'left' }}>필요 재료</div>

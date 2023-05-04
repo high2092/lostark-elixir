@@ -107,7 +107,9 @@ export const MaterialSection = styled.div`
   }
 `;
 
-export const MaterialSectionText = styled.div``;
+export const MaterialSectionText = styled.div`
+  height: 1rem;
+`;
 
 export const MaterialInfo = styled.div`
   display: flex;
