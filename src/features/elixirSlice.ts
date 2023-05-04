@@ -105,11 +105,14 @@ export const elixirSlice = createSlice({
       const { extraChanceConsume, saveChance } = adviceAfterEffect;
       state.adviceAfterEffect = {};
 
-      const advices = adviceService.getAdvices(state.sages, state.options, state.alchemyChance);
-      state.sages.forEach((sage, i) => (sage.advice = advices[i]));
-
       if (!saveChance) state.alchemyChance -= 1 + (extraChanceConsume ?? 0);
-      state.alchemyStatus = state.alchemyChance ? AlchemyStatuses.ADVICE : AlchemyStatuses.COMPLETE;
+      if (state.alchemyChance) {
+        state.alchemyStatus = AlchemyStatuses.ADVICE;
+        const advices = adviceService.getAdvices(state.sages, state.options, state.alchemyChance);
+        state.sages.forEach((sage, i) => (sage.advice = advices[i]));
+      } else {
+        state.alchemyStatus = AlchemyStatuses.COMPLETE;
+      }
     },
 
     clearStatusText(state) {
