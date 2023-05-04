@@ -84,8 +84,8 @@ const InventoryModalContent = () => {
 
 const ElixirOption = (option: OptionResult) => {
   return (
-    <div style={{ display: 'flex', width: '7rem' }}>
-      <div style={{ flex: 10 }}>{getOptionName(option)}</div>
+    <div style={{ display: 'flex', width: '8rem' }}>
+      <div style={{ flex: 9 }}>{getOptionName(option)}</div>
       <div style={{ flex: 1 }}>{getActivationByLevel(option.level)}</div>
     </div>
   );

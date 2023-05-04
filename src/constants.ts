@@ -86,7 +86,7 @@ export const TutorialTexts = {
   [TutorialStatus.OPEN_INVENTORY]: '좌측 상단의 버튼을 클릭해 누적 연성 결과를 확인할 수 있어요.',
 };
 
-export const MOBILE_CRITERIA_MAX_WIDTH = '700px';
+export const MOBILE_CRITERIA_MAX_WIDTH = '768px';
 
 export const INITIAL_MATERIAL = {
   GOLD: 5600000,

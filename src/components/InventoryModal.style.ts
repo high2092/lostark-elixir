@@ -2,14 +2,15 @@ import styled from '@emotion/styled';
 import { ELIXIR_ICON_SIZE, MOBILE_CRITERIA_MAX_WIDTH, MODAL_DEFAULT_BORDER_RADIUS } from '../constants';
 
 const ELIXIR_PADDING = '1vw';
-const ELIXIR_INFO_MODAL_CONTAINER_WIDTH = '16vw';
-const ELIXIR_INFO_MODAL_HORIZONTAL_SIZE = '10vh';
+const ELIXIR_INFO_MODAL_CONTAINER_WIDTH = '13rem';
 const ELIXIR_INFO_MODAL_CONTAINER_HEIGHT = '7vh';
 
 export const InventoryModal = styled.div`
   display: flex;
 
   transform: translateX(calc(${ELIXIR_INFO_MODAL_CONTAINER_WIDTH} / 2));
+
+  font-size: 0.9rem;
 
   @media (max-width: ${MOBILE_CRITERIA_MAX_WIDTH}) {
     flex-direction: column;
@@ -47,6 +48,19 @@ export const Elixir = styled.div<{ hover: boolean }>`
   ${({ hover }) => (hover ? 'fill: #c9a7eb;' : '')}
 `;
 
+const LIST_VIEW_ELIXIR_BORDER = 'solid 1px #bbbbbb';
+export const ListViewElixir = styled.div`
+  padding: 2vw 0;
+  margin: 0.5vw 0;
+
+  border-radius: 5px;
+
+  border: ${LIST_VIEW_ELIXIR_BORDER};
+
+  display: flex;
+  justify-content: space-around;
+`;
+
 export const ElixirInfoModalContainer = styled.div`
   width: ${ELIXIR_INFO_MODAL_CONTAINER_WIDTH};
   height: ${ELIXIR_INFO_MODAL_CONTAINER_HEIGHT};
@@ -62,24 +76,10 @@ export const ListViewInventory = styled.div`
   overflow-y: scroll;
 `;
 
-const LIST_VIEW_ELIXIR_BORDER = 'solid 1px #bbbbbb';
-export const ListViewElixir = styled.div`
-  padding: 2vw 0;
-  margin: 0.5vw 0;
-
-  border-radius: 5px;
-
-  border: ${LIST_VIEW_ELIXIR_BORDER};
-
-  display: flex;
-  justify-content: space-around;
-`;
-
 export const ElixirInfoModal = styled.div`
-  margin-left: 3rem;
+  padding: 1rem 2rem;
   height: 100%;
   background-color: white;
-  padding: calc(${ELIXIR_INFO_MODAL_HORIZONTAL_SIZE} - ${ELIXIR_INFO_MODAL_CONTAINER_HEIGHT}) 1rem;
 
   border-radius: ${MODAL_DEFAULT_BORDER_RADIUS};
 
@@ -88,8 +88,7 @@ export const ElixirInfoModal = styled.div`
   justify-content: space-around;
 
   @media (max-width: ${MOBILE_CRITERIA_MAX_WIDTH}) {
-    margin-left: auto;
-    margin-top: -52vh;
+    margin-top: -49vh;
   }
 `;
 
