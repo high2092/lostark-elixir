@@ -229,9 +229,8 @@ function levelUpRandomOptionAdviceTemplate(odds: number): AdviceBody {
     type: 'util',
     effect: (options) => {
       const result = options.map((option) => ({ ...option }));
-      const candidate = result.filter((option) => !option.locked);
-      const targetIndex = generateRandomInt(0, candidate.length);
-      applySafeResult(candidate[targetIndex], { level: candidate[targetIndex].level + 1 });
+      const [targetIndex] = gacha(result);
+      applySafeResult(result[targetIndex], { level: result[targetIndex].level + 1 });
       return { options: result };
     },
     odds,
@@ -550,8 +549,8 @@ function lockSelectedOptionAndLevelUpRandomOptionAdviceTemplate(odds: number, pa
       const result = options.map((option) => ({ ...option }));
       lockOption(result, optionIndex);
 
-      const [lockTargetIndex] = gacha(result);
-      applySafeResult(result[lockTargetIndex], { level: result[lockTargetIndex].level + 1 });
+      const [levelUpTargetIndex] = gacha(result);
+      applySafeResult(result[levelUpTargetIndex], { level: result[levelUpTargetIndex].level + 1 });
 
       return { options: result };
     },
