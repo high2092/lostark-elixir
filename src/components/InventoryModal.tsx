@@ -6,6 +6,8 @@ import { ElixirIcon } from './ElixirIcon';
 import { useEffect, useState } from 'react';
 import { OptionResult } from '../type/option';
 import { cutThousandUnit, getActivationByLevel, getOptionName } from '../util';
+import { IconButton } from './common/IconButton';
+import { SwitchIcon } from './SwitchIcon';
 
 export const InventoryModal = ({ zIndex }: PreparedModalProps) => {
   return <CenteredModal content={<InventoryModalContent />} zIndex={zIndex} />;
@@ -14,6 +16,7 @@ export const InventoryModal = ({ zIndex }: PreparedModalProps) => {
 const InventoryModalContent = () => {
   const { usedGold, usedCatalyst, elixirs } = useAppSelector((state) => state.result);
   const [hoveredIndex, setHoveredIndex] = useState<number>(null);
+  const [listView, setListView] = useState(false);
 
   useEffect(() => {
     const reset = () => {
@@ -29,20 +32,42 @@ const InventoryModalContent = () => {
     setHoveredIndex(idx);
   };
 
+  const handleSwitchButtonClick = () => {
+    setHoveredIndex(null);
+    setListView(!listView);
+  };
+
   return (
     <S.InventoryModal>
       <S.InventoryContainer>
-        <S.Inventory>
-          {elixirs.map((elixir, idx) => (
-            <S.Elixir hover={hoveredIndex === idx} onMouseOver={(e) => handleElixirMouseOver(e, idx)}>
-              <ElixirIcon />
-            </S.Elixir>
-          ))}
-        </S.Inventory>
-        <S.UsageInfo>
-          <div>사용한 골드: {cutThousandUnit(usedGold)}</div>
-          <div>사용한 연성 촉매: {usedCatalyst}</div>
-        </S.UsageInfo>
+        {listView ? (
+          <S.ListViewInventory>
+            {elixirs.map((elixir) => (
+              <S.ListViewElixir>
+                {elixir.options.map((option) => (
+                  <ElixirOption {...option} />
+                ))}
+              </S.ListViewElixir>
+            ))}
+          </S.ListViewInventory>
+        ) : (
+          <S.Inventory>
+            {elixirs.map((elixir, idx) => (
+              <S.Elixir hover={hoveredIndex === idx} onMouseOver={(e) => handleElixirMouseOver(e, idx)}>
+                <ElixirIcon />
+              </S.Elixir>
+            ))}
+          </S.Inventory>
+        )}
+        <S.BottomSection>
+          <S.UsageInfo>
+            <div>사용한 골드: {cutThousandUnit(usedGold)}</div>
+            <div>사용한 연성 촉매: {usedCatalyst}</div>
+          </S.UsageInfo>
+          <IconButton onClick={handleSwitchButtonClick}>
+            <SwitchIcon />
+          </IconButton>
+        </S.BottomSection>
       </S.InventoryContainer>
       <S.ElixirInfoModalContainer>
         {elixirs[hoveredIndex] !== undefined && (
@@ -59,8 +84,8 @@ const InventoryModalContent = () => {
 
 const ElixirOption = (option: OptionResult) => {
   return (
-    <div style={{ display: 'flex', width: '8rem' }}>
-      <div style={{ flex: 5 }}>{getOptionName(option)}</div>
+    <div style={{ display: 'flex', width: '7rem' }}>
+      <div style={{ flex: 10 }}>{getOptionName(option)}</div>
       <div style={{ flex: 1 }}>{getActivationByLevel(option.level)}</div>
     </div>
   );

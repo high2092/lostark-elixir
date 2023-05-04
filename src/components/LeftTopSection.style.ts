@@ -24,8 +24,3 @@ export const YouTube = styled.div`
   overflow: hidden;
   width: 0;
 `;
-
-export const IconButton = styled.div<{ outline?: boolean }>`
-  ${({ outline }) => (outline ? 'outline: 3px solid red;' : '')}
-  cursor: pointer;
-`;

@@ -11,6 +11,7 @@ import { TUTORIALS, TutorialStatus } from '../constants';
 import { InventoryIcon } from './InventoryIcon';
 import { openModal } from '../features/modalSlice';
 import { ModalTypes } from '../type/common';
+import { IconButton } from './common/IconButton';
 
 const DEFAULT_BGM_VOLUME = 5;
 
@@ -58,15 +59,15 @@ export const LeftTopSection = () => {
         />
       </S.YouTube>
       <S.LeftTopSection>
-        <S.IconButton onClick={handlePlayButtonClick} outline={TUTORIALS[tutorialIndex] === TutorialStatus.PLAY_BGM}>
+        <IconButton onClick={handlePlayButtonClick} outline={TUTORIALS[tutorialIndex] === TutorialStatus.PLAY_BGM}>
           {playing ? <PauseIcon /> : <PlayIcon />}
-        </S.IconButton>
-        <S.IconButton onClick={handleResetButtonClick} outline={TUTORIALS[tutorialIndex] === TutorialStatus.RESET}>
+        </IconButton>
+        <IconButton onClick={handleResetButtonClick} outline={TUTORIALS[tutorialIndex] === TutorialStatus.RESET}>
           <ResetIcon />
-        </S.IconButton>
-        <S.IconButton onClick={handleInventoryButtonClick} outline={TUTORIALS[tutorialIndex] === TutorialStatus.OPEN_INVENTORY}>
+        </IconButton>
+        <IconButton onClick={handleInventoryButtonClick} outline={TUTORIALS[tutorialIndex] === TutorialStatus.OPEN_INVENTORY}>
           <InventoryIcon />
-        </S.IconButton>
+        </IconButton>
       </S.LeftTopSection>
     </>
   );

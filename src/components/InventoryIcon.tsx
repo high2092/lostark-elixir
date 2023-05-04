@@ -1,8 +1,8 @@
-import { PLAY_PAUSE_ICON_SIZE } from '../constants';
+import { DEFAULT_ICON_SIZE } from '../constants';
 
 export const InventoryIcon = () => {
   return (
-    <svg width={PLAY_PAUSE_ICON_SIZE} height={PLAY_PAUSE_ICON_SIZE} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg width={DEFAULT_ICON_SIZE} height={DEFAULT_ICON_SIZE} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         fill-rule="evenodd"
         clip-rule="evenodd"

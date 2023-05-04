@@ -19,15 +19,19 @@ export const InventoryModal = styled.div`
 `;
 
 const ELIXIRS_PER_LINE = 8;
-
+const INVENTORY_CONTAINER_WIDTH = `calc(calc(${ELIXIR_ICON_SIZE} + calc(${ELIXIR_PADDING} * 2)) * ${ELIXIRS_PER_LINE})`;
+const INVENTORY_CONTAINER_HEIGHT = `calc(calc(${ELIXIR_ICON_SIZE} + calc(${ELIXIR_PADDING} * 2)) * 5)`;
 export const InventoryContainer = styled.div`
   border-radius: ${MODAL_DEFAULT_BORDER_RADIUS};
   background-color: white;
 
-  width: calc(calc(${ELIXIR_ICON_SIZE} + calc(${ELIXIR_PADDING} * 2)) * ${ELIXIRS_PER_LINE});
-  min-height: calc(calc(${ELIXIR_ICON_SIZE} + calc(${ELIXIR_PADDING} * 2)) * 5);
+  width: ${INVENTORY_CONTAINER_WIDTH};
+  min-height: ${INVENTORY_CONTAINER_HEIGHT};
 
   padding: 2rem;
+
+  display: flex;
+  justify-content: center;
 `;
 
 export const Inventory = styled.div`
@@ -51,11 +55,31 @@ export const ElixirInfoModalContainer = styled.div`
   justify-content: center;
 `;
 
+export const ListViewInventory = styled.div`
+  width: 100%;
+
+  height: ${INVENTORY_CONTAINER_HEIGHT};
+  overflow-y: scroll;
+`;
+
+const LIST_VIEW_ELIXIR_BORDER = 'solid 1px #bbbbbb';
+export const ListViewElixir = styled.div`
+  padding: 2vw 0;
+  margin: 0.5vw 0;
+
+  border-radius: 5px;
+
+  border: ${LIST_VIEW_ELIXIR_BORDER};
+
+  display: flex;
+  justify-content: space-around;
+`;
+
 export const ElixirInfoModal = styled.div`
-  margin-left: 2rem;
+  margin-left: 3rem;
   height: 100%;
   background-color: white;
-  padding: calc(${ELIXIR_INFO_MODAL_HORIZONTAL_SIZE} - ${ELIXIR_INFO_MODAL_CONTAINER_HEIGHT});
+  padding: calc(${ELIXIR_INFO_MODAL_HORIZONTAL_SIZE} - ${ELIXIR_INFO_MODAL_CONTAINER_HEIGHT}) 1rem;
 
   border-radius: ${MODAL_DEFAULT_BORDER_RADIUS};
 
@@ -69,13 +93,20 @@ export const ElixirInfoModal = styled.div`
   }
 `;
 
-export const UsageInfo = styled.div`
+export const BottomSection = styled.div`
   position: absolute;
   bottom: 0;
 
-  font-size: 0.8rem;
+  width: ${INVENTORY_CONTAINER_WIDTH};
+
+  display: flex;
+  justify-content: space-between;
 
   @media (max-width: ${MOBILE_CRITERIA_MAX_WIDTH}) {
     bottom: ${ELIXIR_INFO_MODAL_CONTAINER_HEIGHT};
   }
+`;
+
+export const UsageInfo = styled.div`
+  font-size: 0.8rem;
 `;

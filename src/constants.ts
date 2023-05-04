@@ -54,7 +54,7 @@ export const STACK_COUNTER_EXPECTED_HEIGHT = '3vw';
 
 export const DEFAULT_ADVICE_REROLL_CHANCE = 2;
 
-export const PLAY_PAUSE_ICON_SIZE = '1rem';
+export const DEFAULT_ICON_SIZE = '1rem';
 
 export const AUDIO_RESOURCE_URL_LIST = ['/sound/refine-success.mp3', '/sound/refine-failure.mp3', '/sound/click.mp3'];
 export const IMAGE_RESOURCE_URL_LIST = ['/image/background.png', '/image/gold.png', '/image/material.png'];
@@ -86,7 +86,7 @@ export const TutorialTexts = {
   [TutorialStatus.OPEN_INVENTORY]: '좌측 상단의 버튼을 클릭해 누적 연성 결과를 확인할 수 있어요.',
 };
 
-export const MOBILE_CRITERIA_MAX_WIDTH = '600px';
+export const MOBILE_CRITERIA_MAX_WIDTH = '700px';
 
 export const INITIAL_MATERIAL = {
   GOLD: 5600000,
