@@ -16,6 +16,7 @@ export interface AdviceBody {
   exhaust?: boolean;
   extraChanceConsume?: number;
   changeLevelLowPoint?: number;
+  contradictMaxLevelExists?: boolean;
 }
 
 export interface Advice extends AdviceBody {

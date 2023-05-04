@@ -3,7 +3,7 @@ import { ADVICES } from '../database/advice';
 import { Advice } from '../type/advice';
 import { OptionInstance } from '../type/option';
 import { Sage } from '../type/sage';
-import { checkMaxLevel, gacha, getLockedCount, getMinLevel, isFullStack, playRefineFailureSound, playRefineSuccessSound, replaceOptionPlaceholder, requireLock } from '../util';
+import { checkMaxLevel, gacha, getLockedCount, getMaxLevel, getMinLevel, isFullStack, playRefineFailureSound, playRefineSuccessSound, replaceOptionPlaceholder, requireLock } from '../util';
 
 class AdviceService {
   advices: Advice[] = ADVICES.map((advice, idx) => ({ ...advice, id: idx + 1 }));
@@ -22,6 +22,7 @@ class AdviceService {
     const lockedCount = getLockedCount(options);
 
     const minLevel = getMinLevel(options);
+    const maxLevel = getMaxLevel(options);
 
     const filterConditions = [
       (advice: Advice) => (!advice.remainChanceLowerBound || remainChance >= advice.remainChanceLowerBound) && (!advice.remainChanceUpperBound || remainChance <= advice.remainChanceUpperBound),
@@ -37,6 +38,7 @@ class AdviceService {
       (advice: Advice) => 1 + (advice.extraChanceConsume ?? 0) <= remainChance, // 남은 연성 횟수보다 많은 기회를 소모하는 조언 등장 X
 
       (advice: Advice) => !advice.extraChanceConsume || remainChance >= 3, // 남은 연성 횟수가 3회 이하일 때 기회 소모 조언 등장 X
+      (advice: Advice) => !advice.contradictMaxLevelExists || maxLevel !== MAX_ACTIVE, // 옵션 중 최고 레벨이 있는 경우 등장 X
     ];
 
     if (lockedCount === 0) filterConditions.push((advice: Advice) => advice.type !== 'unlock'); // 봉인된 옵션 없는 경우 봉인 해제 조언 등장 X

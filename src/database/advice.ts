@@ -175,6 +175,7 @@ function levelUpHighestOptionAdviceTemplate(odds: number): AdviceBody {
   return {
     name: `최고 단계 효과를 +1 올려${P.주겠네}. 대신 다른 효과 1개의 단계는 2 감소${P.할걸세}.`,
     type: 'util',
+    contradictMaxLevelExists: true,
     effect: (options) => {
       const result = options.map((option) => ({ ...option }));
       const maxLevel = getMaxLevel(result);
