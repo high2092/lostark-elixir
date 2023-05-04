@@ -17,7 +17,7 @@ class AdviceService {
     return this.advices.filter((advice) => !advice.special);
   }
 
-  private getAdvice(sage: Sage, options: OptionInstance[], remainChance: number, currentAdvices: Advice[], someoneMeditation: boolean) {
+  private getAdvice(sage: Sage, options: OptionInstance[], remainChance: number, currentAdvices: Advice[], someoneMeditation: boolean, discountRate: number) {
     const advicePool = this.getAdvicePool(sage);
     const lockedCount = getLockedCount(options);
 
@@ -39,6 +39,8 @@ class AdviceService {
 
       (advice: Advice) => !advice.extraChanceConsume || remainChance >= 3, // 남은 연성 횟수가 3회 이하일 때 기회 소모 조언 등장 X
       (advice: Advice) => !advice.contradictMaxLevelExists || maxLevel !== MAX_ACTIVE, // 옵션 중 최고 레벨이 있는 경우 등장 X
+
+      (advice: Advice) => !advice.discount || discountRate < 100,
     ];
 
     if (lockedCount === 0) filterConditions.push((advice: Advice) => advice.type !== 'unlock'); // 봉인된 옵션 없는 경우 봉인 해제 조언 등장 X
@@ -58,7 +60,7 @@ class AdviceService {
     return result;
   }
 
-  getAdvices(sages: Sage[], options: OptionInstance[], remainChance: number) {
+  getAdvices(sages: Sage[], options: OptionInstance[], remainChance: number, discountRate: number) {
     const someoneMeditation = sages.reduce((acc, cur) => acc || cur.meditation, false);
 
     const TRY = remainChance <= OPTION_COUNT - FINAL_OPTION_COUNT ? 1000 : 1; // 봉인 턴이면 시행 횟수 늘리기
@@ -66,7 +68,7 @@ class AdviceService {
       try {
         const result = [];
         sages.forEach((sage) => {
-          result.push(this.getAdvice(sage, options, remainChance, result, someoneMeditation));
+          result.push(this.getAdvice(sage, options, remainChance, result, someoneMeditation, discountRate));
         });
         return result;
       } catch {}

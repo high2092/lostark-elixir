@@ -36,12 +36,14 @@ const Home = () => {
   const [cookies, setCookie] = useCookies();
 
   const dispatch = useAppDispatch();
-  const { sages, alchemyChance, alchemyStatus, options, reset } = useAppSelector((state) => state.elixir);
+  const { sages, alchemyChance, alchemyStatus, options, reset, discountRate } = useAppSelector((state) => state.elixir);
   const { selectedAdviceIndex, selectedOptionIndex, tutorialIndex } = useAppSelector((state) => state.ui);
   const { usedGold, usedCatalyst } = useAppSelector((state) => state.result);
 
   const [loaded, setLoaded] = useState(false);
   const statusTextTimeoutRef = useRef<NodeJS.Timeout>();
+
+  const goldCost = COST_PER_ALCHEMY.GOLD * (1 - 0.01 * discountRate);
 
   useEffect(() => {
     const handleWindowClick = () => dispatch(getNextTutorial());
@@ -100,7 +102,7 @@ const Home = () => {
       case AlchemyStatuses.REFINE: {
         const { id } = sages[selectedAdviceIndex].option;
         dispatch(pickOption(id));
-        dispatch(chargeCost());
+        dispatch(chargeCost({ gold: goldCost }));
         dispatch(setSelectedAdviceIndex(null));
         break;
       }
@@ -120,7 +122,7 @@ const Home = () => {
       }
       case AlchemyStatuses.ALCHEMY: {
         dispatch(alchemy());
-        dispatch(chargeCost());
+        dispatch(chargeCost({ gold: goldCost }));
         dispatch(setSelectedAdviceIndex(null));
         break;
       }
@@ -205,7 +207,7 @@ const Home = () => {
                   <div style={{ flex: 4, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                     <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between' }}>
                       <div>정제 비용</div>
-                      <Gold amount={COST_PER_ALCHEMY.GOLD} />
+                      <Gold amount={goldCost} />
                     </div>
                     <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between' }}>
                       <div>소지 금액</div>

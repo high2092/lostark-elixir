@@ -17,6 +17,7 @@ export interface AdviceBody {
   extraChanceConsume?: number;
   changeLevelLowPoint?: number;
   contradictMaxLevelExists?: boolean;
+  discount?: boolean;
 }
 
 export interface Advice extends AdviceBody {
@@ -32,6 +33,7 @@ export interface AdviceEffectResult {
   addRerollChance?: number;
   reset?: boolean;
   enterMeditation?: boolean;
+  discount?: number;
 }
 
 export type AdviceEffect = (options: OptionInstance[], optionIdx?: number) => AdviceEffectResult;

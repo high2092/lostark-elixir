@@ -19,15 +19,20 @@ const initialState: ResultState = {
   elixirs: [],
 };
 
+interface ChargeCostPayload {
+  gold: number;
+  free?: boolean;
+}
+
 export const resultSlice = createSlice({
   name: 'result',
   initialState,
   reducers: {
-    chargeCost(state, action?: PayloadAction<boolean>) {
-      const free = action.payload;
+    chargeCost(state, action: PayloadAction<ChargeCostPayload>) {
+      const { gold, free } = action.payload;
       if (free) return;
 
-      state.usedGold += COST_PER_ALCHEMY.GOLD;
+      state.usedGold += gold;
       state.usedCatalyst += COST_PER_ALCHEMY.CATALYST;
     },
 

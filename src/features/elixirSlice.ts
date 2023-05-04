@@ -20,6 +20,7 @@ interface ElixirState {
   adviceAfterEffect: AdviceAfterEffect;
   alchemyStatus: AlchemyStatus;
   reset: boolean;
+  discountRate: number; // [0, 100] 내의 정수
 }
 
 const initialSages: Sage[] = [createSage(SageTemplates[SageKeys.L]), createSage(SageTemplates[SageKeys.B]), createSage(SageTemplates[SageKeys.C])];
@@ -33,6 +34,7 @@ const initialState: ElixirState = {
   adviceAfterEffect: {},
   alchemyStatus: AlchemyStatuses.REFINE,
   reset: true,
+  discountRate: 0,
 };
 
 export const elixirSlice = createSlice({
@@ -46,7 +48,7 @@ export const elixirSlice = createSlice({
       state.sages.forEach((sage, i) => (sage.option = options[i]));
       if (--state.pickOptionChance === 0) {
         state.alchemyStatus = AlchemyStatuses.ADVICE;
-        const advices = adviceService.getAdvices(state.sages, state.options, state.alchemyChance);
+        const advices = adviceService.getAdvices(state.sages, state.options, state.alchemyChance, state.discountRate);
         state.sages.forEach((sage, i) => (sage.advice = advices[i]));
       }
     },
@@ -59,7 +61,7 @@ export const elixirSlice = createSlice({
           break;
         }
         case AlchemyStatuses.ADVICE: {
-          const advices = adviceService.getAdvices(state.sages, state.options, state.alchemyChance);
+          const advices = adviceService.getAdvices(state.sages, state.options, state.alchemyChance, state.discountRate);
           state.sages.forEach((sage, i) => (sage.advice = advices[i]));
           break;
         }
@@ -70,12 +72,13 @@ export const elixirSlice = createSlice({
     pickAdvice(state, action: PayloadAction<{ selectedAdviceIndex: number; selectedOptionIndex: number }>) {
       const { selectedAdviceIndex, selectedOptionIndex } = action.payload;
       const { advice } = state.sages[selectedAdviceIndex];
-      const { options, extraTarget, extraAlchemy, extraChanceConsume, saveChance, enterMeditation, addRerollChance } = adviceService.executeAdvice(advice, state.options, selectedOptionIndex);
+      const { options, extraTarget, extraAlchemy, extraChanceConsume, saveChance, enterMeditation, addRerollChance, discount } = adviceService.executeAdvice(advice, state.options, selectedOptionIndex);
       state.options = options;
       state.adviceAfterEffect = { extraTarget, extraAlchemy, extraChanceConsume, saveChance };
 
       if (addRerollChance) state.adviceRerollChance += addRerollChance;
       if (enterMeditation) state.sages[selectedAdviceIndex].meditation = true;
+      if (discount) state.discountRate = Math.min(state.discountRate + discount, 100);
 
       state.sages.forEach((sage, i) => {
         if (isFullStack(sage)) sage.stack = 0;
@@ -108,7 +111,7 @@ export const elixirSlice = createSlice({
       if (!saveChance) state.alchemyChance -= 1 + (extraChanceConsume ?? 0);
       if (state.alchemyChance) {
         state.alchemyStatus = AlchemyStatuses.ADVICE;
-        const advices = adviceService.getAdvices(state.sages, state.options, state.alchemyChance);
+        const advices = adviceService.getAdvices(state.sages, state.options, state.alchemyChance, state.discountRate);
         state.sages.forEach((sage, i) => (sage.advice = advices[i]));
       } else {
         state.alchemyStatus = AlchemyStatuses.COMPLETE;

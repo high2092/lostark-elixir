@@ -123,6 +123,10 @@ export const ADVICES: AdviceBody[] = [
   saveChanceAdviceTemplate(1),
 
   changeOptionSelectedSlotAdviceTemplate(1),
+
+  discountGoldCostAdviceTemplate(1, { percentage: 20 }),
+  discountGoldCostAdviceTemplate(1, { percentage: 40 }),
+  discountGoldCostAdviceTemplate(1, { percentage: 100, special: SageTypesTypes.ORDER }),
 ];
 
 function potentialLevelUpFixedOptionAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
@@ -768,6 +772,18 @@ function changeOptionSelectedSlotAdviceTemplate(odds: number): AdviceBody {
 
       return { options: result };
     },
+    odds,
+  };
+}
+
+function discountGoldCostAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
+  const { percentage, special } = params;
+  return {
+    name: `남은 연성에서 비용이 ${percentage}% 감소${P.할걸세}.`,
+    type: 'util',
+    special,
+    discount: true,
+    effect: (options) => ({ options, discount: percentage }),
     odds,
   };
 }
