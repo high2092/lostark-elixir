@@ -25,7 +25,7 @@ import { Loading } from '../components/Loading';
 import { useCookies } from 'react-cookie';
 import { AlchemyStatuses } from '../type/common';
 import { useAppDispatch, useAppSelector } from '../store';
-import { alchemy, clearStatusText, drawAdvices, initElixir, pickAdvice, pickOption } from '../features/elixirSlice';
+import { alchemy, clearStatusText, initElixir, pickAdvice, pickOption } from '../features/elixirSlice';
 import { Gold } from '../components/Gold';
 import { AdviceSection } from '../components/AdviceSection';
 import { setSelectedAdviceIndex, setSelectedOptionIndex, getNextTutorial, initTutorial } from '../features/uiSlice';
@@ -76,15 +76,8 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    switch (alchemyStatus) {
-      case AlchemyStatuses.ADVICE: {
-        dispatch(drawAdvices());
-        break;
-      }
-      case AlchemyStatuses.COMPLETE: {
-        dispatch(completeAlchemy(options));
-        break;
-      }
+    if (alchemyStatus === AlchemyStatuses.COMPLETE) {
+      dispatch(completeAlchemy(options));
     }
   }, [alchemyStatus]);
 

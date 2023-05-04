@@ -44,14 +44,27 @@ export const elixirSlice = createSlice({
       state.options.push(optionService.pickOption(id));
       const options = optionService.drawOptions();
       state.sages.forEach((sage, i) => (sage.option = options[i]));
-      if (--state.pickOptionChance === 0) state.alchemyStatus = AlchemyStatuses.ADVICE;
+      if (--state.pickOptionChance === 0) {
+        state.alchemyStatus = AlchemyStatuses.ADVICE;
+        const advices = adviceService.getAdvices(state.sages, state.options, state.alchemyChance);
+        state.sages.forEach((sage, i) => (sage.advice = advices[i]));
+      }
     },
 
-    drawAdvices(state, action: PayloadAction<{ reroll: boolean }>) {
-      const { reroll } = action.payload ?? {};
-      const advices = adviceService.getAdvices(state.sages, state.options, state.alchemyChance);
-      state.sages.forEach((sage, i) => (sage.advice = advices[i]));
-      if (reroll) state.adviceRerollChance--;
+    reroll(state) {
+      switch (state.alchemyStatus) {
+        case AlchemyStatuses.REFINE: {
+          const options = optionService.drawOptions();
+          state.sages.forEach((sage, i) => (sage.option = options[i]));
+          break;
+        }
+        case AlchemyStatuses.ADVICE: {
+          const advices = adviceService.getAdvices(state.sages, state.options, state.alchemyChance);
+          state.sages.forEach((sage, i) => (sage.advice = advices[i]));
+          break;
+        }
+      }
+      state.adviceRerollChance--;
     },
 
     pickAdvice(state, action: PayloadAction<{ selectedAdviceIndex: number; selectedOptionIndex: number }>) {
@@ -92,6 +105,9 @@ export const elixirSlice = createSlice({
       const { extraChanceConsume, saveChance } = adviceAfterEffect;
       state.adviceAfterEffect = {};
 
+      const advices = adviceService.getAdvices(state.sages, state.options, state.alchemyChance);
+      state.sages.forEach((sage, i) => (sage.advice = advices[i]));
+
       if (!saveChance) state.alchemyChance -= 1 + (extraChanceConsume ?? 0);
       state.alchemyStatus = state.alchemyChance ? AlchemyStatuses.ADVICE : AlchemyStatuses.COMPLETE;
     },
@@ -117,4 +133,4 @@ export const elixirSlice = createSlice({
   },
 });
 
-export const { pickOption, drawAdvices, pickAdvice, alchemy, clearStatusText, resetElixir, initElixir } = elixirSlice.actions;
+export const { pickOption, reroll, pickAdvice, alchemy, clearStatusText, resetElixir, initElixir } = elixirSlice.actions;

@@ -1,12 +1,12 @@
 import * as S from './AdviceSection.style';
 import { Placeholders, ADVICE_COUNT } from '../constants';
-import { drawAdvices } from '../features/elixirSlice';
 import { setSelectedAdviceIndex } from '../features/uiSlice';
 import { useAppDispatch, useAppSelector } from '../store';
 import { AlchemyStatuses } from '../type/common';
 import { isFullStack, playClickSound } from '../util';
 import { SageTypeStackCounter } from './SageTypeStackCounter';
 import { DialogueEndTypes, Sage } from '../type/sage';
+import { reroll } from '../features/elixirSlice';
 
 interface AdviceDialogueProps {
   sage: Sage;
@@ -18,8 +18,17 @@ export const AdviceSection = () => {
   const { selectedAdviceIndex } = useAppSelector((state) => state.ui);
 
   const handleRerollButtonClick = () => {
-    if (adviceRerollChance <= 0 || alchemyStatus !== AlchemyStatuses.ADVICE) return;
-    dispatch(drawAdvices({ reroll: true }));
+    if (adviceRerollChance <= 0) return;
+
+    switch (alchemyStatus) {
+      case AlchemyStatuses.REFINE:
+      case AlchemyStatuses.ADVICE:
+        break;
+      default:
+        return;
+    }
+
+    dispatch(reroll());
     playClickSound();
   };
 
