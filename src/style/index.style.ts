@@ -86,9 +86,20 @@ export const DescriptionSection = styled.div`
   align-items: center;
 `;
 
+export const DescriptionSSection = styled.div`
+  flex: 5;
+  width: 60%;
+
+  text-align: center;
+
+  @media (max-width: ${MOBILE_CRITERIA_MAX_WIDTH}) {
+    width: 100%;
+  }
+`;
+
 export const MaterialSection = styled.div`
   width: 60%;
-  height: 60%;
+  /* height: 60%; */
   text-align: center;
 
   @media (max-width: ${MOBILE_CRITERIA_MAX_WIDTH}) {

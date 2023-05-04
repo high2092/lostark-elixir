@@ -1,7 +1,7 @@
 import { DEFAULT_BIG_HIT_RATE_PERCENT, FINAL_OPTION_COUNT, MAX_ACTIVE, OPTION_COUNT, Placeholders, SageTypes } from './constants';
 import { Advice, AdviceType } from './type/advice';
 import { OddsKey } from './type/common';
-import { Option, OptionInstance, OptionInstanceBody } from './type/option';
+import { Option, OptionInstance, OptionInstanceBody, OptionResult } from './type/option';
 import { Sage, SageTemplate, SageTypesType } from './type/sage';
 
 type FilterCondition = (elem: Record<string, any>, idx: number) => boolean;
@@ -138,7 +138,7 @@ export function replaceOptionPlaceholder(advice: Advice, options: OptionInstance
   advice.name = advice.name.replaceAll(Placeholders.OPTION, getOptionName(option)).replaceAll(Placeholders.SUB_OPTION, getOptionName(subOption));
 }
 
-export function getOptionName(option: OptionInstance) {
+export function getOptionName(option: OptionResult) {
   if (!option) return 'null';
   return `${option.name}${option.type ? ` (${option.type})` : ''}`;
 }
@@ -327,4 +327,16 @@ export function getMaxLevel(options: OptionInstance[]) {
     if (!cur.locked) acc = Math.max(acc, cur.level);
     return acc;
   }, 0);
+}
+
+export function cutThousandUnit(amount: number) {
+  return amount.toLocaleString();
+}
+
+export function getActivationByLevel(level: number) {
+  if (level >= 10) return 5;
+  if (level >= 9) return 4;
+  if (level >= 8) return 3;
+  if (level >= 6) return 2;
+  if (level >= 3) return 1;
 }

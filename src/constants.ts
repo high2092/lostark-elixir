@@ -68,22 +68,36 @@ export const ButtonTexts = {
   [AlchemyStatuses.COMPLETE]: '연성 완료',
 };
 
-export const MaterialSectionText = {
-  SELECT_OPTION: '엘릭서에 정제할 효과를 위 항목에서 선택하세요.',
-};
+export const REFINE_DESCRIPTION_TEXT = '엘릭서에 정제할 효과를 위 항목에서 선택하세요.';
 
 export const DEFAULT_BIG_HIT_RATE_PERCENT = 10;
 
 export const TutorialStatus = {
   PLAY_BGM: 1,
   RESET: 2,
+  OPEN_INVENTORY: 3,
 };
 
-export const TUTORIALS = [TutorialStatus.PLAY_BGM, TutorialStatus.RESET];
+export const TUTORIALS = [TutorialStatus.PLAY_BGM, TutorialStatus.RESET, TutorialStatus.OPEN_INVENTORY];
 
 export const TutorialTexts = {
   [TutorialStatus.PLAY_BGM]: '좌측 상단의 버튼을 클릭해 BGM을 켜거나 끌 수 있어요.',
   [TutorialStatus.RESET]: '좌측 상단의 버튼을 클릭해 연성 상태를 초기화할 수 있어요.',
+  [TutorialStatus.OPEN_INVENTORY]: '좌측 상단의 버튼을 클릭해 누적 연성 결과를 확인할 수 있어요.',
 };
 
 export const MOBILE_CRITERIA_MAX_WIDTH = '600px';
+
+export const INITIAL_MATERIAL = {
+  GOLD: 5600000,
+  CATALYST: 100000,
+};
+
+export const COST_PER_ALCHEMY = {
+  GOLD: 280,
+  CATALYST: 5,
+};
+
+export const MODAL_DEFAULT_BORDER_RADIUS = '2rem';
+
+export const ELIXIR_ICON_SIZE = '4vh';

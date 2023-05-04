@@ -1,6 +1,8 @@
+export type OptionType = '혼돈' | '질서';
+
 export interface Option {
   name: string;
-  type?: '혼돈' | '질서';
+  type?: OptionType;
   part?: '투구' | '상의' | '하의' | '어깨' | '장갑';
   odds: number;
 }
@@ -23,4 +25,10 @@ export interface OptionInstanceBody extends Option {
 
 export interface OptionInstance extends OptionInstanceBody {
   id: number;
+}
+
+export interface OptionResult {
+  name: string;
+  type?: OptionType;
+  level: number;
 }

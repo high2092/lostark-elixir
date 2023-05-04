@@ -8,6 +8,9 @@ import { useAppDispatch, useAppSelector } from '../store';
 import { resetUI } from '../features/uiSlice';
 import { resetElixir } from '../features/elixirSlice';
 import { TUTORIALS, TutorialStatus } from '../constants';
+import { InventoryIcon } from './InventoryIcon';
+import { openModal } from '../features/modalSlice';
+import { ModalTypes } from '../type/common';
 
 const DEFAULT_BGM_VOLUME = 5;
 
@@ -38,6 +41,10 @@ export const LeftTopSection = () => {
     dispatch(resetElixir());
   };
 
+  const handleInventoryButtonClick = () => {
+    dispatch(openModal(ModalTypes.INVENTORY));
+  };
+
   return (
     <>
       <S.YouTube>
@@ -51,14 +58,15 @@ export const LeftTopSection = () => {
         />
       </S.YouTube>
       <S.LeftTopSection>
-        <S.BGMPlayer onClick={handlePlayButtonClick} outline={TUTORIALS[tutorialIndex] === TutorialStatus.PLAY_BGM}>
-          <S.PlayButton>
-            <div>{playing ? <PauseIcon /> : <PlayIcon />}</div>
-          </S.PlayButton>
-        </S.BGMPlayer>
-        <S.ResetButton onClick={handleResetButtonClick} outline={TUTORIALS[tutorialIndex] === TutorialStatus.RESET}>
+        <S.IconButton onClick={handlePlayButtonClick} outline={TUTORIALS[tutorialIndex] === TutorialStatus.PLAY_BGM}>
+          {playing ? <PauseIcon /> : <PlayIcon />}
+        </S.IconButton>
+        <S.IconButton onClick={handleResetButtonClick} outline={TUTORIALS[tutorialIndex] === TutorialStatus.RESET}>
           <ResetIcon />
-        </S.ResetButton>
+        </S.IconButton>
+        <S.IconButton onClick={handleInventoryButtonClick} outline={TUTORIALS[tutorialIndex] === TutorialStatus.OPEN_INVENTORY}>
+          <InventoryIcon />
+        </S.IconButton>
       </S.LeftTopSection>
     </>
   );

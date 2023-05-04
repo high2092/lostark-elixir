@@ -15,7 +15,7 @@ export const LeftTopSection = styled.div`
   align-items: center;
 
   & > * {
-    padding: 0 0.1rem;
+    padding: 0 0.2rem;
   }
 `;
 
@@ -25,20 +25,7 @@ export const YouTube = styled.div`
   width: 0;
 `;
 
-export const BGMPlayer = styled.div<{ outline: boolean }>`
+export const IconButton = styled.div<{ outline?: boolean }>`
   ${({ outline }) => (outline ? 'outline: 3px solid red;' : '')}
-
-  display: flex;
-  align-items: center;
-`;
-
-export const PlayButton = styled.div`
-  padding: 0rem 0.2rem;
-  cursor: pointer;
-`;
-
-export const ResetButton = styled.div<{ outline: boolean }>`
-  ${({ outline }) => (outline ? 'outline: 3px solid red;' : '')}
-
   cursor: pointer;
 `;

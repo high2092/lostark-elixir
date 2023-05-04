@@ -6,7 +6,7 @@ import {
   ButtonTexts,
   CENTERED_FLEX_STYLE,
   MAX_ACTIVE,
-  MaterialSectionText,
+  REFINE_DESCRIPTION_TEXT,
   OPTION_COUNT,
   STACK_COUNTER_EXPECTED_HEIGHT,
   TUTORIALS,
@@ -15,6 +15,8 @@ import {
   TutorialTexts,
   IMAGE_RESOURCE_URL_LIST,
   MOBILE_CRITERIA_MAX_WIDTH,
+  COST_PER_ALCHEMY,
+  INITIAL_MATERIAL,
 } from '../constants';
 import { Activation } from '../components/Activation';
 import { getBigHitRate, getHitRate, getOptionName, playClickSound } from '../util';
@@ -28,6 +30,7 @@ import { Gold } from '../components/Gold';
 import { AdviceSection } from '../components/AdviceSection';
 import { setSelectedAdviceIndex, setSelectedOptionIndex, getNextTutorial, initTutorial } from '../features/uiSlice';
 import { NoOptionSelectedError } from '../error/NoOptionSelectedError';
+import { chargeCost, completeAlchemy } from '../features/resultSlice';
 
 const Home = () => {
   const [cookies, setCookie] = useCookies();
@@ -35,6 +38,7 @@ const Home = () => {
   const dispatch = useAppDispatch();
   const { sages, alchemyChance, alchemyStatus, options, reset } = useAppSelector((state) => state.elixir);
   const { selectedAdviceIndex, selectedOptionIndex, tutorialIndex } = useAppSelector((state) => state.ui);
+  const { usedGold, usedCatalyst } = useAppSelector((state) => state.result);
 
   const [loaded, setLoaded] = useState(false);
   const statusTextTimeoutRef = useRef<NodeJS.Timeout>();
@@ -75,6 +79,11 @@ const Home = () => {
     switch (alchemyStatus) {
       case AlchemyStatuses.ADVICE: {
         dispatch(drawAdvices());
+        break;
+      }
+      case AlchemyStatuses.COMPLETE: {
+        dispatch(completeAlchemy(options));
+        break;
       }
     }
   }, [alchemyStatus]);
@@ -117,6 +126,7 @@ const Home = () => {
       }
       case AlchemyStatuses.ALCHEMY: {
         dispatch(alchemy());
+        dispatch(chargeCost());
         dispatch(setSelectedAdviceIndex(null));
         break;
       }
@@ -176,35 +186,45 @@ const Home = () => {
         <AdviceSection />
       </S.MainSection>
       <S.DescriptionSection>
-        <S.MaterialSection>
-          <S.MaterialSectionText>{MaterialSectionText.SELECT_OPTION}</S.MaterialSectionText>
-          <S.MaterialInfo>
-            <S.MaterialInfoSubSection>
-              <div style={{ flex: 1, textAlign: 'left' }}>필요 재료</div>
-              <div style={{ flex: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <img style={{ width: '30px', height: '30px', background: '#0b2447' }} src="image/material.png" />
-                  <div>안정된 연성 촉매</div>
-                </div>
-                <div>41/2</div>
-              </div>
-            </S.MaterialInfoSubSection>
-            <S.VerticalRule height="4rem" />
-            <S.MaterialInfoSubSection>
-              <div style={{ flex: 1, textAlign: 'left' }}>필요 비용</div>
-              <div style={{ flex: 4, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between' }}>
-                  <div>정제 비용</div>
-                  <Gold amount={280} />
-                </div>
-                <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between' }}>
-                  <div>소지 금액</div>
-                  <Gold amount={26741} />
-                </div>
-              </div>
-            </S.MaterialInfoSubSection>
-          </S.MaterialInfo>
-        </S.MaterialSection>
+        <S.DescriptionSSection>
+          {alchemyStatus === AlchemyStatuses.ADVICE ? (
+            <div style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+              <div>{`위 항목에서 현자의 조언을 선택해주세요`}</div>
+              <div>{`(선택 후 결정 완료 시 취소 불가)`}</div>
+            </div>
+          ) : (
+            <>
+              <S.MaterialSectionText>{REFINE_DESCRIPTION_TEXT}</S.MaterialSectionText>
+              <S.MaterialInfo>
+                <S.MaterialInfoSubSection>
+                  <div style={{ flex: 1, textAlign: 'left' }}>필요 재료</div>
+                  <div style={{ flex: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                      <img style={{ width: '30px', height: '30px', background: '#0b2447' }} src="image/material.png" />
+                      <div>안정된 연성 촉매</div>
+                    </div>
+                    <div>{`${INITIAL_MATERIAL.CATALYST - usedCatalyst}/${COST_PER_ALCHEMY.CATALYST}`}</div>
+                  </div>
+                </S.MaterialInfoSubSection>
+                <S.VerticalRule height="4rem" />
+                <S.MaterialInfoSubSection>
+                  <div style={{ flex: 1, textAlign: 'left' }}>필요 비용</div>
+                  <div style={{ flex: 4, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                    <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between' }}>
+                      <div>정제 비용</div>
+                      <Gold amount={COST_PER_ALCHEMY.GOLD} />
+                    </div>
+                    <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between' }}>
+                      <div>소지 금액</div>
+                      <Gold amount={INITIAL_MATERIAL.GOLD - usedGold} />
+                    </div>
+                  </div>
+                </S.MaterialInfoSubSection>
+              </S.MaterialInfo>
+            </>
+          )}
+        </S.DescriptionSSection>
+
         <div>{`연성 ${alchemyChance}회 가능`}</div>
         <S.RefineButton onClick={handleRefineButtonClick} disabled={getDisabled()}>
           {ButtonTexts[alchemyStatus]}

@@ -8,3 +8,13 @@ export const AlchemyStatuses = {
 export type AlchemyStatus = (typeof AlchemyStatuses)[keyof typeof AlchemyStatuses];
 
 export type OddsKey = 'odds' | 'hitRate' | 'tempHitRate';
+
+export const ModalTypes = {
+  INVENTORY: 'inventory',
+} as const;
+
+export type ModalType = (typeof ModalTypes)[keyof typeof ModalTypes];
+
+export interface PreparedModalProps {
+  zIndex: number;
+}
