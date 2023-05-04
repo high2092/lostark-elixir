@@ -90,6 +90,7 @@ export const elixirSlice = createSlice({
       }
 
       const { extraChanceConsume, saveChance } = adviceAfterEffect;
+      state.adviceAfterEffect = {};
 
       if (!saveChance) state.alchemyChance -= 1 + (extraChanceConsume ?? 0);
       state.alchemyStatus = state.alchemyChance ? AlchemyStatuses.ADVICE : AlchemyStatuses.COMPLETE;
