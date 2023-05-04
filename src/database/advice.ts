@@ -64,7 +64,6 @@ export const ADVICES: AdviceBody[] = [
   ...createFixedOptionAdvices(1, amplifyFixedOptionHitRateTemporarilyAdviceTemplate, { percentage: 70 }),
   ...createFixedOptionAdvices(1, amplifyFixedOptionHitRateTemporarilyAdviceTemplate, { percentage: 30 }),
   ...createFixedOptionAdvices(1, amplifyFixedOptionHitRateTemporarilyAdviceTemplate, { percentage: -20 }),
-  amplifySelectedOptionHitRateTemporarilyAdviceTemplate(1, { extraChanceConsume: 1, extraAlchemy: 1 }),
 
   ...createFixedOptionAdvices(1, amplifyFixedOptionHitRateAdviceTemplate, { percentage: 5 }),
   ...createFixedOptionAdvices(1, amplifyFixedOptionHitRateAdviceTemplate, { percentage: 10 }),
@@ -87,8 +86,6 @@ export const ADVICES: AdviceBody[] = [
 
   amplifySelectedHitRateAdviceTemplate(1, { percentage: 15, special: SageTypesTypes.ORDER }),
   amplifySelectedHitRateAdviceTemplate(1, { percentage: 20, special: SageTypesTypes.ORDER }),
-
-  addExtraTargetAdviceTemplate(1, { extraTarget: 1, extraChanceConsume: 1 }),
 
   addRerollChanceAdviceTemplate(1, { addRerollChance: 1, special: SageTypesTypes.ORDER }),
   addRerollChanceAdviceTemplate(1, { addRerollChance: 2, special: SageTypesTypes.ORDER }),
@@ -115,8 +112,12 @@ export const ADVICES: AdviceBody[] = [
   ...createFixedSubOptionAdvices(1, exchangeLevelBetweenFixedOptionsAdviceTemplate, { n: 1 }),
   ...createFixedSubOptionAdvices(1, exchangeLevelBetweenFixedOptionsAdviceTemplate, { n: 2 }),
 
+  amplifySelectedOptionHitRateTemporarilyAdviceTemplate(1, { extraChanceConsume: 1, extraAlchemy: 1, remainChanceUpperBound: 11 }),
+
+  addExtraTargetAdviceTemplate(1, { extraTarget: 1, extraChanceConsume: 1, remainChanceUpperBound: 11 }),
+
   extraAlchemyAdviceTemplate(1, { extraAlchemy: 1 }),
-  extraAlchemyAdviceTemplate(1, { extraAlchemy: 2, extraChanceConsume: 1 }),
+  extraAlchemyAdviceTemplate(1, { extraAlchemy: 2, extraChanceConsume: 1, remainChanceUpperBound: 11 }),
   extraAlchemyAdviceTemplate(1, { extraAlchemy: 2, special: SageTypesTypes.ORDER }),
 
   saveChanceAdviceTemplate(1),
@@ -282,11 +283,12 @@ function amplifyFixedOptionHitRateTemporarilyAdviceTemplate(odds: number, params
 }
 
 function amplifySelectedOptionHitRateTemporarilyAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
-  const { extraAlchemy, extraChanceConsume } = params;
+  const { extraAlchemy, extraChanceConsume, remainChanceUpperBound } = params;
   const percentage = 100;
   return {
     name: `이번에는 ${P.자네가} ${P.선택한} 효과를 ${1 + extraAlchemy}단계 연성해${P.주겠네}. 다만 기회를 ${1 + extraChanceConsume}번 소모${P.할걸세}.`,
     type: 'util',
+    remainChanceUpperBound,
     effect: (options, optionIndex) => {
       if (optionIndex === null) throw new NoOptionSelectedError();
       const result = options.map((option) => ({ ...option }));
@@ -396,10 +398,11 @@ function amplifyFixedOptionBigHitRateTemporarilyAdviceTemplate(odds: number, par
 
 function addExtraTargetAdviceTemplate(odds: number, params?: AdviceTemplateProps): AdviceBody {
   params ??= {};
-  const { extraTarget, extraChanceConsume } = params;
+  const { extraTarget, extraChanceConsume, remainChanceUpperBound } = params;
   return {
     name: `이번 연성에서 ${extraTarget + 1}개의 효과를 동시에 연성해${P.주겠네}.${extraChanceConsume ? ` 다만, 기회를 ${extraChanceConsume + 1}번 소모${P.할걸세}.` : ''}`,
     type: 'util',
+    remainChanceUpperBound,
     effect: (options) => ({ options: options, extraTarget, extraChanceConsume }),
     odds,
     extraChanceConsume,
@@ -669,11 +672,12 @@ function changeSelectedOptionToFixedLevelAdviceTemplate(odds: number, params: Ad
 }
 
 function exchangeOddEvenAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
-  const { odd } = params;
+  const { odd, remainChanceUpperBound } = params;
   const str = ['2, 4', '1, 3, 5'];
   return {
     name: `${str[Number(odd)]} 슬롯의 효과를 +1 올려${P.주겠네}. 대신 ${str[Number(!odd)]} 슬롯의 효과가 1 감소${P.할걸세}.`,
     type: 'util',
+    remainChanceUpperBound,
     effect: (options) => {
       const result = options.map((option) => ({ ...option }));
 
@@ -726,10 +730,11 @@ function exchangeLevelBetweenFixedOptionsAdviceTemplate(odds: number, params: Ad
 }
 
 function extraAlchemyAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
-  const { extraAlchemy, extraChanceConsume, special } = params;
+  const { extraAlchemy, extraChanceConsume, special, remainChanceUpperBound } = params;
   return {
     name: `${getExtraAlchemyText(extraAlchemy)}${extraChanceConsume ? ` 다만, 기회를 ${extraChanceConsume + 1}번 소모${P.할걸세}.` : ''}`,
     type: 'util',
+    remainChanceUpperBound,
     special,
     effect: (options) => ({ options: options, extraAlchemy, extraChanceConsume }),
     odds,
