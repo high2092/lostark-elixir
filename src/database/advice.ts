@@ -300,6 +300,7 @@ function amplifySelectedOptionHitRateTemporarilyAdviceTemplate(odds: number, par
       return { options: result, extraAlchemy, extraChanceConsume };
     },
     odds,
+    extraChanceConsume,
   };
 }
 
