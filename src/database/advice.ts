@@ -46,17 +46,17 @@ export const ADVICES: AdviceBody[] = [
   levelUpSelectedOptionAdviceTemplate(1, { special: SageTypesTypes.ORDER, n: 1 }),
 
   // 고정 레벨 변경
-  raiseAllBelowNAdviceTemplate(0.5, { n: 0, remainChanceUpperBound: 14, remainChanceLowerBound: 11 }),
-  raiseAllBelowNAdviceTemplate(0.5, { n: 2, remainChanceUpperBound: 10, remainChanceLowerBound: 7 }),
+  raiseAllBelowNAdviceTemplate(0.5, { n: 0, remainChanceUpperBound: 12, remainChanceLowerBound: 9 }),
+  raiseAllBelowNAdviceTemplate(0.5, { n: 2, remainChanceUpperBound: 9, remainChanceLowerBound: 6 }),
   raiseAllBelowNAdviceTemplate(0.5, { n: 4, remainChanceUpperBound: 6, remainChanceLowerBound: 3 }),
-  raiseAllBelowNAdviceTemplate(0.5, { n: 6, remainChanceUpperBound: 2 }),
+  raiseAllBelowNAdviceTemplate(0.5, { n: 6, remainChanceUpperBound: 3 }),
 
-  ...createFixedOptionAdvices(1, changeFixedOptionToFixedLevelAdviceTemplate, { n: 1, remainChanceUpperBound: 14, remainChanceLowerBound: 11 }),
-  ...createFixedOptionAdvices(1, changeFixedOptionToFixedLevelAdviceTemplate, { n: 2, remainChanceUpperBound: 10, remainChanceLowerBound: 7 }),
+  ...createFixedOptionAdvices(1, changeFixedOptionToFixedLevelAdviceTemplate, { n: 1, remainChanceUpperBound: 12, remainChanceLowerBound: 9 }),
+  ...createFixedOptionAdvices(1, changeFixedOptionToFixedLevelAdviceTemplate, { n: 2, remainChanceUpperBound: 9, remainChanceLowerBound: 6 }),
   ...createFixedOptionAdvices(1, changeFixedOptionToFixedLevelAdviceTemplate, { n: 3, remainChanceUpperBound: 6, remainChanceLowerBound: 3 }),
 
-  changeSelectedOptionToFixedLevelAdviceTemplate(0.5, { n: 1, remainChanceUpperBound: 14, remainChanceLowerBound: 11 }),
-  changeSelectedOptionToFixedLevelAdviceTemplate(0.5, { n: 2, remainChanceUpperBound: 10, remainChanceLowerBound: 7 }),
+  changeSelectedOptionToFixedLevelAdviceTemplate(0.5, { n: 1, remainChanceUpperBound: 12, remainChanceLowerBound: 9 }),
+  changeSelectedOptionToFixedLevelAdviceTemplate(0.5, { n: 2, remainChanceUpperBound: 9, remainChanceLowerBound: 6 }),
   changeSelectedOptionToFixedLevelAdviceTemplate(0.5, { n: 3, remainChanceUpperBound: 6, remainChanceLowerBound: 3 }),
   //
 
