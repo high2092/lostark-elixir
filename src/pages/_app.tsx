@@ -1,5 +1,5 @@
-import '../../static/reset.css';
-import '../../static/index.css';
+import '../../public/css/reset.css';
+import '../../public/css/index.css';
 import { Provider } from 'react-redux';
 import { store } from '../store';
 import { Footer } from '../components/Footer';

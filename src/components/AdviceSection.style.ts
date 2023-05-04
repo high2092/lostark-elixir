@@ -38,6 +38,7 @@ export const Advice = styled.div<{ disabled: boolean; special: SageTypesType; se
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  line-height: 1.1;
 
   & > * {
     padding: 10%;
