@@ -49,18 +49,18 @@ export const ADVICES: AdviceBody[] = [
   levelUpHighestOptionAdviceTemplate(1, { maxReturn: 1, special: SageTypesTypes.ORDER }),
 
   // 고정 레벨 변경
-  raiseAllBelowNAdviceTemplate(0.5, { n: 0, remainChanceUpperBound: 12, remainChanceLowerBound: 9 }),
-  raiseAllBelowNAdviceTemplate(0.5, { n: 2, remainChanceUpperBound: 9, remainChanceLowerBound: 6 }),
-  raiseAllBelowNAdviceTemplate(0.5, { n: 4, remainChanceUpperBound: 6, remainChanceLowerBound: 3 }),
+  raiseAllBelowNAdviceTemplate(0.5, { n: 0, remainChanceUpperBound: 12, remainChanceLowerBound: 10 }),
+  raiseAllBelowNAdviceTemplate(0.5, { n: 2, remainChanceUpperBound: 9, remainChanceLowerBound: 7 }),
+  raiseAllBelowNAdviceTemplate(0.5, { n: 4, remainChanceUpperBound: 6, remainChanceLowerBound: 4 }),
   raiseAllBelowNAdviceTemplate(0.5, { n: 6, remainChanceUpperBound: 3 }),
 
-  ...createFixedOptionAdvices(1, changeFixedOptionToFixedLevelAdviceTemplate, { n: 1, remainChanceUpperBound: 12, remainChanceLowerBound: 9 }),
-  ...createFixedOptionAdvices(1, changeFixedOptionToFixedLevelAdviceTemplate, { n: 2, remainChanceUpperBound: 9, remainChanceLowerBound: 6 }),
-  ...createFixedOptionAdvices(1, changeFixedOptionToFixedLevelAdviceTemplate, { n: 3, remainChanceUpperBound: 6, remainChanceLowerBound: 3 }),
+  ...createFixedOptionAdvices(1, changeFixedOptionToFixedLevelAdviceTemplate, { n: 1, remainChanceUpperBound: 12, remainChanceLowerBound: 10 }),
+  ...createFixedOptionAdvices(1, changeFixedOptionToFixedLevelAdviceTemplate, { n: 2, remainChanceUpperBound: 9, remainChanceLowerBound: 7 }),
+  ...createFixedOptionAdvices(1, changeFixedOptionToFixedLevelAdviceTemplate, { n: 3, remainChanceUpperBound: 6, remainChanceLowerBound: 4 }),
 
-  changeSelectedOptionToFixedLevelAdviceTemplate(0.5, { n: 1, remainChanceUpperBound: 12, remainChanceLowerBound: 9 }),
-  changeSelectedOptionToFixedLevelAdviceTemplate(0.5, { n: 2, remainChanceUpperBound: 9, remainChanceLowerBound: 6 }),
-  changeSelectedOptionToFixedLevelAdviceTemplate(0.5, { n: 3, remainChanceUpperBound: 6, remainChanceLowerBound: 3 }),
+  changeSelectedOptionToFixedLevelAdviceTemplate(0.5, { n: 1, remainChanceUpperBound: 12, remainChanceLowerBound: 10 }),
+  changeSelectedOptionToFixedLevelAdviceTemplate(0.5, { n: 2, remainChanceUpperBound: 9, remainChanceLowerBound: 7 }),
+  changeSelectedOptionToFixedLevelAdviceTemplate(0.5, { n: 3, remainChanceUpperBound: 6, remainChanceLowerBound: 4 }),
   //
 
   ...createFixedOptionAdvices(1, amplifyFixedOptionHitRateTemporarilyAdviceTemplate, { percentage: 100, name: `이번 연성에서 ${P.OPTION} 효과를 연성해${P.주겠네}.` }),
