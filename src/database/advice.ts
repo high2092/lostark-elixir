@@ -1,9 +1,8 @@
 import { OPTION_COUNT, Placeholders as P } from '../constants';
-import { NoOptionSelectedError } from '../error/NoOptionSelectedError';
 import { optionService } from '../service/OptionService';
 import { AdviceBody, AdviceType } from '../type/advice';
 import { SageKey, SageKeys, SageTypesType, SageTypesTypes } from '../type/sage';
-import { applySafeResult, changeHitRate, convertToSignedString, extractOptionDefaultProps, gacha, generateRandomInt, generateRandomNumber, getMaxLevel, getMinLevel, lockOption, redistribute, unlockOption } from '../util';
+import { applySafeResult, changeHitRate, convertToSignedString, extractOptionDefaultProps, gacha, generateRandomInt, generateRandomNumber, getMaxLevel, getMinLevel, lockOption, redistribute, unlockOption, validateOptionIndex } from '../util';
 
 const getExtraAlchemyText = (extraAlchemy: number) => `이번에 연성되는 효과는 ${1 + extraAlchemy}단계 연성해${P.주겠네}.`;
 const getExtraTargetText = (extraTarget: number) => `이번 연성에서 ${extraTarget + 1}개의 효과를 동시에 연성해${P.주겠네}.`;
@@ -154,7 +153,7 @@ function potentialLevelSelectedOptionAdviceTemplate(odds: number, params: Advice
     name: `선택한 효과를 ${percentage}% 확률로 +1 올려${P.주겠네}.`,
     type: 'potential',
     effect: (options, optionIndex) => {
-      if (optionIndex === null) throw new NoOptionSelectedError();
+      validateOptionIndex(optionIndex);
       const result = options.map((option) => ({ ...option }));
       if (generateRandomNumber(0, 100) <= percentage) applySafeResult(result[optionIndex], { level: result[optionIndex].level + 1 });
       return { options: result };
@@ -224,7 +223,7 @@ function levelUpSelectedOptionAdviceTemplate(odds: number, params: AdviceTemplat
     type: 'util',
     special,
     effect: (options, optionIndex) => {
-      if (optionIndex === null) throw new NoOptionSelectedError();
+      validateOptionIndex(optionIndex);
       const result = options.map((option) => ({ ...option }));
       applySafeResult(result[optionIndex], { level: result[optionIndex].level + n });
       return { options: result };
@@ -268,7 +267,7 @@ function potentialChangeLevelSelectedOptionAdviceTemplate(odds: number, props?: 
     special,
     sage,
     effect: (options, optionIndex) => {
-      if (optionIndex === null) throw new NoOptionSelectedError();
+      validateOptionIndex(optionIndex);
       const result = options.map((option) => ({ ...option }));
       const diff = generateRandomInt(-maxRisk, maxReturn + 1);
       applySafeResult(result[optionIndex], { level: result[optionIndex].level + diff });
@@ -302,7 +301,7 @@ function amplifySelectedOptionHitRateTemporarilyAdviceTemplate(odds: number, par
     type: 'util',
     remainChanceUpperBound,
     effect: (options, optionIndex) => {
-      if (optionIndex === null) throw new NoOptionSelectedError();
+      validateOptionIndex(optionIndex);
       const result = options.map((option) => ({ ...option }));
       changeHitRate(optionIndex, percentage, result, { temp: true });
       return { options: result, extraAlchemy, extraChanceConsume };
@@ -336,7 +335,7 @@ function amplifySelectedHitRateAdviceTemplate(odds: number, props?: AdviceTempla
     special,
     sage,
     effect: (options, optionIndex) => {
-      if (optionIndex === null) throw new NoOptionSelectedError();
+      validateOptionIndex(optionIndex);
       const result = options.map((option) => ({ ...option }));
       changeHitRate(optionIndex, percentage, result);
       return { options: result };
@@ -368,7 +367,7 @@ function amplifySelectedOptionBigHitRateAdviceTemplate(odds: number, params: Adv
     type: 'util',
     special,
     effect: (options, optionIndex) => {
-      if (optionIndex === null) throw new NoOptionSelectedError();
+      validateOptionIndex(optionIndex);
       const result = options.map((option) => ({ ...option }));
 
       applySafeResult(result[optionIndex], { bigHitRate: result[optionIndex].bigHitRate + percentage });
@@ -522,7 +521,7 @@ function lockSelectedOptionAdviceTemplate(odds: number, params: AdviceTemplatePr
     type: 'lock',
     special,
     effect: (options, optionIndex) => {
-      if (optionIndex === null) throw new NoOptionSelectedError();
+      validateOptionIndex(optionIndex);
       const result = options.map((option) => ({ ...option }));
 
       lockOption(result, optionIndex);
@@ -541,7 +540,7 @@ function lockSelectedOptionAndRedistributeAdviceTemplate(odds: number, params: A
     type: 'lock',
     special,
     effect: (options, optionIndex) => {
-      if (optionIndex === null) throw new NoOptionSelectedError();
+      validateOptionIndex(optionIndex);
       const result = options.map((option) => ({ ...option }));
       lockOption(result, optionIndex);
       redistribute(result);
@@ -558,7 +557,7 @@ function lockSelectedOptionAndLevelUpRandomOptionAdviceTemplate(odds: number, pa
     type: 'lock',
     special,
     effect: (options, optionIndex) => {
-      if (optionIndex === null) throw new NoOptionSelectedError();
+      validateOptionIndex(optionIndex);
       const result = options.map((option) => ({ ...option }));
       lockOption(result, optionIndex);
 
@@ -578,7 +577,7 @@ function lockSelectedOptionAndLevelUpLowestOptionAdviceTemplate(odds: number, pa
     type: 'lock',
     special,
     effect: (options, optionIndex) => {
-      if (optionIndex === null) throw new NoOptionSelectedError();
+      validateOptionIndex(optionIndex);
       const result = options.map((option) => ({ ...option }));
       lockOption(result, optionIndex);
 
@@ -674,7 +673,7 @@ function changeSelectedOptionToFixedLevelAdviceTemplate(odds: number, params: Ad
     remainChanceUpperBound,
     remainChanceLowerBound,
     effect: (options, optionIndex) => {
-      if (optionIndex === null) throw new NoOptionSelectedError();
+      validateOptionIndex(optionIndex);
       const result = options.map((option) => ({ ...option }));
       applySafeResult(result[optionIndex], { level: n + generateRandomInt(0, 2) });
       return { options: result };
@@ -771,7 +770,7 @@ function changeOptionSelectedSlotAdviceTemplate(odds: number): AdviceBody {
     type: 'util',
     special: SageTypesTypes.CHAOS,
     effect: (options, optionIndex) => {
-      if (!optionIndex) throw new NoOptionSelectedError();
+      validateOptionIndex(optionIndex);
       const result = options.map((option) => ({ ...option }));
       const newOption = optionService.exchangeOption(result[optionIndex]);
       result[optionIndex] = {

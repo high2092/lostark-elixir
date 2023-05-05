@@ -1,4 +1,5 @@
 import { DEFAULT_BIG_HIT_RATE_PERCENT, FINAL_OPTION_COUNT, MAX_ACTIVE, OPTION_COUNT, Placeholders, SageTypes } from './constants';
+import { NoOptionSelectedError } from './error/NoOptionSelectedError';
 import { Advice, AdviceType } from './type/advice';
 import { OddsKey } from './type/common';
 import { Option, OptionInstance, OptionInstanceBody, OptionResult } from './type/option';
@@ -77,8 +78,10 @@ export const getStackForDisplaying = (type: SageTypesType, stack: number) => {
 };
 
 export const validateOptionIndex = (idx: number) => {
-  if (typeof idx !== 'number') throw new Error();
+  if (!isExist(idx)) throw new NoOptionSelectedError();
+  if (typeof idx !== 'number') throw Error();
   if (idx < 0 || idx >= OPTION_COUNT) throw new Error();
+  return;
 };
 
 export const isFullStack = (sage: Sage) => {
