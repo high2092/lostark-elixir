@@ -192,7 +192,7 @@ function levelUpHighestOptionAdviceTemplate(odds: number, params: AdviceTemplate
       const [upTargetIndex] = gacha(result, { filterConditions: [(option) => option.level === maxLevel] });
       const [downTargetIndex] = gacha(result, { filterConditions: [(option, idx) => idx !== upTargetIndex] });
       applySafeResult(result[upTargetIndex], { level: result[upTargetIndex].level + maxReturn });
-      applySafeResult(result[downTargetIndex], { level: result[downTargetIndex].level - maxRisk });
+      applySafeResult(result[downTargetIndex], { level: result[downTargetIndex].level - (maxRisk ?? 0) });
       return { options: result };
     },
     odds,
