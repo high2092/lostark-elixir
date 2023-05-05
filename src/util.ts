@@ -340,3 +340,7 @@ export function getActivationByLevel(level: number) {
   if (level >= 6) return 2;
   if (level >= 3) return 1;
 }
+
+export function isExist(obj: any) {
+  return obj !== null && obj !== undefined;
+}
