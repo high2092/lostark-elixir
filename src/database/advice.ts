@@ -7,6 +7,7 @@ import { applySafeResult, changeHitRate, convertToSignedString, extractOptionDef
 
 const getExtraAlchemyText = (extraAlchemy: number) => `이번에 연성되는 효과는 ${1 + extraAlchemy}단계 연성해${P.주겠네}.`;
 const getExtraTargetText = (extraTarget: number) => `이번 연성에서 ${extraTarget + 1}개의 효과를 동시에 연성해${P.주겠네}.`;
+const getOtherOptionLevelDownText = (n: number, optionName?: string) => `대신 ${optionName ? `${optionName} 효과` : '다른 효과 1개'}의 단계는 ${n} 감소${P.할걸세}.`;
 
 /** TODO: 봉인된 옵션에 대한 처리 방식 조사하기
  * 1. 단계 위/아래로 한칸씩 이동
@@ -40,10 +41,13 @@ export const ADVICES: AdviceBody[] = [
   potentialChangeLevelSelectedOptionAdviceTemplate(1, { maxRisk: 2, maxReturn: 2 }),
   potentialChangeLevelSelectedOptionAdviceTemplate(1, { maxRisk: 1, maxReturn: 2 }),
 
-  levelUpHighestOptionAdviceTemplate(1),
+  // 확정 레벨업, 리스크 O
+  levelUpHighestOptionAdviceTemplate(1, { maxReturn: 1, maxRisk: 2 }),
   levelUpLowestOptionAdviceTemplate(1),
-  levelUpRandomOptionAdviceTemplate(1),
-  levelUpSelectedOptionAdviceTemplate(1, { special: SageTypesTypes.ORDER, n: 1 }),
+  levelUpRandomOptionAdviceTemplate(1, { n: 1 }),
+  levelUpRandomOptionAdviceTemplate(1, { n: 3, special: SageTypesTypes.ORDER }),
+  levelUpSelectedOptionAdviceTemplate(1, { n: 2, special: SageTypesTypes.ORDER }),
+  levelUpHighestOptionAdviceTemplate(1, { maxReturn: 1 }),
 
   // 고정 레벨 변경
   raiseAllBelowNAdviceTemplate(0.5, { n: 0, remainChanceUpperBound: 12, remainChanceLowerBound: 9 }),
@@ -175,18 +179,20 @@ function potentialChangeLevelFixedOptionAdviceTemplate(odds: number, params: Adv
   };
 }
 
-function levelUpHighestOptionAdviceTemplate(odds: number): AdviceBody {
+function levelUpHighestOptionAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
+  const { maxReturn, maxRisk, special } = params;
   return {
-    name: `최고 단계 효과를 +1 올려${P.주겠네}. 대신 다른 효과 1개의 단계는 2 감소${P.할걸세}.`,
+    name: `최고 단계 효과를 ${maxReturn} 올려${P.주겠네}.${maxRisk ? ` ${getOtherOptionLevelDownText(maxRisk)}` : ''} `,
     type: 'util',
+    special,
     contradictMaxLevelExists: true,
     effect: (options) => {
       const result = options.map((option) => ({ ...option }));
       const maxLevel = getMaxLevel(result);
       const [upTargetIndex] = gacha(result, { filterConditions: [(option) => option.level === maxLevel] });
       const [downTargetIndex] = gacha(result, { filterConditions: [(option, idx) => idx !== upTargetIndex] });
-      applySafeResult(result[upTargetIndex], { level: result[upTargetIndex].level + 1 });
-      applySafeResult(result[downTargetIndex], { level: result[downTargetIndex].level - 2 });
+      applySafeResult(result[upTargetIndex], { level: result[upTargetIndex].level + maxReturn });
+      applySafeResult(result[downTargetIndex], { level: result[downTargetIndex].level - maxRisk });
       return { options: result };
     },
     odds,
@@ -227,10 +233,12 @@ function levelUpSelectedOptionAdviceTemplate(odds: number, params: AdviceTemplat
   };
 }
 
-function levelUpRandomOptionAdviceTemplate(odds: number): AdviceBody {
+function levelUpRandomOptionAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
+  const { n, special } = params;
   return {
-    name: `임의 효과를 +1 올려${P.주겠네}.`,
+    name: `임의 효과를 +${n} 올려${P.주겠네}.`,
     type: 'util',
+    special,
     effect: (options) => {
       const result = options.map((option) => ({ ...option }));
       const [targetIndex] = gacha(result);
