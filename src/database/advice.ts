@@ -47,7 +47,7 @@ export const ADVICES: AdviceBody[] = [
   levelUpRandomOptionAdviceTemplate(1, { n: 1 }),
   levelUpRandomOptionAdviceTemplate(1, { n: 3, special: SageTypesTypes.ORDER }),
   levelUpSelectedOptionAdviceTemplate(1, { n: 2, special: SageTypesTypes.ORDER }),
-  levelUpHighestOptionAdviceTemplate(1, { maxReturn: 1 }),
+  levelUpHighestOptionAdviceTemplate(1, { maxReturn: 1, special: SageTypesTypes.ORDER }),
 
   // 고정 레벨 변경
   raiseAllBelowNAdviceTemplate(0.5, { n: 0, remainChanceUpperBound: 12, remainChanceLowerBound: 9 }),
