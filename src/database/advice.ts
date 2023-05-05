@@ -226,7 +226,7 @@ function levelUpSelectedOptionAdviceTemplate(odds: number, params: AdviceTemplat
     effect: (options, optionIndex) => {
       if (optionIndex === null) throw new NoOptionSelectedError();
       const result = options.map((option) => ({ ...option }));
-      applySafeResult(result[optionIndex], { level: result[optionIndex].level + 1 });
+      applySafeResult(result[optionIndex], { level: result[optionIndex].level + n });
       return { options: result };
     },
     odds,
