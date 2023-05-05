@@ -10,6 +10,7 @@ const App = ({ Component, pageProps }) => {
   return (
     <Provider store={store}>
       <Head>
+        <title>엘릭서 시뮬레이터</title>
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
