@@ -242,7 +242,7 @@ function levelUpRandomOptionAdviceTemplate(odds: number, params: AdviceTemplateP
     effect: (options) => {
       const result = options.map((option) => ({ ...option }));
       const [targetIndex] = gacha(result);
-      applySafeResult(result[targetIndex], { level: result[targetIndex].level + 1 });
+      applySafeResult(result[targetIndex], { level: result[targetIndex].level + n });
       return { options: result };
     },
     odds,
