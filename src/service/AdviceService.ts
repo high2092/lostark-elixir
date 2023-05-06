@@ -54,6 +54,8 @@ class AdviceService {
       filterConditions,
     });
 
+    if (adviceIndex === undefined) throw new Error();
+
     const result = { ...advicePool[adviceIndex] };
     replaceOptionPlaceholder(result, options);
 

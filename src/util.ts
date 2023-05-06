@@ -37,6 +37,7 @@ export const gacha = (arr: Record<string, any>[], props?: GachaProps) => {
   if (count > _arr.length) throw new Error('gacha: Given count is greater than arr length.');
   for (let i = 0; i < count; i++) {
     const idx = gachaInternal(_arr);
+    if (idx === null) return result;
     result.push(idx);
     _arr.splice(idx, 1, { ..._arr[idx], odds: 0 });
   }
@@ -49,7 +50,7 @@ const gachaInternal = (arr: Record<string, any>[]) => {
     return acc + odds;
   }, 0);
 
-  if (oddsSum === 0) throw new Error('gacha: 뽑을 수 있는 아이템이 없습니다.');
+  if (oddsSum === 0) return null;
 
   const randomNumber = generateRandomNumber(0, oddsSum);
 
@@ -300,8 +301,8 @@ export function checkMaxLevel(options: OptionInstance[]) {
       changeHitRate(idx, -option.hitRate, options);
       option.isMaxLevel = true;
     } else if (option.isMaxLevel && option.level !== MAX_ACTIVE) {
-      changeHitRate(idx, option.backUpHitRate, options);
       option.isMaxLevel = false;
+      changeHitRate(idx, option.backUpHitRate, options);
     }
   });
 }
