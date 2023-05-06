@@ -40,7 +40,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react-redux", "virtual:f72184d88f6f99d4574aad8a074bd84266784d1e9f4dedb5e47b294dcafd6c1f1918580966e642ee50ceb880a10ab12fdcdaed4a84049c963de0b13f14eed70e#npm:8.0.5"],\
             ["react-youtube", "virtual:f72184d88f6f99d4574aad8a074bd84266784d1e9f4dedb5e47b294dcafd6c1f1918580966e642ee50ceb880a10ab12fdcdaed4a84049c963de0b13f14eed70e#npm:10.1.0"],\
             ["terser-webpack-plugin", "virtual:f72184d88f6f99d4574aad8a074bd84266784d1e9f4dedb5e47b294dcafd6c1f1918580966e642ee50ceb880a10ab12fdcdaed4a84049c963de0b13f14eed70e#npm:5.3.7"],\
-            ["typescript", "patch:typescript@npm%3A5.0.4#~builtin<compat/typescript>::version=5.0.4&hash=85af82"]\
+            ["typescript", "patch:typescript@npm%3A5.0.4#~builtin<compat/typescript>::version=5.0.4&hash=85af82"],\
+            ["vivus", "npm:0.4.6"]\
           ],\
           "linkType": "SOFT"\
         }]\
@@ -1049,7 +1050,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react-redux", "virtual:f72184d88f6f99d4574aad8a074bd84266784d1e9f4dedb5e47b294dcafd6c1f1918580966e642ee50ceb880a10ab12fdcdaed4a84049c963de0b13f14eed70e#npm:8.0.5"],\
             ["react-youtube", "virtual:f72184d88f6f99d4574aad8a074bd84266784d1e9f4dedb5e47b294dcafd6c1f1918580966e642ee50ceb880a10ab12fdcdaed4a84049c963de0b13f14eed70e#npm:10.1.0"],\
             ["terser-webpack-plugin", "virtual:f72184d88f6f99d4574aad8a074bd84266784d1e9f4dedb5e47b294dcafd6c1f1918580966e642ee50ceb880a10ab12fdcdaed4a84049c963de0b13f14eed70e#npm:5.3.7"],\
-            ["typescript", "patch:typescript@npm%3A5.0.4#~builtin<compat/typescript>::version=5.0.4&hash=85af82"]\
+            ["typescript", "patch:typescript@npm%3A5.0.4#~builtin<compat/typescript>::version=5.0.4&hash=85af82"],\
+            ["vivus", "npm:0.4.6"]\
           ],\
           "linkType": "SOFT"\
         }]\
@@ -1731,6 +1733,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packagePeers": [\
             "@types/react",\
             "react"\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["vivus", [\
+        ["npm:0.4.6", {\
+          "packageLocation": "./.yarn/cache/vivus-npm-0.4.6-9279395cca-a7d46259cd.zip/node_modules/vivus/",\
+          "packageDependencies": [\
+            ["vivus", "npm:0.4.6"]\
           ],\
           "linkType": "HARD"\
         }]\

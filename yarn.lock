@@ -812,6 +812,7 @@ __metadata:
     react-youtube: ^10.1.0
     terser-webpack-plugin: ^5.3.7
     typescript: 5.0.4
+    vivus: ^0.4.6
   languageName: unknown
   linkType: soft
 
@@ -1367,6 +1368,13 @@ __metadata:
   peerDependencies:
     react: ^16.8.0 || ^17.0.0 || ^18.0.0
   checksum: 5c639e0f8da3521d605f59ce5be9e094ca772bd44a4ce7322b055a6f58eeed8dda3c94cabd90c7a41fb6fa852210092008afe48f7038792fd47501f33299116a
+  languageName: node
+  linkType: hard
+
+"vivus@npm:^0.4.6":
+  version: 0.4.6
+  resolution: "vivus@npm:0.4.6"
+  checksum: a7d46259cdf8c8fb0c7903982b04d5208237e6178efd6e6a99fc7ffc0379f40e175eddb504b0035b0fa5e63ba29ba729d761f837b2a0e7572137483faa306506
   languageName: node
   linkType: hard
 

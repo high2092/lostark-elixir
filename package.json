@@ -17,7 +17,8 @@
     "react-dom": "^18.2.0",
     "react-redux": "^8.0.5",
     "react-youtube": "^10.1.0",
-    "terser-webpack-plugin": "^5.3.7"
+    "terser-webpack-plugin": "^5.3.7",
+    "vivus": "^0.4.6"
   },
   "devDependencies": {
     "@types/node": "18.16.1",
