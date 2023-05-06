@@ -84,12 +84,7 @@ class AdviceService {
       else if (diff < 0) option.statusText = '연성 단계 하락';
     });
 
-    const levelUp = result.options.reduce((acc, cur, i) => acc || cur.level - options[i].level > 0, false);
-
     checkMaxLevel(result.options);
-
-    if (advice.type !== 'potential' || levelUp) playRefineSuccessSound();
-    else playRefineFailureSound();
 
     return result;
   }

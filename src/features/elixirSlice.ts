@@ -2,14 +2,14 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Sage, SageKeys, SageTypesTypes } from '../type/sage';
 import { SageTemplates } from '../database/sage';
 import { DEFAULT_ADVICE_REROLL_CHANCE, OPTION_COUNT } from '../constants';
-import { OptionInstance } from '../type/option';
-import { AdviceAfterEffect } from '../type/advice';
+import { AlchemyResult, OptionInstance } from '../type/option';
+import { AdviceAfterEffect, AdviceEffectResult } from '../type/advice';
 import { adviceService } from '../service/AdviceService';
 import { alchemyService } from '../service/AlchemyService';
 import { ALCHEMY_CHANCE } from '../constants';
 import { optionService } from '../service/OptionService';
 import { AlchemyStatus, AlchemyStatuses } from '../type/common';
-import { createSage, isFullStack } from '../util';
+import { checkBreakCriticalPoint, createSage, isFullStack, playRefineFailureSound, playRefineSuccessSound } from '../util';
 
 interface ElixirState {
   sages: Sage[];
@@ -21,6 +21,10 @@ interface ElixirState {
   alchemyStatus: AlchemyStatus;
   reset: boolean;
   discountRate: number; // [0, 100] 내의 정수
+  alchemyResultBuffer: AlchemyResult;
+  adviceResultBuffer: AdviceEffectResult;
+  maxLevelByAlchemy: boolean;
+  maxLevelByAdvice: boolean;
 }
 
 const initialSages: Sage[] = [createSage(SageTemplates[SageKeys.L]), createSage(SageTemplates[SageKeys.B]), createSage(SageTemplates[SageKeys.C])];
@@ -35,6 +39,10 @@ const initialState: ElixirState = {
   alchemyStatus: AlchemyStatuses.REFINE,
   reset: true,
   discountRate: 0,
+  alchemyResultBuffer: null,
+  adviceResultBuffer: null,
+  maxLevelByAlchemy: false,
+  maxLevelByAdvice: false,
 };
 
 export const elixirSlice = createSlice({
@@ -72,50 +80,36 @@ export const elixirSlice = createSlice({
     pickAdvice(state, action: PayloadAction<{ selectedAdviceIndex: number; selectedOptionIndex: number }>) {
       const { selectedAdviceIndex, selectedOptionIndex } = action.payload;
       const { advice } = state.sages[selectedAdviceIndex];
-      const { options, extraTarget, extraAlchemy, extraChanceConsume, saveChance, enterMeditation, addRerollChance, discount } = adviceService.executeAdvice(advice, state.options, selectedOptionIndex);
-      state.options = options;
-      state.adviceAfterEffect = { extraTarget, extraAlchemy, extraChanceConsume, saveChance };
 
-      if (addRerollChance) state.adviceRerollChance += addRerollChance;
-      if (enterMeditation) state.sages[selectedAdviceIndex].meditation = true;
-      if (discount) state.discountRate = Math.min(state.discountRate + discount, 100);
+      state.adviceResultBuffer = adviceService.executeAdvice(advice, state.options, selectedOptionIndex);
+      if (checkBreakCriticalPoint(state.options, state.adviceResultBuffer.options)) {
+        state.maxLevelByAdvice = true;
+        return;
+      }
 
-      state.sages.forEach((sage, i) => {
-        if (isFullStack(sage)) sage.stack = 0;
+      postprocessAdviceInternal(state, action);
+    },
 
-        if (selectedAdviceIndex === i && sage.type !== SageTypesTypes.ORDER) {
-          sage.type = SageTypesTypes.ORDER;
-          sage.stack = 0;
-        } else if (selectedAdviceIndex !== i && sage.type !== SageTypesTypes.CHAOS) {
-          sage.type = SageTypesTypes.CHAOS;
-          sage.stack = 0;
-        }
-        sage.stack++;
-      });
-
-      state.alchemyStatus = AlchemyStatuses.ALCHEMY;
+    postprocessAdvice(state, action: PayloadAction<{ selectedAdviceIndex: number }>) {
+      postprocessAdviceInternal(state, action);
+      state.maxLevelByAdvice = false;
     },
 
     alchemy(state) {
-      const { options, adviceAfterEffect } = state;
-      state.options = alchemyService.alchemy(options, adviceAfterEffect);
+      const { adviceAfterEffect } = state;
 
-      for (const sage of state.sages) {
-        const { type, stack } = sage;
-        sage.viewStack = { type, stack };
+      state.alchemyResultBuffer = alchemyService.alchemy(state.options, adviceAfterEffect);
+      if (checkBreakCriticalPoint(state.options, state.alchemyResultBuffer.options)) {
+        state.maxLevelByAlchemy = true;
+        return;
       }
 
-      const { extraChanceConsume, saveChance } = adviceAfterEffect;
-      state.adviceAfterEffect = {};
+      postprocessAlchemyInternal(state);
+    },
 
-      if (!saveChance) state.alchemyChance -= 1 + (extraChanceConsume ?? 0);
-      if (state.alchemyChance) {
-        state.alchemyStatus = AlchemyStatuses.ADVICE;
-        const advices = adviceService.getAdvices(state.sages, state.options, state.alchemyChance, state.discountRate);
-        state.sages.forEach((sage, i) => (sage.advice = advices[i]));
-      } else {
-        state.alchemyStatus = AlchemyStatuses.COMPLETE;
-      }
+    postprocessAlchemy(state) {
+      postprocessAlchemyInternal(state);
+      state.maxLevelByAlchemy = false;
     },
 
     clearStatusText(state) {
@@ -139,4 +133,63 @@ export const elixirSlice = createSlice({
   },
 });
 
-export const { pickOption, reroll, pickAdvice, alchemy, clearStatusText, resetElixir, initElixir } = elixirSlice.actions;
+function postprocessAlchemyInternal(state: ElixirState) {
+  const { adviceAfterEffect } = state;
+  if (state.alchemyResultBuffer.bigHit) playRefineSuccessSound();
+
+  state.options = state.alchemyResultBuffer.options;
+  state.alchemyResultBuffer = null;
+
+  for (const sage of state.sages) {
+    const { type, stack } = sage;
+    sage.viewStack = { type, stack };
+  }
+
+  const { extraChanceConsume, saveChance } = adviceAfterEffect;
+  state.adviceAfterEffect = {};
+
+  if (!saveChance) state.alchemyChance -= 1 + (extraChanceConsume ?? 0);
+
+  if (state.alchemyChance) {
+    state.alchemyStatus = AlchemyStatuses.ADVICE;
+    const advices = adviceService.getAdvices(state.sages, state.options, state.alchemyChance, state.discountRate);
+    state.sages.forEach((sage, i) => (sage.advice = advices[i]));
+  } else {
+    state.alchemyStatus = AlchemyStatuses.COMPLETE;
+  }
+}
+
+function postprocessAdviceInternal(state: ElixirState, action: PayloadAction<{ selectedAdviceIndex: number }>) {
+  const { selectedAdviceIndex } = action.payload;
+
+  const { options, extraTarget, extraAlchemy, extraChanceConsume, saveChance, enterMeditation, addRerollChance, discount } = state.adviceResultBuffer;
+  const { advice } = state.sages[selectedAdviceIndex];
+
+  state.options = options;
+  state.adviceAfterEffect = { extraTarget, extraAlchemy, extraChanceConsume, saveChance };
+
+  if (addRerollChance) state.adviceRerollChance += addRerollChance;
+  if (enterMeditation) state.sages[selectedAdviceIndex].meditation = true;
+  if (discount) state.discountRate = Math.min(state.discountRate + discount, 100);
+
+  const levelUp = options.reduce((acc, cur, i) => acc || cur.level - state.options[i].level > 0, false);
+  if (advice.type !== 'potential' || levelUp) playRefineSuccessSound();
+  else playRefineFailureSound();
+
+  state.sages.forEach((sage, i) => {
+    if (isFullStack(sage)) sage.stack = 0;
+
+    if (selectedAdviceIndex === i && sage.type !== SageTypesTypes.ORDER) {
+      sage.type = SageTypesTypes.ORDER;
+      sage.stack = 0;
+    } else if (selectedAdviceIndex !== i && sage.type !== SageTypesTypes.CHAOS) {
+      sage.type = SageTypesTypes.CHAOS;
+      sage.stack = 0;
+    }
+    sage.stack++;
+  });
+
+  state.alchemyStatus = AlchemyStatuses.ALCHEMY;
+}
+
+export const { pickOption, reroll, pickAdvice, alchemy, clearStatusText, resetElixir, initElixir, postprocessAlchemy, postprocessAdvice } = elixirSlice.actions;

@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { optionLengthTest, optionOddsSumTest, randomTest } from '../test/option';
+import { MaxLevelEffect } from '../components/MaxLevelEffect';
 
 const Test = () => {
   useEffect(() => {
@@ -7,7 +8,11 @@ const Test = () => {
     optionOddsSumTest();
     randomTest();
   }, []);
-  return <></>;
+  return (
+    <>
+      <MaxLevelEffect />
+    </>
+  );
 };
 
 export default Test;

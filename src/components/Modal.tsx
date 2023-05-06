@@ -12,9 +12,10 @@ interface ModalProps {
   bottom?: string;
   left?: string;
   transform?: string;
+  dimmedOpacity?: number;
 }
 
-export const Modal = ({ content, zIndex, handleDimmedClick, top, right, bottom, left, transform }: ModalProps) => {
+export const Modal = ({ content, zIndex, handleDimmedClick, top, right, bottom, left, transform, dimmedOpacity }: ModalProps) => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -31,14 +32,14 @@ export const Modal = ({ content, zIndex, handleDimmedClick, top, right, bottom, 
   return (
     <>
       <ModalContent {...styleProps}>{content}</ModalContent>
-      <Dimmed zIndex={zIndex - 1} onClick={handleDimmedClick} />
+      <Dimmed zIndex={zIndex - 1} onClick={handleDimmedClick} opacity={dimmedOpacity} />
     </>
   );
 };
 
-export const CenteredModal = ({ content, zIndex, handleDimmedClick }: ModalProps) => {
+export const CenteredModal = ({ content, zIndex, handleDimmedClick, dimmedOpacity }: ModalProps) => {
   const coreProps = { content, zIndex, handleDimmedClick };
-  const styleProps = { top: '50%', left: '50%', transform: 'translate(-50%, -50%)' };
+  const styleProps = { top: '50%', left: '50%', transform: 'translate(-50%, -50%)', dimmedOpacity };
   return <Modal {...coreProps} {...styleProps} />;
 };
 
@@ -54,7 +55,7 @@ const ModalContent = styled.div<{ zIndex: number; top?: string; left?: string; b
   `};
 `;
 
-const Dimmed = styled.div<{ zIndex: number }>`
+export const Dimmed = styled.div<{ zIndex: number; opacity?: number }>`
   position: fixed;
 
   ${({ zIndex }) => `z-index: ${zIndex};`}
@@ -64,5 +65,5 @@ const Dimmed = styled.div<{ zIndex: number }>`
   height: 100vh;
 
   background: black;
-  opacity: 0.3;
+  opacity: ${({ opacity }) => opacity ?? 0.3};
 `;

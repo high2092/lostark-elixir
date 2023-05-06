@@ -32,3 +32,8 @@ export interface OptionResult {
   type?: OptionType;
   level: number;
 }
+
+export interface AlchemyResult {
+  options: OptionInstance[];
+  bigHit: boolean;
+}

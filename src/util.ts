@@ -347,3 +347,11 @@ export function getActivationByLevel(level: number) {
 export function isExist(obj: any) {
   return obj !== null && obj !== undefined;
 }
+
+export function checkBreakCriticalPoint(prev: OptionInstance[], next: OptionInstance[]) {
+  const CRITICAL_POINT = MAX_ACTIVE;
+  for (let i = 0; i < OPTION_COUNT; i++) {
+    if (prev[i].level < CRITICAL_POINT && next[i].level >= CRITICAL_POINT) return true;
+  }
+  return false;
+}

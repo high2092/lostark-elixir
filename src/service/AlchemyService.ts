@@ -1,13 +1,13 @@
 import { MAX_ACTIVE } from '../constants';
 import { AdviceAfterEffect } from '../type/advice';
-import { OptionInstance } from '../type/option';
+import { AlchemyResult, OptionInstance } from '../type/option';
 import { checkMaxLevel, gacha, generateRandomNumber, getBigHitRate, playRefineSuccessSound } from '../util';
 
 class AlchemyService {
-  alchemy(options: OptionInstance[], adviceAfterResult: AdviceAfterEffect) {
+  alchemy(options: OptionInstance[], adviceAfterResult: AdviceAfterEffect): AlchemyResult {
     const { extraTarget, extraAlchemy } = adviceAfterResult;
     const delta = 1 + (extraAlchemy ?? 0);
-    const result = [...options];
+    const result = options.map((option) => ({ ...option }));
     const oddsKey = result[0].tempHitRate !== null ? 'tempHitRate' : 'hitRate';
 
     const targetIndexList = gacha(options, { oddsKey, count: 1 + (extraTarget ?? 0) });
@@ -26,9 +26,7 @@ class AlchemyService {
     result.forEach((option, idx) => (result[idx] = { ...option, tempHitRate: null, tempBigHitRate: null }));
     checkMaxLevel(result);
 
-    if (bigHit) playRefineSuccessSound();
-
-    return result;
+    return { options: result, bigHit };
   }
 }
 

@@ -25,18 +25,19 @@ import { Loading } from '../components/Loading';
 import { useCookies } from 'react-cookie';
 import { AlchemyStatuses } from '../type/common';
 import { useAppDispatch, useAppSelector } from '../store';
-import { alchemy, clearStatusText, initElixir, pickAdvice, pickOption } from '../features/elixirSlice';
+import { alchemy, clearStatusText, postprocessAlchemy, initElixir, pickAdvice, pickOption, postprocessAdvice } from '../features/elixirSlice';
 import { Gold } from '../components/Gold';
 import { AdviceSection } from '../components/AdviceSection';
 import { setSelectedAdviceIndex, setSelectedOptionIndex, getNextTutorial, initTutorial } from '../features/uiSlice';
 import { NoOptionSelectedError } from '../error/NoOptionSelectedError';
 import { chargeCost, completeAlchemy } from '../features/resultSlice';
+import { DURATION_MS, MaxLevelEffect } from '../components/MaxLevelEffect';
 
 const Home = () => {
   const [cookies, setCookie] = useCookies();
 
   const dispatch = useAppDispatch();
-  const { sages, alchemyChance, alchemyStatus, options, reset, discountRate } = useAppSelector((state) => state.elixir);
+  const { sages, alchemyChance, alchemyStatus, options, reset, discountRate, maxLevelByAlchemy, maxLevelByAdvice } = useAppSelector((state) => state.elixir);
   const { selectedAdviceIndex, selectedOptionIndex, tutorialIndex } = useAppSelector((state) => state.ui);
   const { usedGold, usedCatalyst } = useAppSelector((state) => state.result);
 
@@ -44,6 +45,31 @@ const Home = () => {
   const statusTextTimeoutRef = useRef<NodeJS.Timeout>();
 
   const goldCost = COST_PER_ALCHEMY.GOLD * (1 - 0.01 * discountRate);
+
+  const STATUS_TEXT_DISPLAY_TIME_MS = 2000;
+  const setStatusTextTimeout = () => {
+    clearTimeout(statusTextTimeoutRef.current);
+    statusTextTimeoutRef.current = setTimeout(() => {
+      dispatch(clearStatusText());
+    }, STATUS_TEXT_DISPLAY_TIME_MS);
+  };
+
+  const DURATION_MARGIN_MS = 500;
+  useEffect(() => {
+    if (maxLevelByAlchemy) {
+      setTimeout(() => {
+        dispatch(postprocessAlchemy());
+      }, DURATION_MS + DURATION_MARGIN_MS);
+    }
+  }, [maxLevelByAlchemy]);
+
+  useEffect(() => {
+    if (maxLevelByAdvice) {
+      setTimeout(() => {
+        dispatch(postprocessAdvice({ selectedAdviceIndex }));
+      }, DURATION_MS + DURATION_MARGIN_MS);
+    }
+  }, [maxLevelByAdvice]);
 
   useEffect(() => {
     const handleWindowClick = () => dispatch(getNextTutorial());
@@ -82,6 +108,10 @@ const Home = () => {
       dispatch(completeAlchemy(options));
     }
   }, [alchemyStatus]);
+
+  useEffect(() => {
+    setStatusTextTimeout();
+  }, [options]);
 
   useEffect(() => {
     if (reset) dispatch(initElixir());
@@ -128,7 +158,6 @@ const Home = () => {
       }
     }
 
-    setStatusTextTimeout();
     dispatch(setSelectedOptionIndex(null));
   };
 
@@ -141,14 +170,6 @@ const Home = () => {
 
   const getDisabled = () => {
     return alchemyChance <= 0;
-  };
-
-  const STATUS_TEXT_DISPLAY_TIME_MS = 2000;
-  const setStatusTextTimeout = () => {
-    clearTimeout(statusTextTimeoutRef.current);
-    statusTextTimeoutRef.current = setTimeout(() => {
-      dispatch(clearStatusText());
-    }, STATUS_TEXT_DISPLAY_TIME_MS);
   };
 
   return (
@@ -227,6 +248,7 @@ const Home = () => {
       </S.DescriptionSection>
       <LeftTopSection />
       {tutorialIndex < TUTORIALS.length && <S.FirstVisitHelpText>{TutorialTexts[TUTORIALS[tutorialIndex]]}</S.FirstVisitHelpText>}
+      {(maxLevelByAlchemy || maxLevelByAdvice) && <MaxLevelEffect />}
     </S.Home>
   );
 };
