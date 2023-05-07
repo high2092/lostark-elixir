@@ -39,7 +39,7 @@ export const AdviceSection = () => {
   };
 
   const getAdviceButtonDisabled = (sage: Sage) => {
-    return alchemyChance <= 0 || alchemyStatus === AlchemyStatuses.ALCHEMY || sage.meditation;
+    return alchemyStatus === AlchemyStatuses.COMPLETE || alchemyStatus === AlchemyStatuses.ALCHEMY || sage.meditation;
   };
 
   return (

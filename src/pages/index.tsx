@@ -120,7 +120,7 @@ const Home = () => {
   if (!loaded) return <Loading />;
 
   const handleRefineButtonClick = () => {
-    if (alchemyChance <= 0) return;
+    if (getDisabled()) return;
     if (selectedAdviceIndex === null && alchemyStatus !== AlchemyStatuses.ALCHEMY) {
       alert('조언을 선택해주세요.');
       return;
@@ -169,7 +169,7 @@ const Home = () => {
   };
 
   const getDisabled = () => {
-    return alchemyChance <= 0;
+    return alchemyStatus === AlchemyStatuses.COMPLETE;
   };
 
   return (

@@ -356,3 +356,11 @@ export function checkBreakCriticalPoint(prev: OptionInstance[], next: OptionInst
   }
   return false;
 }
+
+export function checkEarlyComplete(options: OptionInstance[]) {
+  for (const { level, locked } of options) {
+    if (!locked && level < MAX_ACTIVE) return false;
+  }
+  if (getLockedCount(options) !== OPTION_COUNT - FINAL_OPTION_COUNT) return false;
+  return true;
+}

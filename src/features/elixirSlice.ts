@@ -9,7 +9,7 @@ import { alchemyService } from '../service/AlchemyService';
 import { ALCHEMY_CHANCE } from '../constants';
 import { optionService } from '../service/OptionService';
 import { AlchemyStatus, AlchemyStatuses } from '../type/common';
-import { checkBreakCriticalPoint, createSage, isFullStack, playRefineFailureSound, playRefineSuccessSound } from '../util';
+import { checkBreakCriticalPoint, checkEarlyComplete, createSage, isFullStack, playRefineFailureSound, playRefineSuccessSound } from '../util';
 
 interface ElixirState {
   sages: Sage[];
@@ -150,7 +150,7 @@ function postprocessAlchemyInternal(state: ElixirState) {
 
   if (!saveChance) state.alchemyChance -= 1 + (extraChanceConsume ?? 0);
 
-  if (state.alchemyChance) {
+  if (state.alchemyChance && !checkEarlyComplete(state.options)) {
     state.alchemyStatus = AlchemyStatuses.ADVICE;
     const advices = adviceService.getAdvices(state.sages, state.options, state.alchemyChance, state.discountRate);
     state.sages.forEach((sage, i) => (sage.advice = advices[i]));
@@ -189,7 +189,11 @@ function postprocessAdviceInternal(state: ElixirState, action: PayloadAction<{ s
     sage.stack++;
   });
 
-  state.alchemyStatus = AlchemyStatuses.ALCHEMY;
+  if (checkEarlyComplete(state.options)) {
+    state.alchemyStatus = AlchemyStatuses.COMPLETE;
+  } else {
+    state.alchemyStatus = AlchemyStatuses.ALCHEMY;
+  }
 }
 
 export const { pickOption, reroll, pickAdvice, alchemy, clearStatusText, resetElixir, initElixir, postprocessAlchemy, postprocessAdvice } = elixirSlice.actions;
