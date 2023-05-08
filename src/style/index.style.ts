@@ -21,7 +21,7 @@ export const Home = styled.div`
 `;
 
 const ELIXIR_OPTION_HEIGHT = '9vh';
-const ELIXIR_OPTION_HEIGHT_MOBILE = '7vh';
+const ELIXIR_OPTION_HEIGHT_MOBILE = '6.66vh';
 const ELIXIR_OPTION_SECTION_TOP_FACTOR = 3.6;
 export const ElixirOptionSection = styled.div`
   position: absolute;

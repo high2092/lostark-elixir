@@ -5,6 +5,7 @@ import { DEFAULT_BORDER_RADIUS_PX, MOBILE_CRITERIA_MAX_WIDTH, SageTypes } from '
 const ADVICE_SECTION_WIDTH_VW = 75;
 
 const ADVICE_HEIGHT = '4.5rem';
+const ADVICE_HEIGHT_MOBILE = '5rem';
 const ADVICE_MARGIN = '0.5rem';
 
 export const AdviceSection = styled.div`
@@ -42,6 +43,10 @@ export const Advice = styled.div<{ disabled: boolean; special: SageTypesType; se
 
   & > * {
     padding: 10%;
+  }
+
+  @media (max-width: ${MOBILE_CRITERIA_MAX_WIDTH}) {
+    height: ${ADVICE_HEIGHT_MOBILE};
   }
 `;
 
