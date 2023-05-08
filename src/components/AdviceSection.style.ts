@@ -5,7 +5,7 @@ import { DEFAULT_BORDER_RADIUS_PX, MOBILE_CRITERIA_MAX_WIDTH, SageTypes } from '
 const ADVICE_SECTION_WIDTH_VW = 75;
 
 const ADVICE_HEIGHT = '4.5rem';
-const ADVICE_HEIGHT_MOBILE = '5rem';
+const ADVICE_HEIGHT_MOBILE = '5.5rem';
 const ADVICE_MARGIN = '0.5rem';
 
 export const AdviceSection = styled.div`
