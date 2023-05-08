@@ -165,16 +165,16 @@ function postprocessAdviceInternal(state: ElixirState, action: PayloadAction<{ s
   const { options, extraTarget, extraAlchemy, extraChanceConsume, saveChance, enterMeditation, addRerollChance, discount } = state.adviceResultBuffer;
   const { advice } = state.sages[selectedAdviceIndex];
 
+  const levelUp = options.reduce((acc, cur, i) => acc || cur.level - state.options[i].level > 0, false);
+  if (advice.type !== 'potential' || levelUp) playRefineSuccessSound();
+  else playRefineFailureSound();
+
   state.options = options;
   state.adviceAfterEffect = { extraTarget, extraAlchemy, extraChanceConsume, saveChance };
 
   if (addRerollChance) state.adviceRerollChance += addRerollChance;
   if (enterMeditation) state.sages[selectedAdviceIndex].meditation = true;
   if (discount) state.discountRate = Math.min(state.discountRate + discount, 100);
-
-  const levelUp = options.reduce((acc, cur, i) => acc || cur.level - state.options[i].level > 0, false);
-  if (advice.type !== 'potential' || levelUp) playRefineSuccessSound();
-  else playRefineFailureSound();
 
   state.sages.forEach((sage, i) => {
     if (isFullStack(sage)) sage.stack = 0;
