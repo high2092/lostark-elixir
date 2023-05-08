@@ -1,13 +1,16 @@
 import styled from '@emotion/styled';
-import { CenteredModal, Modal } from './Modal';
+import { Modal } from './Modal';
 import Vivus from 'vivus';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { MOBILE_CRITERIA_MAX_WIDTH } from '../constants';
 
 const COLOR = '#C9A7EB';
 
-const SIZE = '4vw';
+const SIZE = '6vh';
+
 export const DURATION_MS = 1200;
 export const MaxLevelEffect = () => {
+  const [isMobile, setIsMobile] = useState(false);
   const svgRef = useRef<any>();
   useEffect(() => {
     new Vivus(svgRef.current, {
@@ -16,9 +19,13 @@ export const MaxLevelEffect = () => {
     });
   }, []);
 
+  useEffect(() => {
+    setIsMobile(window.innerWidth <= parseInt(MOBILE_CRITERIA_MAX_WIDTH));
+  }, []);
+
   return (
     <Modal
-      top="60%"
+      top={`${57 - (isMobile ? 10 : 0)}%`}
       left="50.1%"
       transform="translate(-50%, -50%)"
       content={
