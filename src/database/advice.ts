@@ -44,7 +44,6 @@ export const ADVICES: AdviceBody[] = [
   levelUpHighestOptionAdviceTemplate(1, { maxReturn: 1, maxRisk: 2 }),
   levelUpLowestOptionAdviceTemplate(1),
   levelUpRandomOptionAdviceTemplate(1, { n: 1 }),
-  levelUpRandomOptionAdviceTemplate(1, { n: 3, special: SageTypesTypes.ORDER }),
   levelUpSelectedOptionAdviceTemplate(1, { n: 2, special: SageTypesTypes.ORDER }),
   levelUpHighestOptionAdviceTemplate(1, { maxReturn: 1, special: SageTypesTypes.ORDER }),
 
