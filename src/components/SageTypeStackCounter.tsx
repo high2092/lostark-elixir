@@ -14,7 +14,7 @@ interface SageTypeStackCounterProps {
 export const SageTypeStackCounter = ({ sage }: SageTypeStackCounterProps) => {
   if (!sage || !sage.viewStack || sage.meditation)
     return (
-      <S.SageTypeStackCounter>
+      <S.SageTypeStackCounter blank={true}>
         <BlankIcon />
       </S.SageTypeStackCounter>
     );
