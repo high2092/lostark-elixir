@@ -1,4 +1,4 @@
-import { OPTION_COUNT, Placeholders as P } from '../constants';
+import { MAX_ACTIVE, OPTION_COUNT, Placeholders as P } from '../constants';
 import { optionService } from '../service/OptionService';
 import { AdviceBody, AdviceType } from '../type/advice';
 import { SageKey, SageKeys, SageTypesType, SageTypesTypes } from '../type/sage';
@@ -243,7 +243,7 @@ function levelUpRandomOptionAdviceTemplate(odds: number, params: AdviceTemplateP
     special,
     effect: (options) => {
       const result = options.map((option) => ({ ...option }));
-      const [targetIndex] = gacha(result);
+      const [targetIndex] = gacha(result, { filterConditions: [(option) => option.level < MAX_ACTIVE] });
       applySafeResult(result[targetIndex], { level: result[targetIndex].level + n });
       return { options: result };
     },
