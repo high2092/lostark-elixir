@@ -115,8 +115,8 @@ export const ADVICES: AdviceBody[] = [
   ...createFixedSubOptionAdvices(1, exchangeOneLevelBetweenFixedOptionsAdviceTemplate, { n: 2 }),
   ...createFixedSubOptionAdvices(1, exchangeLevelBetweenFixedOptionsAdviceTemplate, {}),
   ...createFixedSubOptionAdvices(1, exchangeLevelBetweenFixedOptionsAdviceTemplate, { n: 1 }),
-  ...createFixedSubOptionAdvices(1, exchangeLevelBetweenMaxMinAdviceTemplate, {}),
-  ...createFixedSubOptionAdvices(1, exchangeLevelBetweenMaxMinAdviceTemplate, { n: 1 }),
+  exchangeLevelBetweenMaxMinAdviceTemplate(1, {}),
+  exchangeLevelBetweenMaxMinAdviceTemplate(1, { n: 1 }),
 
   amplifySelectedOptionHitRateTemporarilyAdviceTemplate(1, { extraChanceConsume: 1, extraAlchemy: 1, remainChanceUpperBound: 11 }),
 
