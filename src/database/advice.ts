@@ -113,10 +113,10 @@ export const ADVICES: AdviceBody[] = [
   exchangeOddEvenAdviceTemplate(0.5, { odd: false, n: 1, remainChanceUpperBound: 12 }),
   ...createFixedSubOptionAdvices(1, exchangeOneLevelBetweenFixedOptionsAdviceTemplate, { n: 1 }),
   ...createFixedSubOptionAdvices(1, exchangeOneLevelBetweenFixedOptionsAdviceTemplate, { n: 2 }),
-  ...createFixedSubOptionAdvices(1, exchangeLevelBetweenFixedOptionsAdviceTemplate, {}),
-  ...createFixedSubOptionAdvices(1, exchangeLevelBetweenFixedOptionsAdviceTemplate, { n: 1 }),
-  exchangeLevelBetweenMaxMinAdviceTemplate(1, {}),
-  exchangeLevelBetweenMaxMinAdviceTemplate(1, { n: 1 }),
+  ...createFixedSubOptionAdvices(0.5, exchangeLevelBetweenFixedOptionsAdviceTemplate, { remainChanceUpperBound: 12 }),
+  ...createFixedSubOptionAdvices(0.5, exchangeLevelBetweenFixedOptionsAdviceTemplate, { n: 1, remainChanceUpperBound: 12 }),
+  exchangeLevelBetweenMaxMinAdviceTemplate(0.5, { remainChanceUpperBound: 12 }),
+  exchangeLevelBetweenMaxMinAdviceTemplate(0.5, { n: 1, remainChanceUpperBound: 12 }),
 
   amplifySelectedOptionHitRateTemporarilyAdviceTemplate(1, { extraChanceConsume: 1, extraAlchemy: 1, remainChanceUpperBound: 11 }),
 
@@ -749,7 +749,7 @@ function exchangeOneLevelBetweenFixedOptionsAdviceTemplate(odds: number, params:
 }
 
 function exchangeLevelBetweenFixedOptionsAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
-  const { n, optionIndex, subOptionIndex } = params;
+  const { n, optionIndex, subOptionIndex, remainChanceUpperBound } = params;
   return {
     name: `${n ? `${P.OPTION} 단계 효과를 ${n} 소모하고 ` : ''}${P.OPTION} 효과와 ${P.SUB_OPTION} 효과의 단계를 뒤바꿔${P.주겠네}.`,
     type: 'util',
@@ -762,11 +762,12 @@ function exchangeLevelBetweenFixedOptionsAdviceTemplate(odds: number, params: Ad
     odds,
     optionIndex,
     subOptionIndex,
+    remainChanceUpperBound,
   };
 }
 
 function exchangeLevelBetweenMaxMinAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
-  const { n } = params;
+  const { n, remainChanceUpperBound } = params;
   return {
     name: `${n ? `최고 단계 효과를 ${n} 소모하고 ` : ''}최고 단계 효과 1개와 최하 단계 효과 1개의 단계를 뒤바꿔${P.주겠네}.`,
     type: 'util',
@@ -781,6 +782,7 @@ function exchangeLevelBetweenMaxMinAdviceTemplate(odds: number, params: AdviceTe
       return { options: result };
     },
     odds,
+    remainChanceUpperBound,
   };
 }
 
