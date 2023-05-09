@@ -6,7 +6,7 @@ import { applySafeResult, changeHitRate, convertToSignedString, extractOptionDef
 
 const getExtraAlchemyText = (extraAlchemy: number) => `이번에 연성되는 효과는 ${1 + extraAlchemy}단계 연성해${P.주겠네}.`;
 const getExtraTargetText = (extraTarget: number) => `이번 연성에서 ${extraTarget + 1}개의 효과를 동시에 연성해${P.주겠네}.`;
-const getOtherOptionLevelDownText = (n: number, optionName?: string) => `대신 ${optionName ? `${optionName} 효과` : '다른 효과 1개'}의 단계는 ${n} 감소${P.할걸세}.`;
+const getOtherOptionLevelDownText = (n: number, optionName?: string) => `대신 ${optionName ? `${optionName} 효과` : '다른 효과 1개'}의 단계가 ${n} 감소${P.할걸세}.`;
 
 /** TODO: 봉인된 옵션에 대한 처리 방식 조사하기
  * 1. 단계 위/아래로 한칸씩 이동
@@ -111,8 +111,12 @@ export const ADVICES: AdviceBody[] = [
   redistributeAdviceTemplate(2, { special: SageTypesTypes.CHAOS }),
   exchangeOddEvenAdviceTemplate(0.5, { odd: true, n: 1, remainChanceUpperBound: 12 }),
   exchangeOddEvenAdviceTemplate(0.5, { odd: false, n: 1, remainChanceUpperBound: 12 }),
+  ...createFixedSubOptionAdvices(1, exchangeOneLevelBetweenFixedOptionsAdviceTemplate, { n: 1 }),
+  ...createFixedSubOptionAdvices(1, exchangeOneLevelBetweenFixedOptionsAdviceTemplate, { n: 2 }),
+  ...createFixedSubOptionAdvices(1, exchangeLevelBetweenFixedOptionsAdviceTemplate, {}),
   ...createFixedSubOptionAdvices(1, exchangeLevelBetweenFixedOptionsAdviceTemplate, { n: 1 }),
-  ...createFixedSubOptionAdvices(1, exchangeLevelBetweenFixedOptionsAdviceTemplate, { n: 2 }),
+  ...createFixedSubOptionAdvices(1, exchangeLevelBetweenMaxMinAdviceTemplate, {}),
+  ...createFixedSubOptionAdvices(1, exchangeLevelBetweenMaxMinAdviceTemplate, { n: 1 }),
 
   amplifySelectedOptionHitRateTemporarilyAdviceTemplate(1, { extraChanceConsume: 1, extraAlchemy: 1, remainChanceUpperBound: 11 }),
 
@@ -723,7 +727,7 @@ function amplifyOddOrEvenBigHitRateAdviceTemplate(odds: number, params: AdviceTe
   };
 }
 
-function exchangeLevelBetweenFixedOptionsAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
+function exchangeOneLevelBetweenFixedOptionsAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
   const { n, optionIndex, subOptionIndex } = params;
   return {
     name: `${P.OPTION} 효과의 단계를 +1 올려${P.주겠네}. 대신 ${P.SUB_OPTION} 효과의 단계가 ${n} 감소${P.할걸세}.`,
@@ -737,6 +741,42 @@ function exchangeLevelBetweenFixedOptionsAdviceTemplate(odds: number, params: Ad
     odds,
     optionIndex,
     subOptionIndex,
+  };
+}
+
+function exchangeLevelBetweenFixedOptionsAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
+  const { n, optionIndex, subOptionIndex } = params;
+  return {
+    name: `${n ? `${P.OPTION} 단계 효과를 ${n} 소모하고 ` : ''}${P.OPTION} 효과와 ${P.SUB_OPTION} 효과의 단계를 뒤바꿔${P.주겠네}.`,
+    type: 'util',
+    effect: (options) => {
+      const result = options.map((option) => ({ ...option }));
+      applySafeResult(result[optionIndex], { level: options[subOptionIndex].level });
+      applySafeResult(result[subOptionIndex], { level: options[optionIndex].level - (n ?? 0) });
+      return { options: result };
+    },
+    odds,
+    optionIndex,
+    subOptionIndex,
+  };
+}
+
+function exchangeLevelBetweenMaxMinAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
+  const { n } = params;
+  return {
+    name: `${n ? `최고 단계 효과를 ${n} 소모하고 ` : ''}최고 단계 효과 1개와 최하 단계 효과 1개의 단계를 뒤바꿔${P.주겠네}.`,
+    type: 'util',
+    effect: (options) => {
+      const result = options.map((option) => ({ ...option }));
+      const maxLevel = getMaxLevel(result);
+      const minLevel = getMinLevel(result);
+      const [maxTargetIndex] = gacha(result, { filterConditions: [(option) => option.level === maxLevel] });
+      const [minTargetIndex] = gacha(result, { filterConditions: [(option, idx) => option.level === minLevel && idx !== maxTargetIndex] });
+      applySafeResult(result[maxTargetIndex], { level: options[minTargetIndex].level });
+      applySafeResult(result[minTargetIndex], { level: options[maxTargetIndex].level - (n ?? 0) });
+      return { options: result };
+    },
+    odds,
   };
 }
 
