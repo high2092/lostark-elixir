@@ -15,6 +15,7 @@ export const InventoryModal = ({ zIndex }: PreparedModalProps) => {
 
 const InventoryModalContent = () => {
   const { usedGold, usedCatalyst, elixirs } = useAppSelector((state) => state.result);
+  const { resetCount } = useAppSelector((state) => state.elixir);
   const [hoveredIndex, setHoveredIndex] = useState<number>(null);
   const [listView, setListView] = useState(false);
 
@@ -61,6 +62,7 @@ const InventoryModalContent = () => {
         )}
         <S.BottomSection>
           <S.UsageInfo>
+            <div>사용한 엘릭서: {1 + resetCount}</div>
             <div>사용한 골드: {cutThousandUnit(usedGold)}</div>
             <div>사용한 연성 촉매: {usedCatalyst}</div>
           </S.UsageInfo>
