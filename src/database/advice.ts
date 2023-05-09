@@ -293,6 +293,7 @@ function amplifyFixedOptionHitRateTemporarilyAdviceTemplate(odds: number, params
     },
     odds,
     optionIndex,
+    contradictLastOption: true,
   };
 }
 
@@ -326,6 +327,7 @@ function amplifyFixedOptionHitRateAdviceTemplate(odds: number, params: AdviceTem
     },
     odds,
     optionIndex,
+    contradictLastOption: true,
   };
 }
 
@@ -344,6 +346,7 @@ function amplifySelectedHitRateAdviceTemplate(odds: number, props?: AdviceTempla
       return { options: result };
     },
     odds,
+    contradictLastOption: true,
   };
 }
 
@@ -421,6 +424,7 @@ function addExtraTargetAdviceTemplate(odds: number, params?: AdviceTemplateProps
     effect: (options) => ({ options: options, extraTarget, extraChanceConsume }),
     odds,
     extraChanceConsume,
+    contradictLastOption: true,
   };
 }
 

@@ -18,6 +18,7 @@ export interface AdviceBody {
   changeLevelLowPoint?: number;
   contradictMaxLevelExists?: boolean;
   discount?: boolean;
+  contradictLastOption?: boolean;
 }
 
 export interface Advice extends AdviceBody {
