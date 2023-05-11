@@ -40,10 +40,10 @@ export const uiSlice = createSlice({
       state.tutorialIndex = initialState.tutorialIndex;
       state.resetCount = state.resetCount + 1;
     },
-    setChecked(state, action: PayloadAction<boolean>) {
+    setHideBackgroundImage(state, action: PayloadAction<boolean>) {
       state.hideBackgroundImage = action.payload;
     },
   },
 });
 
-export const { setSelectedAdviceIndex, setSelectedOptionIndex, initTutorial, getNextTutorial, resetUI, setChecked } = uiSlice.actions;
+export const { setSelectedAdviceIndex, setSelectedOptionIndex, initTutorial, getNextTutorial, resetUI, setHideBackgroundImage } = uiSlice.actions;

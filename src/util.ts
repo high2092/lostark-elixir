@@ -1,5 +1,6 @@
 import { DEFAULT_BIG_HIT_RATE_PERCENT, FINAL_OPTION_COUNT, MAX_ACTIVE, OPTION_COUNT, Placeholders, SageTypes } from './constants';
 import { NoOptionSelectedError } from './error/NoOptionSelectedError';
+import { store } from './store';
 import { Advice, AdviceType } from './type/advice';
 import { OddsKey } from './type/common';
 import { Option, OptionInstance, OptionInstanceBody, OptionResult } from './type/option';
@@ -105,6 +106,8 @@ export const playRefineFailureSound = () => {
 
 const CLICK_SOUND_VOLUME = 0.1;
 export const playClickSound = () => {
+  const { muteSoundEffect } = store.getState().elixir;
+  if (muteSoundEffect) return;
   const audio = new Audio('/sound/click.mp3');
   audio.volume = CLICK_SOUND_VOLUME;
   audio.play();

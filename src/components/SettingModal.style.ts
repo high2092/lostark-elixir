@@ -7,4 +7,8 @@ export const SettingModal = styled.div`
   background-color: white;
 
   border-radius: ${MODAL_DEFAULT_BORDER_RADIUS};
+
+  & > * {
+    padding: 0.5rem 0;
+  }
 `;
