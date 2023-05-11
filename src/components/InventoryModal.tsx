@@ -43,10 +43,10 @@ const InventoryModalContent = () => {
       <S.InventoryContainer>
         {listView ? (
           <S.ListViewInventory>
-            {elixirs.map((elixir) => (
-              <S.ListViewElixir>
-                {elixir.options.map((option) => (
-                  <ElixirOption {...option} />
+            {elixirs.map((elixir, i) => (
+              <S.ListViewElixir key={`listViewElixir-${i}`}>
+                {elixir.options.map((option, j) => (
+                  <ElixirOption key={`listViewElixir-${i}-option-${j}`} {...option} />
                 ))}
               </S.ListViewElixir>
             ))}
@@ -54,7 +54,7 @@ const InventoryModalContent = () => {
         ) : (
           <S.Inventory>
             {elixirs.map((elixir, idx) => (
-              <S.Elixir hover={hoveredIndex === idx} onMouseOver={(e) => handleElixirMouseOver(e, idx)}>
+              <S.Elixir key={`gridElixir-${idx}`} hover={hoveredIndex === idx} onMouseOver={(e) => handleElixirMouseOver(e, idx)}>
                 <ElixirIcon />
               </S.Elixir>
             ))}
@@ -74,8 +74,8 @@ const InventoryModalContent = () => {
       <S.ElixirInfoModalContainer>
         {elixirs[hoveredIndex] !== undefined && (
           <S.ElixirInfoModal>
-            {elixirs[hoveredIndex].options.map((elixir) => (
-              <ElixirOption {...elixir} />
+            {elixirs[hoveredIndex].options.map((elixir, idx) => (
+              <ElixirOption key={`elixirInfo-${hoveredIndex}-option-${idx}`} {...elixir} />
             ))}
           </S.ElixirInfoModal>
         )}
