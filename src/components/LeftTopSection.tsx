@@ -12,6 +12,7 @@ import { InventoryIcon } from './InventoryIcon';
 import { openModal } from '../features/modalSlice';
 import { ModalTypes } from '../type/common';
 import { IconButton } from './common/IconButton';
+import { SettingIcon } from './SettingIcon';
 
 const DEFAULT_BGM_VOLUME = 5;
 
@@ -46,6 +47,10 @@ export const LeftTopSection = () => {
     dispatch(openModal(ModalTypes.INVENTORY));
   };
 
+  const handleSettingIconClick = () => {
+    dispatch(openModal(ModalTypes.SETTING));
+  };
+
   return (
     <>
       <S.YouTube>
@@ -67,6 +72,9 @@ export const LeftTopSection = () => {
         </IconButton>
         <IconButton onClick={handleInventoryButtonClick} outline={TUTORIALS[tutorialIndex] === TutorialStatus.OPEN_INVENTORY}>
           <InventoryIcon />
+        </IconButton>
+        <IconButton onClick={handleSettingIconClick}>
+          <SettingIcon />
         </IconButton>
       </S.LeftTopSection>
     </>

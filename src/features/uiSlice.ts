@@ -5,12 +5,14 @@ interface UIState {
   selectedAdviceIndex: number;
   selectedOptionIndex: number;
   tutorialIndex: number;
+  hideBackgroundImage: boolean;
 }
 
 const initialState: UIState = {
   selectedAdviceIndex: null,
   selectedOptionIndex: null,
   tutorialIndex: TUTORIALS.length,
+  hideBackgroundImage: false,
 };
 
 export const uiSlice = createSlice({
@@ -31,11 +33,14 @@ export const uiSlice = createSlice({
       state.tutorialIndex++;
     },
     resetUI(state) {
-      Object.entries(initialState).forEach(([key, value]) => {
-        state[key] = value;
-      });
+      state.selectedAdviceIndex = initialState.selectedAdviceIndex;
+      state.selectedOptionIndex = initialState.selectedOptionIndex;
+      state.tutorialIndex = initialState.tutorialIndex;
+    },
+    setChecked(state, action: PayloadAction<boolean>) {
+      state.hideBackgroundImage = action.payload;
     },
   },
 });
 
-export const { setSelectedAdviceIndex, setSelectedOptionIndex, initTutorial, getNextTutorial, resetUI } = uiSlice.actions;
+export const { setSelectedAdviceIndex, setSelectedOptionIndex, initTutorial, getNextTutorial, resetUI, setChecked } = uiSlice.actions;

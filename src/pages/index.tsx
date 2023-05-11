@@ -38,7 +38,7 @@ const Home = () => {
 
   const dispatch = useAppDispatch();
   const { sages, alchemyChance, alchemyStatus, options, reset, discountRate, maxLevelByAlchemy, maxLevelByAdvice } = useAppSelector((state) => state.elixir);
-  const { selectedAdviceIndex, selectedOptionIndex, tutorialIndex } = useAppSelector((state) => state.ui);
+  const { selectedAdviceIndex, selectedOptionIndex, tutorialIndex, hideBackgroundImage } = useAppSelector((state) => state.ui);
   const { usedGold, usedCatalyst } = useAppSelector((state) => state.result);
 
   const [loaded, setLoaded] = useState(false);
@@ -174,7 +174,7 @@ const Home = () => {
 
   return (
     <S.Home>
-      <S.MainSection>
+      <S.MainSection hideBackgroundImage={hideBackgroundImage}>
         <S.ElixirOptionSection>
           {options.map((option, idx) => {
             const { name, part, level, statusText, locked } = option;

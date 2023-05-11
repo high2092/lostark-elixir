@@ -60,7 +60,7 @@ export const ElixirOption = styled.div<{ selected?: boolean; locked?: boolean }>
 `;
 
 const MAIN_SECTION_HEIGHT_PERCENT = 77;
-export const MainSection = styled.div`
+export const MainSection = styled.div<{ hideBackgroundImage: boolean }>`
   position: relative;
 
   top: 0;
@@ -69,7 +69,7 @@ export const MainSection = styled.div`
   width: 100%;
   height: ${MAIN_SECTION_HEIGHT_PERCENT}%;
 
-  background: url('image/background.png');
+  background: ${({ hideBackgroundImage }) => (hideBackgroundImage ? '#333333' : `url('image/background.png')`)};
   background-size: cover;
   background-position: center center;
 `;

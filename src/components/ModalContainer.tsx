@@ -1,6 +1,7 @@
 import { useAppSelector } from '../store';
 import { ModalType, ModalTypes } from '../type/common';
 import { InventoryModal } from './InventoryModal';
+import { SettingModal } from './SettingModal';
 
 type ModalComponents = {
   [key in ModalType]: (...params: any[]) => JSX.Element;
@@ -8,6 +9,7 @@ type ModalComponents = {
 
 const ModalComponents: ModalComponents = {
   [ModalTypes.INVENTORY]: InventoryModal,
+  [ModalTypes.SETTING]: SettingModal,
 };
 
 const DEFAULT_MODAL_Z_INDEX = 1000;
