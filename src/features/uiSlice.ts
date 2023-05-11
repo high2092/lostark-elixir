@@ -6,6 +6,7 @@ interface UIState {
   selectedOptionIndex: number;
   tutorialIndex: number;
   hideBackgroundImage: boolean;
+  resetCount: number;
 }
 
 const initialState: UIState = {
@@ -13,6 +14,7 @@ const initialState: UIState = {
   selectedOptionIndex: null,
   tutorialIndex: TUTORIALS.length,
   hideBackgroundImage: false,
+  resetCount: 0,
 };
 
 export const uiSlice = createSlice({
@@ -36,6 +38,7 @@ export const uiSlice = createSlice({
       state.selectedAdviceIndex = initialState.selectedAdviceIndex;
       state.selectedOptionIndex = initialState.selectedOptionIndex;
       state.tutorialIndex = initialState.tutorialIndex;
+      state.resetCount = state.resetCount + 1;
     },
     setChecked(state, action: PayloadAction<boolean>) {
       state.hideBackgroundImage = action.payload;

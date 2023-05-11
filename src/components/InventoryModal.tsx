@@ -15,7 +15,7 @@ export const InventoryModal = ({ zIndex }: PreparedModalProps) => {
 
 const InventoryModalContent = () => {
   const { usedGold, usedCatalyst, elixirs } = useAppSelector((state) => state.result);
-  const { resetCount } = useAppSelector((state) => state.elixir);
+  const { resetCount } = useAppSelector((state) => state.ui);
   const [hoveredIndex, setHoveredIndex] = useState<number>(null);
   const [listView, setListView] = useState(false);
 

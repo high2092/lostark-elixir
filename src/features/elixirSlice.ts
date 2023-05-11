@@ -25,7 +25,6 @@ interface ElixirState {
   adviceResultBuffer: AdviceEffectResult;
   maxLevelByAlchemy: boolean;
   maxLevelByAdvice: boolean;
-  resetCount: number;
 }
 
 const initialSages: Sage[] = [createSage(SageTemplates[SageKeys.L]), createSage(SageTemplates[SageKeys.B]), createSage(SageTemplates[SageKeys.C])];
@@ -44,7 +43,6 @@ const initialState: ElixirState = {
   adviceResultBuffer: null,
   maxLevelByAlchemy: false,
   maxLevelByAdvice: false,
-  resetCount: 0,
 };
 
 export const elixirSlice = createSlice({
@@ -124,8 +122,6 @@ export const elixirSlice = createSlice({
       Object.entries(initialState).forEach(([key, value]) => {
         state[key] = value;
       });
-      state.resetCount = state.resetCount + 1;
-      state.reset = true;
     },
 
     initElixir(state) {
