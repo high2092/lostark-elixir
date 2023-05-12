@@ -1,6 +1,7 @@
 import { useAppSelector } from '../store';
 import { ModalType, ModalTypes } from '../type/common';
 import { InventoryModal } from './InventoryModal';
+import { PatchNoteModal } from './PatchNoteModal';
 import { SettingModal } from './SettingModal';
 
 type ModalComponents = {
@@ -10,6 +11,7 @@ type ModalComponents = {
 const ModalComponents: ModalComponents = {
   [ModalTypes.INVENTORY]: InventoryModal,
   [ModalTypes.SETTING]: SettingModal,
+  [ModalTypes.PATCH_NOTE]: PatchNoteModal,
 };
 
 const DEFAULT_MODAL_Z_INDEX = 1000;
@@ -18,11 +20,11 @@ export const ModalContainer = () => {
   const { modals } = useAppSelector((state) => state.modal);
 
   return (
-    <>
+    <div onClick={(e) => e.stopPropagation()}>
       {modals.map((type, idx) => {
         const ModalComponent = ModalComponents[type];
         return <ModalComponent key={`modal-${type}-${idx}`} zIndex={DEFAULT_MODAL_Z_INDEX + idx} />;
       })}
-    </>
+    </div>
   );
 };

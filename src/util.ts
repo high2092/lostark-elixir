@@ -368,3 +368,11 @@ export function checkEarlyComplete(options: OptionInstance[]) {
   if (getLockedCount(options) !== OPTION_COUNT - FINAL_OPTION_COUNT) return false;
   return true;
 }
+
+export function convertLocalTimeString(timeString: string) {
+  const date = new Date();
+  const [hours, minutes] = timeString.split(':').map(Number);
+  date.setHours(hours);
+  date.setMinutes(minutes);
+  return date.toLocaleTimeString('ko-KR', { hour12: true, hour: 'numeric', minute: 'numeric' });
+}

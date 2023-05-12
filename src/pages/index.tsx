@@ -23,7 +23,7 @@ import { getBigHitRate, getHitRate, getOptionName, playClickSound } from '../uti
 import { LeftTopSection } from '../components/LeftTopSection';
 import { Loading } from '../components/Loading';
 import { useCookies } from 'react-cookie';
-import { AlchemyStatuses } from '../type/common';
+import { AlchemyStatuses, ModalTypes } from '../type/common';
 import { useAppDispatch, useAppSelector } from '../store';
 import { alchemy, clearStatusText, postprocessAlchemy, initElixir, pickAdvice, pickOption, postprocessAdvice } from '../features/elixirSlice';
 import { Gold } from '../components/Gold';
@@ -32,6 +32,7 @@ import { setSelectedAdviceIndex, setSelectedOptionIndex, getNextTutorial, initTu
 import { NoOptionSelectedError } from '../error/NoOptionSelectedError';
 import { chargeCost, completeAlchemy } from '../features/resultSlice';
 import { DURATION_MS, MaxLevelEffect } from '../components/MaxLevelEffect';
+import { openModal } from '../features/modalSlice';
 
 const Home = () => {
   const [cookies, setCookie] = useCookies();
@@ -102,6 +103,10 @@ const Home = () => {
 
     Promise.all(promises).then(() => setLoaded(true));
   }, []);
+
+  useEffect(() => {
+    if (loaded) dispatch(openModal(ModalTypes.PATCH_NOTE));
+  }, [loaded]);
 
   useEffect(() => {
     if (alchemyStatus === AlchemyStatuses.COMPLETE) {

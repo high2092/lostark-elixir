@@ -12,6 +12,7 @@ export type OddsKey = 'odds' | 'hitRate' | 'tempHitRate';
 export const ModalTypes = {
   INVENTORY: 'inventory',
   SETTING: 'setting',
+  PATCH_NOTE: 'patchNote',
 } as const;
 
 export type ModalType = (typeof ModalTypes)[keyof typeof ModalTypes];
