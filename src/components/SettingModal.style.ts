@@ -9,6 +9,8 @@ export const SettingModal = styled.div`
 
   border-radius: ${MODAL_DEFAULT_BORDER_RADIUS};
 
+  user-select: none;
+
   & > * {
     padding: 0.5rem 0;
   }
