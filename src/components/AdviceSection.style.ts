@@ -22,6 +22,10 @@ export const AdviceSection = styled.div`
   font-size: 0.8rem;
   text-align: center;
   word-break: keep-all;
+
+  @media (max-width: 800px) {
+    font-size: 0.6rem;
+  }
 `;
 
 export const Advice = styled.div<{ disabled: boolean; special: SageTypesType; selected: boolean }>`
