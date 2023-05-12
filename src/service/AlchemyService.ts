@@ -3,12 +3,19 @@ import { AdviceAfterEffect } from '../type/advice';
 import { AlchemyResult, OptionInstance } from '../type/option';
 import { checkMaxLevel, gacha, generateRandomNumber, getBigHitRate, playRefineSuccessSound } from '../util';
 
+const getOddsKey = (options: OptionInstance[]): 'tempHitRate' | 'hitRate' => {
+  for (const { tempHitRate } of options) {
+    if (tempHitRate !== null) return 'tempHitRate';
+  }
+  return 'hitRate';
+};
+
 class AlchemyService {
   alchemy(options: OptionInstance[], adviceAfterResult: AdviceAfterEffect): AlchemyResult {
     const { extraTarget, extraAlchemy } = adviceAfterResult;
     const delta = 1 + (extraAlchemy ?? 0);
     const result = options.map((option) => ({ ...option }));
-    const oddsKey = result[0].tempHitRate !== null ? 'tempHitRate' : 'hitRate';
+    const oddsKey = getOddsKey(options);
 
     const targetIndexList = gacha(options, { oddsKey, count: 1 + (extraTarget ?? 0) });
 
