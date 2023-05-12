@@ -1,6 +1,20 @@
 import { OptionInstance } from './option';
 import { SageKey, SageTypesType } from './sage';
 
+export const AdviceUniqueKeys = {
+  POTENTIAL_LEVEL_UP: 'potentialLevelUp',
+  POTENTIAL_LEVEL_UP_SELECTED_OPTION: 'potentialLevelUpSelectedOption',
+  POTENTIAL_CHANGE_LEVEL: 'potentialChangeLevel',
+  AMPLIFY_FIXED_OPTION_HIT_RATE: 'amplifyFixedOptionHitRate',
+  AMPLIFY_FIXED_OPTION_HIT_RATE_TEMPRORARILY: 'amplifyFixedOptionHitRateTemporarily',
+  AMPLIFY_FIXED_OPTION_BIG_HIT_RATE: 'amplifyFixedOptionBigHitRate',
+  AMPLIFY_FIXED_OPTION_BIG_HIT_RATE_TEMPRORARILY: 'amplifyFixedOptionBigHitRateTemporarily',
+  AMPLIFY_ALL_BIG_HIT_RATE: 'amplifyAllBigHitRate',
+  DISCOUNT_GOLD_COST: 'discountGoldCost',
+  EXCHANGE_ONE_LEVEL_BETWEEN_FIXED_OPTIONS: 'exchangeOneLevelBetweenFixedOptions',
+  EXCHANGE_LEVEL_BETWEEN_FIXED_OPTIONS: 'exchangeOneLevelBetweenFixedOptions',
+} as const;
+
 export interface AdviceBody {
   type: AdviceType;
   special?: SageTypesType;
@@ -19,6 +33,7 @@ export interface AdviceBody {
   contradictMaxLevelExists?: boolean;
   discount?: boolean;
   contradictLastOption?: boolean;
+  uniqueKey?: string;
 }
 
 export interface Advice extends AdviceBody {

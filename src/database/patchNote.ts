@@ -10,6 +10,10 @@ export interface Patch {
 
 export const PATCH_NOTE: Patch[] = [
   {
+    date: '2023-05-13',
+    details: [{ time: '01:34', description: '각 현자 간 비슷한 조언이 나오지 않도록 변경되었습니다.' }],
+  },
+  {
     date: '2023-05-12',
     details: [
       { time: '10:58', description: '패치 노트가 추가되었습니다.' },

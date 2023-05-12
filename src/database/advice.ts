@@ -1,6 +1,6 @@
 import { MAX_ACTIVE, OPTION_COUNT, Placeholders as P } from '../constants';
 import { optionService } from '../service/OptionService';
-import { AdviceBody, AdviceType } from '../type/advice';
+import { AdviceBody, AdviceType, AdviceUniqueKeys } from '../type/advice';
 import { SageKey, SageKeys, SageTypesType, SageTypesTypes } from '../type/sage';
 import { applySafeResult, changeHitRate, convertToSignedString, extractOptionDefaultProps, gacha, generateRandomInt, generateRandomNumber, getMaxLevel, getMinLevel, lockOption, redistribute, unlockOption, validateOptionIndex } from '../util';
 
@@ -147,6 +147,7 @@ function potentialLevelUpFixedOptionAdviceTemplate(odds: number, params: AdviceT
     },
     odds,
     optionIndex,
+    uniqueKey: AdviceUniqueKeys.POTENTIAL_LEVEL_UP + optionIndex,
   };
 }
 
@@ -162,6 +163,7 @@ function potentialLevelSelectedOptionAdviceTemplate(odds: number, params: Advice
       return { options: result };
     },
     odds,
+    uniqueKey: AdviceUniqueKeys.POTENTIAL_LEVEL_UP_SELECTED_OPTION,
   };
 }
 
@@ -178,6 +180,7 @@ function potentialChangeLevelFixedOptionAdviceTemplate(odds: number, params: Adv
     },
     odds,
     optionIndex,
+    uniqueKey: AdviceUniqueKeys.POTENTIAL_CHANGE_LEVEL + optionIndex,
   };
 }
 
@@ -294,6 +297,7 @@ function amplifyFixedOptionHitRateTemporarilyAdviceTemplate(odds: number, params
     odds,
     optionIndex,
     contradictLastOption: true,
+    uniqueKey: AdviceUniqueKeys.AMPLIFY_FIXED_OPTION_HIT_RATE_TEMPRORARILY + optionIndex,
   };
 }
 
@@ -328,6 +332,7 @@ function amplifyFixedOptionHitRateAdviceTemplate(odds: number, params: AdviceTem
     odds,
     optionIndex,
     contradictLastOption: true,
+    uniqueKey: AdviceUniqueKeys.AMPLIFY_FIXED_OPTION_HIT_RATE + optionIndex,
   };
 }
 
@@ -363,6 +368,7 @@ function amplifyFixedOptionBigHitRateAdviceTemplate(odds: number, params: Advice
     },
     odds,
     optionIndex,
+    uniqueKey: AdviceUniqueKeys.AMPLIFY_FIXED_OPTION_BIG_HIT_RATE + optionIndex,
   };
 }
 
@@ -396,6 +402,7 @@ function amplifyAllBigHitRateAdviceTemplate(odds: number, params: AdviceTemplate
       return { options: result };
     },
     odds,
+    uniqueKey: AdviceUniqueKeys.AMPLIFY_ALL_BIG_HIT_RATE + special,
   };
 }
 
@@ -745,6 +752,7 @@ function exchangeOneLevelBetweenFixedOptionsAdviceTemplate(odds: number, params:
     odds,
     optionIndex,
     subOptionIndex,
+    uniqueKey: AdviceUniqueKeys.EXCHANGE_ONE_LEVEL_BETWEEN_FIXED_OPTIONS + optionIndex + subOptionIndex,
   };
 }
 
@@ -763,6 +771,7 @@ function exchangeLevelBetweenFixedOptionsAdviceTemplate(odds: number, params: Ad
     optionIndex,
     subOptionIndex,
     remainChanceUpperBound,
+    uniqueKey: AdviceUniqueKeys.EXCHANGE_LEVEL_BETWEEN_FIXED_OPTIONS + optionIndex + subOptionIndex,
   };
 }
 
@@ -838,6 +847,7 @@ function discountGoldCostAdviceTemplate(odds: number, params: AdviceTemplateProp
     discount: true,
     effect: (options) => ({ options, discount: percentage }),
     odds,
+    uniqueKey: AdviceUniqueKeys.DISCOUNT_GOLD_COST,
   };
 }
 

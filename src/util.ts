@@ -376,3 +376,8 @@ export function convertLocalTimeString(timeString: string) {
   date.setMinutes(minutes);
   return date.toLocaleTimeString('ko-KR', { hour12: true, hour: 'numeric', minute: 'numeric' });
 }
+
+export const isContradict = (advices: Advice[], uniqueKey: string) => {
+  if (!uniqueKey) return false;
+  return advices.find((advice) => advice.uniqueKey === uniqueKey) !== undefined;
+};

@@ -3,7 +3,7 @@ import { ADVICES } from '../database/advice';
 import { Advice } from '../type/advice';
 import { OptionInstance } from '../type/option';
 import { Sage } from '../type/sage';
-import { checkMaxLevel, gacha, getLockedCount, getLockedOrMaxLevelCount, getMaxLevel, getMinLevel, isExist, isFullStack, playRefineFailureSound, playRefineSuccessSound, replaceOptionPlaceholder, requireLock } from '../util';
+import { checkMaxLevel, gacha, getLockedCount, getLockedOrMaxLevelCount, getMaxLevel, getMinLevel, isContradict, isExist, isFullStack, playRefineFailureSound, playRefineSuccessSound, replaceOptionPlaceholder, requireLock } from '../util';
 
 class AdviceService {
   advices: Advice[] = ADVICES.map((advice, idx) => ({ ...advice, id: idx + 1 }));
@@ -44,6 +44,8 @@ class AdviceService {
       (advice: Advice) => !advice.discount || discountRate < 100,
 
       (advice: Advice) => !advice.contradictLastOption || !isLastOption,
+
+      (advice: Advice) => !isContradict(currentAdvices, advice.uniqueKey),
     ];
 
     if (lockedCount === 0) filterConditions.push((advice: Advice) => advice.type !== 'unlock'); // 봉인된 옵션 없는 경우 봉인 해제 조언 등장 X
