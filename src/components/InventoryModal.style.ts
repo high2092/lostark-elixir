@@ -36,6 +36,8 @@ export const InventoryContainer = styled.div`
 `;
 
 export const Inventory = styled.div`
+  height: max-content;
+
   display: grid;
   grid-template-columns: repeat(${ELIXIRS_PER_LINE}, 1fr);
 
