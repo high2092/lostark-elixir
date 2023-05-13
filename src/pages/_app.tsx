@@ -5,6 +5,7 @@ import { store } from '../store';
 import { Footer } from '../components/Footer';
 import { ModalContainer } from '../components/ModalContainer';
 import Head from 'next/head';
+import { Analytics } from '@vercel/analytics/react';
 
 const App = ({ Component, pageProps }) => {
   return (
@@ -15,6 +16,7 @@ const App = ({ Component, pageProps }) => {
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </Head>
+      <Analytics />
       <Component {...pageProps} />
       <Footer />
       <ModalContainer />
