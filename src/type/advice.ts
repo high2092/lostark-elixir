@@ -5,6 +5,7 @@ export const AdviceUniqueKeys = {
   POTENTIAL_LEVEL_UP: 'potentialLevelUp',
   POTENTIAL_LEVEL_UP_SELECTED_OPTION: 'potentialLevelUpSelectedOption',
   POTENTIAL_CHANGE_LEVEL: 'potentialChangeLevel',
+  POTENTIAL_CHANGE_LEVEL_SELECTED_OPTION: 'potentialChangeLevelSelectedOption',
   AMPLIFY_FIXED_OPTION_HIT_RATE: 'amplifyFixedOptionHitRate',
   AMPLIFY_FIXED_OPTION_HIT_RATE_TEMPRORARILY: 'amplifyFixedOptionHitRateTemporarily',
   AMPLIFY_FIXED_OPTION_BIG_HIT_RATE: 'amplifyFixedOptionBigHitRate',

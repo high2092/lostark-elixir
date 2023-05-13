@@ -281,6 +281,7 @@ function potentialChangeLevelSelectedOptionAdviceTemplate(odds: number, props?: 
     },
     odds,
     exhaust: enterMeditation,
+    uniqueKey: AdviceUniqueKeys.POTENTIAL_CHANGE_LEVEL_SELECTED_OPTION + sage,
   };
 }
 
