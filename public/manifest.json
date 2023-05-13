@@ -4,7 +4,7 @@
   "display": "standalone",
   "scope": "/",
   "start_url": "/",
-  "name": "Lostark Elixir Simulator",
+  "name": "Elixir Simulator",
   "short_name": "Elixir Simulator",
   "icons": [
     {
