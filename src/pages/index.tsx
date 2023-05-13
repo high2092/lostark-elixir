@@ -180,11 +180,11 @@ const Home = () => {
   return (
     <S.Home downsizeHeight={downsizeHeight}>
       <S.MainSection hideBackgroundImage={hideBackgroundImage}>
-        <S.ElixirOptionSection>
+        <S.ElixirOptionSection downsizeHeight={downsizeHeight}>
           {options.map((option, idx) => {
             const { name, part, level, statusText, locked } = option;
             return (
-              <S.ElixirOption key={`elixirOption-${idx}`} onClick={(e) => handleElixirOptionClick(e, idx)} selected={selectedOptionIndex === idx} locked={locked}>
+              <S.ElixirOption key={`elixirOption-${idx}`} onClick={(e) => handleElixirOptionClick(e, idx)} selected={selectedOptionIndex === idx} locked={locked} downsizeHeight={downsizeHeight}>
                 <div css={[CENTERED_FLEX_STYLE, { flex: 2 }]}>{locked ? '봉인' : `${getHitRate(option).toFixed(1)}%`}</div>
                 <div css={{ flex: 7, paddingRight: '1rem', display: 'flex', justifyContent: 'center', flexDirection: 'column' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -201,7 +201,7 @@ const Home = () => {
             );
           })}
           {Array.from({ length: OPTION_COUNT - options.length }).map((_, idx) => (
-            <S.ElixirOption key={`elixirOptionEmpty-${idx}`} />
+            <S.ElixirOption key={`elixirOptionEmpty-${idx}`} downsizeHeight={downsizeHeight} />
           ))}
         </S.ElixirOptionSection>
         <AdviceSection />

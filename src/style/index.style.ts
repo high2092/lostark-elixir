@@ -23,7 +23,7 @@ export const Home = styled.div<{ downsizeHeight: boolean }>`
 const ELIXIR_OPTION_HEIGHT = '9vh';
 const ELIXIR_OPTION_HEIGHT_MOBILE = '6.66vh';
 const ELIXIR_OPTION_SECTION_TOP_FACTOR = 3.6;
-export const ElixirOptionSection = styled.div`
+export const ElixirOptionSection = styled.div<{ downsizeHeight: boolean }>`
   position: absolute;
 
   z-index: 1;
@@ -34,11 +34,11 @@ export const ElixirOptionSection = styled.div`
   transform: translateY(-50%);
 
   @media (max-width: ${MOBILE_CRITERIA_MAX_WIDTH}) {
-    top: calc(${ELIXIR_OPTION_HEIGHT_MOBILE} * ${ELIXIR_OPTION_SECTION_TOP_FACTOR});
+    ${({ downsizeHeight }) => (downsizeHeight ? `top: calc(${ELIXIR_OPTION_HEIGHT_MOBILE} * ${ELIXIR_OPTION_SECTION_TOP_FACTOR});` : '')}
   }
 `;
 
-export const ElixirOption = styled.div<{ selected?: boolean; locked?: boolean }>`
+export const ElixirOption = styled.div<{ selected?: boolean; locked?: boolean; downsizeHeight: boolean }>`
   width: 21rem;
   height: ${ELIXIR_OPTION_HEIGHT};
 
@@ -55,7 +55,7 @@ export const ElixirOption = styled.div<{ selected?: boolean; locked?: boolean }>
 
   @media (max-width: ${MOBILE_CRITERIA_MAX_WIDTH}) {
     width: 18rem;
-    height: ${ELIXIR_OPTION_HEIGHT_MOBILE};
+    ${({ downsizeHeight }) => (downsizeHeight ? `height: ${ELIXIR_OPTION_HEIGHT_MOBILE};` : '')}
   }
 `;
 
