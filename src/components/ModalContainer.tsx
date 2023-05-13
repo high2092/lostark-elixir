@@ -1,6 +1,7 @@
 import { useAppSelector } from '../store';
 import { ModalType, ModalTypes } from '../type/common';
 import { InventoryModal } from './InventoryModal';
+import { IOSPWAHelpModal } from './PWAHelpModal';
 import { PatchNoteModal } from './PatchNoteModal';
 import { SettingModal } from './SettingModal';
 
@@ -12,6 +13,7 @@ const ModalComponents: ModalComponents = {
   [ModalTypes.INVENTORY]: InventoryModal,
   [ModalTypes.SETTING]: SettingModal,
   [ModalTypes.PATCH_NOTE]: PatchNoteModal,
+  [ModalTypes.PWA_HELP_IOS]: IOSPWAHelpModal,
 };
 
 const DEFAULT_MODAL_Z_INDEX = 1000;

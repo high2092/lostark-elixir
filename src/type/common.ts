@@ -13,6 +13,7 @@ export const ModalTypes = {
   INVENTORY: 'inventory',
   SETTING: 'setting',
   PATCH_NOTE: 'patchNote',
+  PWA_HELP_IOS: 'pwaHelpIOS',
 } as const;
 
 export type ModalType = (typeof ModalTypes)[keyof typeof ModalTypes];

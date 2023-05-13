@@ -1,5 +1,7 @@
 import styled from '@emotion/styled';
 import { MODAL_DEFAULT_BORDER_RADIUS } from '../constants';
+import { css } from '@emotion/react';
+import { AnchorStyle } from '../style/common';
 
 export const SettingModal = styled.div`
   width: 30vw;
@@ -11,7 +13,7 @@ export const SettingModal = styled.div`
 
   user-select: none;
 
-  & > * {
+  & > div {
     padding: 0.5rem 0;
   }
 `;
@@ -20,8 +22,5 @@ export const PatchNoteOpenButton = styled.div`
   position: absolute;
   right: 2rem;
 
-  color: #19a7ce;
-  font-size: 0.8rem;
-
-  cursor: pointer;
+  ${AnchorStyle};
 `;

@@ -10,6 +10,10 @@ export interface Patch {
 
 export const PATCH_NOTE: Patch[] = [
   {
+    date: '2023-05-14',
+    details: [{ time: '01:00', description: '모바일 환경에서 앱처럼 구동할 수 있도록 개선되었습니다.' }],
+  },
+  {
     date: '2023-05-13',
     details: [{ time: '01:34', description: '각 현자 간 비슷한 조언이 나오지 않도록 변경되었습니다.' }],
   },

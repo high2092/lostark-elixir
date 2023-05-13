@@ -7,6 +7,8 @@ interface UIState {
   tutorialIndex: number;
   hideBackgroundImage: boolean;
   resetCount: number;
+
+  downsizeHeight: boolean;
 }
 
 const initialState: UIState = {
@@ -15,6 +17,8 @@ const initialState: UIState = {
   tutorialIndex: TUTORIALS.length,
   hideBackgroundImage: false,
   resetCount: 0,
+
+  downsizeHeight: false,
 };
 
 export const uiSlice = createSlice({
@@ -43,7 +47,10 @@ export const uiSlice = createSlice({
     setHideBackgroundImage(state, action: PayloadAction<boolean>) {
       state.hideBackgroundImage = action.payload;
     },
+    setDownsizeHeight(state, action: PayloadAction<boolean>) {
+      state.downsizeHeight = action.payload;
+    },
   },
 });
 
-export const { setSelectedAdviceIndex, setSelectedOptionIndex, initTutorial, getNextTutorial, resetUI, setHideBackgroundImage } = uiSlice.actions;
+export const { setSelectedAdviceIndex, setSelectedOptionIndex, initTutorial, getNextTutorial, resetUI, setHideBackgroundImage, setDownsizeHeight } = uiSlice.actions;

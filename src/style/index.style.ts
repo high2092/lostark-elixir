@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { DEFAULT_BORDER_RADIUS_PX, MOBILE_CRITERIA_MAX_WIDTH } from '../constants';
 
-export const Home = styled.div`
+export const Home = styled.div<{ downsizeHeight: boolean }>`
   width: 100vw;
   height: 100vh;
 
@@ -13,7 +13,7 @@ export const Home = styled.div`
   user-select: none;
 
   @media (max-width: ${MOBILE_CRITERIA_MAX_WIDTH}) {
-    height: 83vh;
+    ${({ downsizeHeight }) => (downsizeHeight ? 'height: 83vh;' : '')}
     * {
       font-size: 0.6rem;
     }
