@@ -33,6 +33,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@reduxjs/toolkit", "virtual:f72184d88f6f99d4574aad8a074bd84266784d1e9f4dedb5e47b294dcafd6c1f1918580966e642ee50ceb880a10ab12fdcdaed4a84049c963de0b13f14eed70e#npm:1.9.5"],\
             ["@types/node", "npm:18.16.1"],\
             ["@types/react", "npm:18.2.0"],\
+            ["@vercel/analytics", "npm:1.0.1"],\
             ["next", "virtual:f72184d88f6f99d4574aad8a074bd84266784d1e9f4dedb5e47b294dcafd6c1f1918580966e642ee50ceb880a10ab12fdcdaed4a84049c963de0b13f14eed70e#npm:13.3.1"],\
             ["react", "npm:18.2.0"],\
             ["react-cookie", "virtual:f72184d88f6f99d4574aad8a074bd84266784d1e9f4dedb5e47b294dcafd6c1f1918580966e642ee50ceb880a10ab12fdcdaed4a84049c963de0b13f14eed70e#npm:4.1.1"],\
@@ -613,6 +614,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["@vercel/analytics", [\
+        ["npm:1.0.1", {\
+          "packageLocation": "./.yarn/cache/@vercel-analytics-npm-1.0.1-545fdc4bb4-6876e1d086.zip/node_modules/@vercel/analytics/",\
+          "packageDependencies": [\
+            ["@vercel/analytics", "npm:1.0.1"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["acorn", [\
         ["npm:8.8.2", {\
           "packageLocation": "./.yarn/cache/acorn-npm-8.8.2-9d518fd7d3-f790b99a1b.zip/node_modules/acorn/",\
@@ -1043,6 +1053,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@reduxjs/toolkit", "virtual:f72184d88f6f99d4574aad8a074bd84266784d1e9f4dedb5e47b294dcafd6c1f1918580966e642ee50ceb880a10ab12fdcdaed4a84049c963de0b13f14eed70e#npm:1.9.5"],\
             ["@types/node", "npm:18.16.1"],\
             ["@types/react", "npm:18.2.0"],\
+            ["@vercel/analytics", "npm:1.0.1"],\
             ["next", "virtual:f72184d88f6f99d4574aad8a074bd84266784d1e9f4dedb5e47b294dcafd6c1f1918580966e642ee50ceb880a10ab12fdcdaed4a84049c963de0b13f14eed70e#npm:13.3.1"],\
             ["react", "npm:18.2.0"],\
             ["react-cookie", "virtual:f72184d88f6f99d4574aad8a074bd84266784d1e9f4dedb5e47b294dcafd6c1f1918580966e642ee50ceb880a10ab12fdcdaed4a84049c963de0b13f14eed70e#npm:4.1.1"],\

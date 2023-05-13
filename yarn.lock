@@ -458,6 +458,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@vercel/analytics@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "@vercel/analytics@npm:1.0.1"
+  checksum: 6876e1d0868e85198d43a17ffec7266cdee5a53d5fc797d3f7e0d64e9d76a2ade3cbdcbc0a665e2ee2389f65dfc80591f7d667e9fc981cdbaa848006cbaefe19
+  languageName: node
+  linkType: hard
+
 "acorn@npm:^8.5.0":
   version: 8.8.2
   resolution: "acorn@npm:8.8.2"
@@ -804,6 +811,7 @@ __metadata:
     "@reduxjs/toolkit": ^1.9.5
     "@types/node": 18.16.1
     "@types/react": 18.2.0
+    "@vercel/analytics": ^1.0.1
     next: ^13.3.1
     react: ^18.2.0
     react-cookie: ^4.1.1
