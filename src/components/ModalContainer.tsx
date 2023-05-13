@@ -1,7 +1,7 @@
 import { useAppSelector } from '../store';
 import { ModalType, ModalTypes } from '../type/common';
 import { InventoryModal } from './InventoryModal';
-import { IOSPWAHelpModal } from './PWAHelpModal';
+import { PWAHelpModal } from './PWAHelpModal';
 import { PatchNoteModal } from './PatchNoteModal';
 import { SettingModal } from './SettingModal';
 
@@ -13,7 +13,7 @@ const ModalComponents: ModalComponents = {
   [ModalTypes.INVENTORY]: InventoryModal,
   [ModalTypes.SETTING]: SettingModal,
   [ModalTypes.PATCH_NOTE]: PatchNoteModal,
-  [ModalTypes.PWA_HELP_IOS]: IOSPWAHelpModal,
+  [ModalTypes.PWA_HELP_IOS]: PWAHelpModal,
 };
 
 const DEFAULT_MODAL_Z_INDEX = 1000;
@@ -23,9 +23,9 @@ export const ModalContainer = () => {
 
   return (
     <div onClick={(e) => e.stopPropagation()}>
-      {modals.map((type, idx) => {
+      {modals.map(({ type, props }, idx) => {
         const ModalComponent = ModalComponents[type];
-        return <ModalComponent key={`modal-${type}-${idx}`} zIndex={DEFAULT_MODAL_Z_INDEX + idx} />;
+        return <ModalComponent key={`modal-${type}-${idx}`} zIndex={DEFAULT_MODAL_Z_INDEX + idx} {...props} />;
       })}
     </div>
   );

@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import * as S from './SettingModal.style';
-import { ModalTypes, PreparedModalProps } from '../type/common';
+import { PWAPlatformTypes, ModalTypes, PreparedModalProps } from '../type/common';
 import { CenteredModal } from './Modal';
 import { CheckBox } from './CheckBox';
 import { useAppDispatch, useAppSelector } from '../store';
@@ -23,7 +23,7 @@ function SettingModalContent() {
   const dispatch = useAppDispatch();
 
   const handlePatchNoteOpenButtonClick = () => {
-    dispatch(openModal(ModalTypes.PATCH_NOTE));
+    dispatch(openModal({ type: ModalTypes.PATCH_NOTE }));
   };
 
   return (
@@ -44,8 +44,14 @@ function SettingModalContent() {
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         <div>앱 설치 방법</div>
         <div style={{ flex: 1, display: 'flex', justifyContent: 'space-around', alignItems: 'center' }}>
-          <span css={AnchorStyle} onClick={() => dispatch(openModal(ModalTypes.PWA_HELP_IOS))}>
+          <span css={AnchorStyle} onClick={() => dispatch(openModal({ type: ModalTypes.PWA_HELP_IOS, props: { type: PWAPlatformTypes.IOS, length: 3 } }))}>
             iOS
+          </span>
+          <span css={AnchorStyle} onClick={() => dispatch(openModal({ type: ModalTypes.PWA_HELP_IOS, props: { type: PWAPlatformTypes.ANDROID, length: 2 } }))}>
+            Android
+          </span>
+          <span css={AnchorStyle} onClick={() => dispatch(openModal({ type: ModalTypes.PWA_HELP_IOS, props: { type: PWAPlatformTypes.PC, length: 2 } }))}>
+            PC
           </span>
         </div>
       </div>

@@ -44,11 +44,11 @@ export const LeftTopSection = () => {
   };
 
   const handleInventoryButtonClick = () => {
-    dispatch(openModal(ModalTypes.INVENTORY));
+    dispatch(openModal({ type: ModalTypes.INVENTORY }));
   };
 
   const handleSettingIconClick = () => {
-    dispatch(openModal(ModalTypes.SETTING));
+    dispatch(openModal({ type: ModalTypes.SETTING }));
   };
 
   return (

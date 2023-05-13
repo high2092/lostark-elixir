@@ -105,7 +105,7 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    if (loaded) dispatch(openModal(ModalTypes.PATCH_NOTE));
+    if (loaded) dispatch(openModal({ type: ModalTypes.PATCH_NOTE }));
   }, [loaded]);
 
   useEffect(() => {

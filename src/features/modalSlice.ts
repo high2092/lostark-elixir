@@ -1,8 +1,13 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { ModalType } from '../type/common';
 
+interface ModalMetadata {
+  type: ModalType;
+  props?: Record<string, any>;
+}
+
 interface ModalState {
-  modals: ModalType[];
+  modals: ModalMetadata[];
 }
 
 const initialState: ModalState = {
@@ -13,7 +18,7 @@ export const modalSlice = createSlice({
   name: 'modal',
   initialState,
   reducers: {
-    openModal(state, action: PayloadAction<ModalType>) {
+    openModal(state, action: PayloadAction<ModalMetadata>) {
       const type = action.payload;
       state.modals.push(type);
     },

@@ -21,3 +21,11 @@ export type ModalType = (typeof ModalTypes)[keyof typeof ModalTypes];
 export interface PreparedModalProps {
   zIndex: number;
 }
+
+export const PWAPlatformTypes = {
+  ANDROID: 'android',
+  IOS: 'ios',
+  PC: 'pc',
+} as const;
+
+export type PWAPlayformType = (typeof PWAPlatformTypes)[keyof typeof PWAPlatformTypes];
