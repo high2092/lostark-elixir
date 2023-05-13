@@ -15,9 +15,9 @@ function PatchNoteModalContent() {
       <S.PatchNoteTitle>패치 노트</S.PatchNoteTitle>
       <S.PatchNote>
         {PATCH_NOTE.map(({ date, details }) => (
-          <S.Patch>
+          <S.Patch key={`patch-${date}`}>
             <S.PatchDate>{date}</S.PatchDate>
-            <div key={`patch-${date}`}>
+            <div>
               {details.map((detail, j) => (
                 <PatchDetail key={`patchDetail-${date}-${j}`} {...detail} />
               ))}
