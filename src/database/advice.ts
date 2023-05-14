@@ -133,6 +133,8 @@ export const ADVICES: AdviceBody[] = [
   discountGoldCostAdviceTemplate(1, { percentage: 20 }),
   discountGoldCostAdviceTemplate(1, { percentage: 40 }),
   discountGoldCostAdviceTemplate(1, { percentage: 100, special: SageTypesTypes.ORDER }),
+
+  resetAdviceTemplate(1),
 ];
 
 function potentialLevelUpFixedOptionAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
@@ -849,6 +851,16 @@ function discountGoldCostAdviceTemplate(odds: number, params: AdviceTemplateProp
     effect: (options) => ({ options, discount: percentage }),
     odds,
     uniqueKey: AdviceUniqueKeys.DISCOUNT_GOLD_COST,
+  };
+}
+
+function resetAdviceTemplate(odds: number): AdviceBody {
+  return {
+    name: `${P.흐름이좋지않군}. 엘릭서의 효과와 단계를 초기화${P.하겠네2}.`,
+    type: 'util',
+    special: SageTypesTypes.CHAOS,
+    effect: (options) => ({ options, reset: true }),
+    odds,
   };
 }
 

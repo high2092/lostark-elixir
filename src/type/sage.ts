@@ -46,6 +46,8 @@ export const DialogueEndTypes = {
   할걸세: '할걸세',
   않을걸세: '않을걸세',
   바라네: '바라네',
+  흐름이좋지않군: '흐름이좋지않군',
+  하겠네2: '하겠네2',
 } as const;
 
 export type DialogueEndTypes = (typeof DialogueEndTypes)[keyof typeof DialogueEndTypes];

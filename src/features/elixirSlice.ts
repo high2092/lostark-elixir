@@ -139,12 +139,7 @@ export const elixirSlice = createSlice({
     },
 
     resetElixir(state) {
-      optionService.reset();
-      adviceService.reset();
-      Object.entries(initialState).forEach(([key, value]) => {
-        if (key === ElixirStateKeys.MUTE_SOUND_EFFECT) return;
-        state[key] = value;
-      });
+      resetElixirInternal(state);
     },
 
     initElixir(state) {
@@ -190,13 +185,19 @@ function postprocessAlchemyInternal(state: ElixirState) {
 function postprocessAdviceInternal(state: ElixirState, action: PayloadAction<{ selectedAdviceIndex: number }>) {
   const { selectedAdviceIndex } = action.payload;
 
-  const { options, extraTarget, extraAlchemy, extraChanceConsume, saveChance, enterMeditation, addRerollChance, discount } = state.adviceResultBuffer;
+  const { options, extraTarget, extraAlchemy, extraChanceConsume, saveChance, enterMeditation, addRerollChance, discount, reset } = state.adviceResultBuffer;
+
   const { advice } = state.sages[selectedAdviceIndex];
 
   if (!state.muteSoundEffect) {
     const levelUp = options.reduce((acc, cur, i) => acc || cur.level - state.options[i].level > 0, false);
     if (advice.type !== 'potential' || levelUp) playRefineSuccessSound();
     else playRefineFailureSound();
+  }
+
+  if (reset) {
+    resetElixirInternal(state);
+    return;
   }
 
   state.options = options;
@@ -224,6 +225,15 @@ function postprocessAdviceInternal(state: ElixirState, action: PayloadAction<{ s
   } else {
     state.alchemyStatus = AlchemyStatuses.ALCHEMY;
   }
+}
+
+function resetElixirInternal(state: ElixirState) {
+  optionService.reset();
+  adviceService.reset();
+  Object.entries(initialState).forEach(([key, value]) => {
+    if (key === ElixirStateKeys.MUTE_SOUND_EFFECT) return;
+    state[key] = value;
+  });
 }
 
 export const { pickOption, reroll, pickAdvice, alchemy, clearStatusText, resetElixir, initElixir, postprocessAlchemy, postprocessAdvice, setMuteSoundEffect } = elixirSlice.actions;

@@ -11,7 +11,10 @@ export interface Patch {
 export const PATCH_NOTE: Patch[] = [
   {
     date: '2023-05-14',
-    details: [{ time: '01:22', description: '모바일 환경에서 앱처럼 구동할 수 있도록 개선되었습니다. 설정 창에서 앱 설치 방법을 확인하실 수 있습니다.' }],
+    details: [
+      { time: '16:34', description: '혼돈 6스택 조언에 <엘릭서 초기화> 조언이 추가되었습니다.' },
+      { time: '01:22', description: '모바일 환경에서 앱처럼 구동할 수 있도록 개선되었습니다. 설정 창에서 앱 설치 방법을 확인하실 수 있습니다.' },
+    ],
   },
   {
     date: '2023-05-13',

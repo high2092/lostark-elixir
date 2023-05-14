@@ -57,10 +57,11 @@ export type AdviceEffect = (options: OptionInstance[], optionIdx?: number) => Ad
 
 export type AdviceType = 'potential' | 'util' | 'lock' | 'utillock' | 'unlock';
 
-// 연성 추가 효과
+// 추가 효과
 export interface AdviceAfterEffect {
   extraTarget?: number;
   extraAlchemy?: number;
   saveChance?: boolean;
   extraChanceConsume?: number;
+  reset?: boolean;
 }

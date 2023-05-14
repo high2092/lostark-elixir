@@ -47,6 +47,8 @@ export const Placeholders: Placeholders = {
   할걸세: '?{할걸세}',
   않을걸세: '?{않을걸세}',
   바라네: '?{바라네}',
+  흐름이좋지않군: '?{흐름이좋지않군}',
+  하겠네2: '?{하겠네2}',
 };
 
 export const SAGE_TYPE_STACK_SIZE = '1.4vw';
