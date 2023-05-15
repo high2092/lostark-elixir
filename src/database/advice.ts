@@ -62,10 +62,11 @@ export const ADVICES: AdviceBody[] = [
   changeSelectedOptionToFixedLevelAdviceTemplate(0.5, { n: 3, remainChanceUpperBound: 6, remainChanceLowerBound: 4 }),
   //
 
-  ...createFixedOptionAdvices(1, amplifyFixedOptionHitRateTemporarilyAdviceTemplate, { percentage: 100, name: `이번 연성에서 ${P.OPTION} 효과를 연성해${P.주겠네}.` }),
-  ...createFixedOptionAdvices(1, amplifyFixedOptionHitRateTemporarilyAdviceTemplate, { percentage: 70 }),
-  ...createFixedOptionAdvices(1, amplifyFixedOptionHitRateTemporarilyAdviceTemplate, { percentage: 30 }),
-  ...createFixedOptionAdvices(1, amplifyFixedOptionHitRateTemporarilyAdviceTemplate, { percentage: -20 }),
+  ...createFixedOptionAdvices(0.8, amplifyFixedOptionHitRateTemporarilyAdviceTemplate, { percentage: 100, name: `이번 연성에서 ${P.OPTION} 효과를 연성해${P.주겠네}.` }),
+  ...createFixedOptionAdvices(0.8, amplifyFixedOptionHitRateTemporarilyAdviceTemplate, { percentage: 70 }),
+  ...createFixedOptionAdvices(0.8, amplifyFixedOptionHitRateTemporarilyAdviceTemplate, { percentage: 35 }),
+  ...createFixedOptionAdvices(0.8, amplifyFixedOptionHitRateTemporarilyAdviceTemplate, { percentage: -20 }),
+  ...createFixedOptionAdvices(0.8, amplifyFixedOptionHitRateTemporarilyAdviceTemplate, { percentage: -40 }),
 
   ...createFixedOptionAdvices(1, amplifyFixedOptionHitRateAdviceTemplate, { percentage: 5 }),
   ...createFixedOptionAdvices(1, amplifyFixedOptionHitRateAdviceTemplate, { percentage: 10 }),
