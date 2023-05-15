@@ -88,7 +88,7 @@ export const ADVICES: AdviceBody[] = [
   potentialChangeLevelSelectedOptionAdviceTemplate(3, { maxRisk: 4, maxReturn: 5, special: SageTypesTypes.CHAOS, sage: SageKeys.C, enterMeditation: true }),
 
   amplifySelectedHitRateAdviceTemplate(1, { percentage: 15, special: SageTypesTypes.ORDER }),
-  amplifySelectedHitRateAdviceTemplate(1, { percentage: 20, special: SageTypesTypes.ORDER }),
+  amplifySelectedHitRateAdviceTemplate(1, { percentage: -20, special: SageTypesTypes.ORDER }),
 
   addRerollChanceAdviceTemplate(1, { addRerollChance: 1, special: SageTypesTypes.ORDER }),
   addRerollChanceAdviceTemplate(1, { addRerollChance: 2, special: SageTypesTypes.ORDER }),
@@ -96,7 +96,7 @@ export const ADVICES: AdviceBody[] = [
   moveUpLevelAdviceTemplate(2, { special: SageTypesTypes.CHAOS }),
   moveDownLevelAdviceTemplate(2, { special: SageTypesTypes.CHAOS }),
 
-  lockRandomOptionAdviceTemplate(0.5, { remainChanceLowerBound: 8, extraChanceConsume: 1 }),
+  lockRandomOptionAdviceTemplate(0.5, { remainChanceLowerBound: 8 }),
   ...createFixedOptionAdvices(0.5, lockFixedOptionAdviceTemplate, { type: 'utillock', remainChanceLowerBound: 8, extraChanceConsume: 1 }),
 
   unlockRandomOptionAndLockOtherOptionAdviceTemplate(2),
@@ -121,7 +121,7 @@ export const ADVICES: AdviceBody[] = [
 
   amplifySelectedOptionHitRateTemporarilyAdviceTemplate(1, { extraChanceConsume: 1, extraAlchemy: 1, remainChanceUpperBound: 11 }),
 
-  addExtraTargetAdviceTemplate(1, { extraTarget: 1, extraChanceConsume: 1, remainChanceUpperBound: 11 }),
+  addExtraTargetAdviceTemplate(1, { extraTarget: 1, remainChanceUpperBound: 11 }),
 
   extraAlchemyAdviceTemplate(0.5, { extraAlchemy: 1 }),
   extraAlchemyAdviceTemplate(1, { extraAlchemy: 2, extraChanceConsume: 1, remainChanceUpperBound: 11 }),
