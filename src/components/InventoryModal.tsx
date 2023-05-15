@@ -1,16 +1,18 @@
 import * as S from './InventoryModal.style';
 import { PreparedModalProps } from '../type/common';
 import { CenteredModal } from './Modal';
-import { useAppSelector } from '../store';
+import { useAppDispatch, useAppSelector } from '../store';
 import { ElixirIcon } from './ElixirIcon';
 import { useEffect, useState } from 'react';
 import { OptionResult } from '../type/option';
 import { cutThousandUnit, getActivationByLevel, getOptionName } from '../util';
 import { IconButton } from './common/IconButton';
 import { SwitchIcon } from './SwitchIcon';
+import { closeModal } from '../features/modalSlice';
 
 export const InventoryModal = ({ zIndex }: PreparedModalProps) => {
-  return <CenteredModal content={<InventoryModalContent />} zIndex={zIndex} />;
+  const dispatch = useAppDispatch();
+  return <CenteredModal content={<InventoryModalContent />} zIndex={zIndex} onClick={() => dispatch(closeModal())} />;
 };
 
 const InventoryModalContent = () => {
@@ -40,7 +42,7 @@ const InventoryModalContent = () => {
 
   return (
     <S.InventoryModal>
-      <S.InventoryContainer>
+      <S.InventoryContainer onClick={(e) => e.stopPropagation()}>
         {listView ? (
           <S.ListViewInventory>
             {elixirs.map((elixir, i) => (
@@ -73,7 +75,7 @@ const InventoryModalContent = () => {
       </S.InventoryContainer>
       <S.ElixirInfoModalContainer>
         {elixirs[hoveredIndex] !== undefined && (
-          <S.ElixirInfoModal>
+          <S.ElixirInfoModal onClick={(e) => e.stopPropagation()}>
             {elixirs[hoveredIndex].options.map((elixir, idx) => (
               <ElixirOption key={`elixirInfo-${hoveredIndex}-option-${idx}`} {...elixir} />
             ))}
