@@ -69,7 +69,7 @@ export const MainSection = styled.div<{ hideBackgroundImage: boolean }>`
   width: 100%;
   height: ${MAIN_SECTION_HEIGHT_PERCENT}%;
 
-  background: ${({ hideBackgroundImage }) => (hideBackgroundImage ? '#333333' : `url('image/background.png')`)};
+  background: ${({ hideBackgroundImage }) => (hideBackgroundImage ? '#333333' : `url('image/background.webp')`)};
   background-size: cover;
   background-position: center center;
 `;
