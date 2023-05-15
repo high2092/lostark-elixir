@@ -41,8 +41,8 @@ export const ADVICES: AdviceBody[] = [
   potentialChangeLevelSelectedOptionAdviceTemplate(1, { maxRisk: 1, maxReturn: 2 }),
 
   // 확정 레벨업, 리스크 O
-  levelUpHighestOptionAdviceTemplate(1, { maxReturn: 1, maxRisk: 2 }),
-  levelUpLowestOptionAdviceTemplate(1),
+  levelUpHighestOptionAdviceTemplate(1, { maxReturn: 1, maxRisk: 2, remainChanceUpperBound: 12 }),
+  levelUpLowestOptionAdviceTemplate(1, { remainChanceUpperBound: 12 }),
   levelUpRandomOptionAdviceTemplate(1, { n: 1 }),
   levelUpSelectedOptionAdviceTemplate(1, { n: 2, special: SageTypesTypes.ORDER }),
   levelUpHighestOptionAdviceTemplate(1, { maxReturn: 1, special: SageTypesTypes.ORDER }),
@@ -189,12 +189,13 @@ function potentialChangeLevelFixedOptionAdviceTemplate(odds: number, params: Adv
 }
 
 function levelUpHighestOptionAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
-  const { maxReturn, maxRisk, special } = params;
+  const { maxReturn, maxRisk, special, remainChanceUpperBound } = params;
   return {
     name: `최고 단계 효과를 ${maxReturn} 올려${P.주겠네}.${maxRisk ? ` ${getOtherOptionLevelDownText(maxRisk)}` : ''} `,
     type: 'util',
     special,
     contradictMaxLevelExists: true,
+    remainChanceUpperBound,
     effect: (options) => {
       const result = options.map((option) => ({ ...option }));
       const maxLevel = getMaxLevel(result);
@@ -208,10 +209,12 @@ function levelUpHighestOptionAdviceTemplate(odds: number, params: AdviceTemplate
   };
 }
 
-function levelUpLowestOptionAdviceTemplate(odds: number): AdviceBody {
+function levelUpLowestOptionAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
+  const { remainChanceUpperBound } = params;
   return {
     name: `최하 단계 효과를 +1 올려${P.주겠네}. 대신 최고 단계의 효과가 2 감소${P.할걸세}.`,
     type: 'util',
+    remainChanceUpperBound,
     effect: (options) => {
       const result = options.map((option) => ({ ...option }));
       const minLevel = getMinLevel(result);
