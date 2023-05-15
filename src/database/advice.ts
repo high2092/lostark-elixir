@@ -583,7 +583,7 @@ function lockSelectedOptionAndLevelUpRandomOptionAdviceTemplate(odds: number, pa
       const result = options.map((option) => ({ ...option }));
       lockOption(result, optionIndex);
 
-      const [levelUpTargetIndex] = gacha(result);
+      const [levelUpTargetIndex] = gacha(result, { filterConditions: [(option) => option.level < MAX_ACTIVE] });
       applySafeResult(result[levelUpTargetIndex], { level: result[levelUpTargetIndex].level + 1 });
 
       return { options: result };
