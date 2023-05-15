@@ -492,12 +492,12 @@ function moveDownLevelAdviceTemplate(odds: number, params: AdviceTemplateProps):
 }
 
 function lockRandomOptionAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
-  const { extraChanceConsume, saveChance, special, remainChanceUpperBound } = params;
+  const { extraChanceConsume, saveChance, special, remainChanceLowerBound } = params;
   return {
     name: `임의의 효과 하나를 봉인${P.하겠네}.${extraChanceConsume ? ` 다만, 기회를 ${1 + extraChanceConsume}번 소모${P.할걸세}.` : ''}${saveChance ? ` 이번 연성은 기회를 소모하지 ${P.않을걸세}.` : ''}`,
     type: 'utillock',
     special,
-    remainChanceUpperBound,
+    remainChanceLowerBound,
     effect: (options) => {
       const result = options.map((option) => ({ ...option }));
       const [idx] = gacha(result);
