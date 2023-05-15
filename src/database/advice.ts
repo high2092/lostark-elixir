@@ -122,6 +122,7 @@ export const ADVICES: AdviceBody[] = [
   amplifySelectedOptionHitRateTemporarilyAdviceTemplate(1, { extraChanceConsume: 1, extraAlchemy: 1, remainChanceUpperBound: 11 }),
 
   addExtraTargetAdviceTemplate(1, { extraTarget: 1, remainChanceUpperBound: 11 }),
+  addExtraTargetAdviceTemplate(1, { extraTarget: 2, extraChanceConsume: 1, remainChanceUpperBound: 11 }),
 
   extraAlchemyAdviceTemplate(0.5, { extraAlchemy: 1 }),
   extraAlchemyAdviceTemplate(1, { extraAlchemy: 2, extraChanceConsume: 1, remainChanceUpperBound: 11 }),
