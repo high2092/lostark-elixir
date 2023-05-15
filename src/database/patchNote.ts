@@ -9,6 +9,7 @@ export interface Patch {
 }
 
 export const PATCH_NOTE: Patch[] = [
+  { date: '2023-05-15', details: [{ time: '16:20', description: '<최고 단계 상승 + 다른 단계 하락> 조언이 연성 초반에 나오지 않도록 변경되었습니다.' }] },
   {
     date: '2023-05-14',
     details: [

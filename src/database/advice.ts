@@ -111,8 +111,8 @@ export const ADVICES: AdviceBody[] = [
   redistributeAdviceTemplate(2, { special: SageTypesTypes.CHAOS }),
   exchangeOddEvenAdviceTemplate(0.5, { odd: true, n: 1, remainChanceUpperBound: 12 }),
   exchangeOddEvenAdviceTemplate(0.5, { odd: false, n: 1, remainChanceUpperBound: 12 }),
-  ...createFixedSubOptionAdvices(1, exchangeOneLevelBetweenFixedOptionsAdviceTemplate, { n: 1 }),
-  ...createFixedSubOptionAdvices(1, exchangeOneLevelBetweenFixedOptionsAdviceTemplate, { n: 2 }),
+  ...createFixedSubOptionAdvices(1, exchangeOneLevelBetweenFixedOptionsAdviceTemplate, { n: 1, remainChanceUpperBound: 12 }),
+  ...createFixedSubOptionAdvices(1, exchangeOneLevelBetweenFixedOptionsAdviceTemplate, { n: 2, remainChanceUpperBound: 12 }),
   ...createFixedSubOptionAdvices(0.5, exchangeLevelBetweenFixedOptionsAdviceTemplate, { remainChanceUpperBound: 12 }),
   ...createFixedSubOptionAdvices(0.5, exchangeLevelBetweenFixedOptionsAdviceTemplate, { n: 1, remainChanceUpperBound: 12 }),
   exchangeLevelBetweenMaxMinAdviceTemplate(0.5, { remainChanceUpperBound: 12 }),
@@ -742,7 +742,7 @@ function amplifyOddOrEvenBigHitRateAdviceTemplate(odds: number, params: AdviceTe
 }
 
 function exchangeOneLevelBetweenFixedOptionsAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
-  const { n, optionIndex, subOptionIndex } = params;
+  const { n, optionIndex, subOptionIndex, remainChanceUpperBound } = params;
   return {
     name: `${P.OPTION} 효과의 단계를 +1 올려${P.주겠네}. 대신 ${P.SUB_OPTION} 효과의 단계가 ${n} 감소${P.할걸세}.`,
     type: 'util',
@@ -756,6 +756,7 @@ function exchangeOneLevelBetweenFixedOptionsAdviceTemplate(odds: number, params:
     optionIndex,
     subOptionIndex,
     uniqueKey: AdviceUniqueKeys.EXCHANGE_ONE_LEVEL_BETWEEN_FIXED_OPTIONS + optionIndex + subOptionIndex,
+    remainChanceUpperBound,
   };
 }
 
