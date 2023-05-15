@@ -23,6 +23,17 @@ const nextConfig = withPWA({
 
     return config;
   },
+  headers: async () => [
+    {
+      source: '/sound/(.*)\\.mp3',
+      headers: [
+        {
+          key: 'Cache-Control',
+          value: 'public, max-age=31536000',
+        },
+      ],
+    },
+  ],
 });
 
 module.exports = nextConfig;
