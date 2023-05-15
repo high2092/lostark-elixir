@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import * as S from './PWAHelpModal.style';
-import { PWAPlayformType, PreparedModalProps } from '../type/common';
+import { PWAPlatformTypes, PWAPlayformType, PreparedModalProps } from '../type/common';
 import { CenteredModal } from './Modal';
 import { useState } from 'react';
 import { AnchorStyle } from '../style/common';
@@ -15,8 +15,15 @@ export const PWAHelpModal = ({ zIndex, type, length }: PWAHelpModalProps) => {
   return <CenteredModal content={<PWAHelpModalContent {...props} />} zIndex={zIndex} />;
 };
 
-const PWAHelpModalContent = ({ type, length }) => {
+interface PWAHelpModalContentProps {
+  type: PWAPlayformType;
+  length: number;
+}
+
+const PWAHelpModalContent = ({ type, length }: PWAHelpModalContentProps) => {
   const [step, setStep] = useState(1);
+
+  const ext = type == PWAPlatformTypes.PC ? 'webp' : 'png';
 
   const handlePrevButtonClick = () => {
     if (step <= 1) return;
@@ -31,7 +38,7 @@ const PWAHelpModalContent = ({ type, length }) => {
   return (
     <S.PWAHelpModal>
       <div>
-        <S.Image src={`/image/pwa-help/${type}/${step}.png`} />
+        <S.Image src={`/image/pwa-help/${type}/${step}.${ext}`} />
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           {step > 1 ? (
             <div css={AnchorStyle} onClick={handlePrevButtonClick}>

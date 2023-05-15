@@ -68,8 +68,8 @@ export const IMAGE_RESOURCE_URL_LIST = [
   '/image/pwa-help/ios/3.png',
   '/image/pwa-help/android/1.png',
   '/image/pwa-help/android/2.png',
-  '/image/pwa-help/pc/1.png',
-  '/image/pwa-help/pc/2.png',
+  '/image/pwa-help/pc/1.webp',
+  '/image/pwa-help/pc/2.webp',
 ];
 
 export const VISITED_COOKIE_KEY = 'LOSTARK_ELIXIR_VISITED';
