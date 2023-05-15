@@ -290,10 +290,14 @@ export function changeHitRate(idx: number, hitRateDiff: number, options: OptionI
   const { lock, temp } = props;
   const remainHitRateSum = options.reduce((acc, cur, i) => (idx === i || cur.locked || cur.isMaxLevel ? acc : acc + cur.hitRate), 0);
   const hitRateKey = temp ? 'tempHitRate' : 'hitRate';
+
+  const target = options[idx];
+  const actualHitRateDiff = getSafeResult({ [hitRateKey]: target.hitRate + hitRateDiff })[hitRateKey] - target.hitRate;
+
   options.forEach((option, i) => {
     if (option.isMaxLevel) return;
-    if (idx === i && !lock) applySafeResult(option, { [hitRateKey]: option.hitRate + hitRateDiff });
-    else applySafeResult(option, { [hitRateKey]: option.hitRate - hitRateDiff * (option.hitRate / remainHitRateSum) });
+    if (idx === i && !lock) applySafeResult(option, { [hitRateKey]: option.hitRate + actualHitRateDiff });
+    else applySafeResult(option, { [hitRateKey]: option.hitRate - actualHitRateDiff * (option.hitRate / remainHitRateSum) });
   });
 }
 
