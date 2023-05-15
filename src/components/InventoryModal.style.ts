@@ -52,7 +52,7 @@ export const Elixir = styled.div<{ hover: boolean }>`
 
 const LIST_VIEW_ELIXIR_BORDER = 'solid 1px #bbbbbb';
 export const ListViewElixir = styled.div`
-  padding: 2vw 0;
+  padding: 0.8rem 0;
   margin: 0.5vw 0;
 
   border-radius: 5px;
