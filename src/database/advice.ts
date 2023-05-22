@@ -77,7 +77,7 @@ export const ADVICES: AdviceBody[] = [
   ...createFixedOptionAdvices(1, amplifyFixedOptionBigHitRateTemporarilyAdviceTemplate, { percentage: 100 }),
 
   amplifyAllBigHitRateAdviceTemplate(0.5, { percentage: 5 }),
-  amplifyAllBigHitRateAdviceTemplate(0.5, { percentage: 10 }),
+  amplifyAllBigHitRateAdviceTemplate(0.375, { percentage: 10 }),
   amplifyAllBigHitRateAdviceTemplate(1, { percentage: 15, special: SageTypesTypes.ORDER }),
   amplifyOddOrEvenBigHitRateAdviceTemplate(1, { odd: true, percentage: 15, special: SageTypesTypes.ORDER }),
   amplifyOddOrEvenBigHitRateAdviceTemplate(1, { odd: false, percentage: 15, special: SageTypesTypes.ORDER }),
