@@ -137,6 +137,10 @@ export const ADVICES: AdviceBody[] = [
   discountGoldCostAdviceTemplate(1, { percentage: 100, special: SageTypesTypes.ORDER }),
 
   resetAdviceTemplate(1),
+
+  redistributeSelectedOptionAdvice(1),
+  redistributeHighestOptionAdvice(1),
+  redistributeLowestOptionAdvice(1),
 ];
 
 function potentialLevelUpFixedOptionAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
@@ -566,6 +570,59 @@ function lockSelectedOptionAndRedistributeAdviceTemplate(odds: number, params: A
       const result = options.map((option) => ({ ...option }));
       lockOption(result, optionIndex);
       redistribute(result);
+      return { options: result };
+    },
+    odds,
+  };
+}
+
+function redistributeSelectedOptionAdvice(odds: number): AdviceBody {
+  return {
+    name: `선택한 효과의 단계를 모두 다른 효과에 분배${P.하겠네}.`,
+    type: 'util',
+    special: SageTypesTypes.CHAOS,
+    effect: (options, optionIndex) => {
+      validateOptionIndex(optionIndex);
+      const result = options.map((option) => ({ ...option }));
+      const candidate = result.filter((_, idx) => idx !== optionIndex);
+      result[optionIndex].level = 0;
+      redistribute(candidate, options[optionIndex].level);
+      return { options: result };
+    },
+    odds,
+  };
+}
+
+function redistributeLowestOptionAdvice(odds: number): AdviceBody {
+  return {
+    name: `최하 단계 효과 1개의 단계를 모두 다른 효과에 분배${P.하겠네}.`,
+    type: 'util',
+    special: SageTypesTypes.CHAOS,
+    effect: (options) => {
+      const result = options.map((option) => ({ ...option }));
+      const minLevel = getMinLevel(result);
+      const [optionIndex] = gacha(result, { filterConditions: [({ level }) => level === minLevel] });
+      const candidate = result.filter((_, idx) => idx !== optionIndex);
+      result[optionIndex].level = 0;
+      redistribute(candidate, options[optionIndex].level);
+      return { options: result };
+    },
+    odds,
+  };
+}
+
+function redistributeHighestOptionAdvice(odds: number): AdviceBody {
+  return {
+    name: `최고 단계 효과 1개의 단계를 모두 다른 효과에 분배${P.하겠네}.`,
+    type: 'util',
+    special: SageTypesTypes.CHAOS,
+    effect: (options) => {
+      const result = options.map((option) => ({ ...option }));
+      const maxLevel = getMaxLevel(result);
+      const [optionIndex] = gacha(result, { filterConditions: [({ level }) => level === maxLevel] });
+      const candidate = result.filter((_, idx) => idx !== optionIndex);
+      result[optionIndex].level = 0;
+      redistribute(candidate, options[optionIndex].level);
       return { options: result };
     },
     odds,
