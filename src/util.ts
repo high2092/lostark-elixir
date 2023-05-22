@@ -245,27 +245,22 @@ export function applySafeResult(option: OptionInstance, props: ApplyAdviceProps)
   if (tempHitRate !== undefined) option.tempHitRate = tempHitRate;
 }
 
-export function redistribute(options: OptionInstance[]) {
-  const lockedCount = getLockedCount(options);
-  let levelSum = options.reduce((acc, cur) => {
-    if (!cur.locked) acc += cur.level;
-    return acc;
-  }, 0);
-
-  // TODO: fix
-  const shares = Array.from({ length: OPTION_COUNT - lockedCount }).map((_) => 0);
-
-  while (levelSum) {
-    const idx = generateRandomInt(0, shares.length);
-    shares[idx]++;
-    levelSum--;
+export function redistribute(options: OptionInstance[], levelSum?: number) {
+  if (levelSum === undefined) {
+    levelSum = options.reduce((acc, cur) => {
+      if (!cur.locked) {
+        acc += cur.level;
+        cur.level = 0;
+      }
+      return acc;
+    }, 0);
   }
 
-  let i = 0;
-  options.forEach((option) => {
-    if (option.locked) return;
-    applySafeResult(option, { level: shares[i++] });
-  });
+  while (levelSum) {
+    const [idx] = gacha(options, { filterConditions: [(option: OptionInstance) => option.level !== MAX_ACTIVE] });
+    options[idx].level++;
+    levelSum--;
+  }
 }
 
 export function lockOption(options: OptionInstance[], idx: number) {
