@@ -10,6 +10,10 @@ export interface Patch {
 
 export const PATCH_NOTE: Patch[] = [
   {
+    date: '2023-06-12',
+    details: [{ time: '21:37', description: '<특정 효과 봉인>,  <임의 효과 봉인> 조언이 연성 초반에 나오지 않도록 변경되었습니다.' }],
+  },
+  {
     date: '2023-05-23',
     details: [
       { time: '00:39', description: '<남은 연성 대성공 확률 10% 증가> 조언 등장 확률이 하향 조정되었습니다.' },

@@ -96,8 +96,8 @@ export const ADVICES: AdviceBody[] = [
   moveUpLevelAdviceTemplate(2, { special: SageTypesTypes.CHAOS }),
   moveDownLevelAdviceTemplate(2, { special: SageTypesTypes.CHAOS }),
 
-  lockRandomOptionAdviceTemplate(0.5, { remainChanceLowerBound: 8 }),
-  ...createFixedOptionAdvices(0.5, lockFixedOptionAdviceTemplate, { type: 'utillock', remainChanceLowerBound: 8, extraChanceConsume: 1 }),
+  lockRandomOptionAdviceTemplate(0.5, { remainChanceUpperBound: 13, remainChanceLowerBound: 8 }),
+  ...createFixedOptionAdvices(0.5, lockFixedOptionAdviceTemplate, { type: 'utillock', remainChanceUpperBound: 13, remainChanceLowerBound: 8, extraChanceConsume: 1 }),
 
   unlockRandomOptionAndLockOtherOptionAdviceTemplate(2),
 
@@ -499,11 +499,12 @@ function moveDownLevelAdviceTemplate(odds: number, params: AdviceTemplateProps):
 }
 
 function lockRandomOptionAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
-  const { extraChanceConsume, saveChance, special, remainChanceLowerBound } = params;
+  const { extraChanceConsume, saveChance, special, remainChanceUpperBound, remainChanceLowerBound } = params;
   return {
     name: `임의의 효과 하나를 봉인${P.하겠네}.${extraChanceConsume ? ` 다만, 기회를 ${1 + extraChanceConsume}번 소모${P.할걸세}.` : ''}${saveChance ? ` 이번 연성은 기회를 소모하지 ${P.않을걸세}.` : ''}`,
     type: 'utillock',
     special,
+    remainChanceUpperBound,
     remainChanceLowerBound,
     effect: (options) => {
       const result = options.map((option) => ({ ...option }));
@@ -519,10 +520,12 @@ function lockRandomOptionAdviceTemplate(odds: number, params: AdviceTemplateProp
 }
 
 function lockFixedOptionAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
-  const { extraChanceConsume, optionIndex, type } = params;
+  const { extraChanceConsume, optionIndex, type, remainChanceUpperBound, remainChanceLowerBound } = params;
   return {
     name: `${P.OPTION} 효과를 봉인${P.하겠네}.${extraChanceConsume ? ` 다만, 이번 연성에서 기회를 ${1 + extraChanceConsume}번 소모${P.할걸세}.` : ''}`,
     type: type ?? 'lock',
+    remainChanceUpperBound,
+    remainChanceLowerBound,
     effect: (options) => {
       const result = options.map((option) => ({ ...option }));
 
