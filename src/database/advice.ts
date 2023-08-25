@@ -930,6 +930,21 @@ function resetAdviceTemplate(odds: number): AdviceBody {
   };
 }
 
+// 디버깅 전용
+function fillAdviceTemplate(odds: number): AdviceBody {
+  return {
+    name: `선택한 효과의 단계를 10으로 변경해${P.주겠네}.`,
+    type: 'util',
+    effect: (options, optionIndex) => {
+      validateOptionIndex(optionIndex);
+      const result = options.map((option) => ({ ...option }));
+      applySafeResult(result[optionIndex], { level: 10 });
+      return { options: result };
+    },
+    odds,
+  };
+}
+
 interface AdviceTemplateProps {
   name?: string;
 

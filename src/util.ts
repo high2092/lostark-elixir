@@ -258,6 +258,7 @@ export function redistribute(options: OptionInstance[], levelSum?: number) {
 
   while (levelSum) {
     const [idx] = gacha(options, { filterConditions: [(option: OptionInstance) => option.level !== MAX_ACTIVE] });
+    if (idx === undefined) break;
     options[idx].level++;
     levelSum--;
   }
@@ -297,14 +298,19 @@ export function changeHitRate(idx: number, hitRateDiff: number, options: OptionI
 }
 
 export function checkMaxLevel(options: OptionInstance[]) {
+  // backUpHitRate 복원과 활성도 만렙 달성으로 인한 확률 분배는 순서가 중요하며, 복원이 먼저 이루어져야 함
+  options.forEach((option, idx) => {
+    if (option.isMaxLevel && option.level !== MAX_ACTIVE) {
+      option.isMaxLevel = false;
+      changeHitRate(idx, option.backUpHitRate, options);
+    }
+  });
+
   options.forEach((option, idx) => {
     if (!option.isMaxLevel && option.level === MAX_ACTIVE) {
       option.backUpHitRate = option.hitRate;
       changeHitRate(idx, -option.hitRate, options);
       option.isMaxLevel = true;
-    } else if (option.isMaxLevel && option.level !== MAX_ACTIVE) {
-      option.isMaxLevel = false;
-      changeHitRate(idx, option.backUpHitRate, options);
     }
   });
 }

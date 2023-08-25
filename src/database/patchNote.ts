@@ -10,6 +10,10 @@ export interface Patch {
 
 export const PATCH_NOTE: Patch[] = [
   {
+    date: '2023-08-26',
+    details: [{ time: '00:29', description: '혼돈 6스택 <특정 효과의 단계를 다른 단계에 분배> 조언이 특정 상황에서 동작하지 않던 문제가 해결되었습니다.' }],
+  },
+  {
     date: '2023-06-12',
     details: [{ time: '21:37', description: '<특정 효과 봉인>,  <임의 효과 봉인> 조언이 연성 초반에 나오지 않도록 변경되었습니다.' }],
   },
