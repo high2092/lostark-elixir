@@ -76,6 +76,10 @@ export const ADVICES: AdviceBody[] = [
   ...createFixedOptionAdvices(1, amplifyFixedOptionBigHitRateAdviceTemplate, { percentage: 15 }),
   ...createFixedOptionAdvices(1, amplifyFixedOptionBigHitRateTemporarilyAdviceTemplate, { percentage: 100 }),
 
+  amplifySelectedOptionBigHitRateTemporarilyAdviceTemplate(0.5, { percentage: 100 }),
+  amplifyAllBigHitRateTemporarilyAdviceTemplate(0.3, { percentage: 30 }),
+  amplifyAllBigHitRateTemporarilyAdviceTemplate(0.2, { percentage: 60 }),
+
   amplifyAllBigHitRateAdviceTemplate(0.5, { percentage: 5 }),
   amplifyAllBigHitRateAdviceTemplate(0.375, { percentage: 10 }),
   amplifyAllBigHitRateAdviceTemplate(1, { percentage: 15, special: SageTypesTypes.ORDER }),
@@ -430,6 +434,34 @@ function amplifyFixedOptionBigHitRateTemporarilyAdviceTemplate(odds: number, par
     },
     odds: odds,
     optionIndex,
+  };
+}
+
+function amplifySelectedOptionBigHitRateTemporarilyAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
+  const { percentage } = params;
+  return {
+    name: `이번 연성에서 선택한 효과의 대성공 확률을 ${percentage}% 높여${P.주겠네}.`,
+    type: 'util',
+    effect: (options, optionIndex) => {
+      const result = options.map((option) => ({ ...option }));
+      applySafeResult(result[optionIndex], { tempBigHitRate: result[optionIndex].bigHitRate + percentage });
+      return { options: result };
+    },
+    odds: odds,
+  };
+}
+
+function amplifyAllBigHitRateTemporarilyAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
+  const { percentage } = params;
+  return {
+    name: `이번 연성에서 모든 효과의 대성공 확률을 ${percentage}% 높여${P.주겠네}.`,
+    type: 'util',
+    effect: (options) => {
+      const result = options.map((option) => ({ ...option }));
+      result.forEach((option) => applySafeResult(option, { tempBigHitRate: option.bigHitRate + percentage }));
+      return { options: result };
+    },
+    odds: odds,
   };
 }
 
