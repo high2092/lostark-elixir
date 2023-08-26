@@ -11,7 +11,7 @@ export interface Patch {
 export const PATCH_NOTE: Patch[] = [
   {
     date: '2023-08-26',
-    details: [{ time: '00:29', description: '혼돈 6스택 <특정 효과의 단계를 다른 단계에 분배> 조언이 특정 상황에서 동작하지 않던 문제가 해결되었습니다.' }],
+    details: [{ time: '00:29', description: '혼돈 6스택 <특정 효과 단계를 모두 다른 효과에 분배> 조언이 특정 상황에서 동작하지 않던 문제가 해결되었습니다.' }],
   },
   {
     date: '2023-06-12',
