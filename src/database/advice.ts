@@ -114,8 +114,8 @@ export const ADVICES: AdviceBody[] = [
   lockSelectedOptionAndLevelUpLowestOptionAdviceTemplate(1, { special: SageTypesTypes.CHAOS }),
 
   redistributeAdviceTemplate(2, { special: SageTypesTypes.CHAOS }),
-  exchangeOddEvenAdviceTemplate(0.5, { odd: true, n: 1, remainChanceUpperBound: 12 }),
-  exchangeOddEvenAdviceTemplate(0.5, { odd: false, n: 1, remainChanceUpperBound: 12 }),
+  exchangeOddEvenAdviceTemplate(0.3, { odd: true, n: 1, remainChanceUpperBound: 12 }),
+  exchangeOddEvenAdviceTemplate(0.3, { odd: false, n: 1, remainChanceUpperBound: 12 }),
   ...createFixedSubOptionAdvices(1, exchangeOneLevelBetweenFixedOptionsAdviceTemplate, { n: 1, remainChanceUpperBound: 12 }),
   ...createFixedSubOptionAdvices(1, exchangeOneLevelBetweenFixedOptionsAdviceTemplate, { n: 2, remainChanceUpperBound: 12 }),
   ...createFixedSubOptionAdvices(0.5, exchangeLevelBetweenFixedOptionsAdviceTemplate, { remainChanceUpperBound: 12 }),
@@ -801,7 +801,7 @@ function exchangeOddEvenAdviceTemplate(odds: number, params: AdviceTemplateProps
   const { odd, remainChanceUpperBound } = params;
   const str = ['2, 4', '1, 3, 5'];
   return {
-    name: `${str[Number(odd)]} 슬롯의 효과를 +1 올려${P.주겠네}. 대신 ${str[Number(!odd)]} 슬롯의 효과가 1 감소${P.할걸세}.`,
+    name: `${str[Number(odd)]} 슬롯의 효과를 +1 올려${P.주겠네}. 대신 ${str[Number(!odd)]} 슬롯의 효과가 2 감소${P.할걸세}.`,
     type: 'util',
     remainChanceUpperBound,
     effect: (options) => {
@@ -809,7 +809,7 @@ function exchangeOddEvenAdviceTemplate(odds: number, params: AdviceTemplateProps
 
       result.forEach((option, idx) => {
         if ((idx % 2 === 0) === odd) applySafeResult(option, { level: option.level + 1 });
-        else applySafeResult(option, { level: option.level - 1 });
+        else applySafeResult(option, { level: option.level - 2 });
       });
 
       return { options: result };
