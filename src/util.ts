@@ -285,6 +285,7 @@ export function changeHitRate(idx: number, hitRateDiff: number, options: OptionI
   props ??= {};
   const { lock, temp } = props;
   const remainHitRateSum = options.reduce((acc, cur, i) => (idx === i || cur.locked || cur.isMaxLevel ? acc : acc + cur.hitRate), 0);
+  const remainOptionCount = options.reduce((acc, cur, i) => (idx === i || cur.locked || cur.isMaxLevel ? acc : acc + 1), 0);
   const hitRateKey = temp ? 'tempHitRate' : 'hitRate';
 
   const target = options[idx];
@@ -292,8 +293,11 @@ export function changeHitRate(idx: number, hitRateDiff: number, options: OptionI
 
   options.forEach((option, i) => {
     if (option.isMaxLevel) return;
-    if (idx === i && !lock) applySafeResult(option, { [hitRateKey]: option.hitRate + actualHitRateDiff });
-    else applySafeResult(option, { [hitRateKey]: option.hitRate - actualHitRateDiff * (option.hitRate / remainHitRateSum) });
+    if (idx === i) applySafeResult(option, { [hitRateKey]: option.hitRate + actualHitRateDiff });
+    else {
+      if (lock && actualHitRateDiff < 0) applySafeResult(option, { [hitRateKey]: option.hitRate - actualHitRateDiff / remainOptionCount });
+      else applySafeResult(option, { [hitRateKey]: option.hitRate - actualHitRateDiff * (option.hitRate / remainHitRateSum) });
+    }
   });
 }
 

@@ -9,6 +9,7 @@ export interface Patch {
 }
 
 export const PATCH_NOTE: Patch[] = [
+  { date: '2023-09-19', details: [{ time: '20:28', description: '효과 봉인 시 연성 확률이 나머지 효과에 균등하게 분배되지 않던 문제가 해결되었습니다.' }] },
   {
     date: '2023-08-26',
     details: [
