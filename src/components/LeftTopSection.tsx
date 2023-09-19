@@ -14,7 +14,7 @@ import { ModalTypes } from '../type/common';
 import { IconButton } from './common/IconButton';
 import { SettingIcon } from './SettingIcon';
 
-const DEFAULT_BGM_VOLUME = 5;
+const DEFAULT_BGM_VOLUME = 10;
 
 export const LeftTopSection = () => {
   const dispatch = useAppDispatch();
