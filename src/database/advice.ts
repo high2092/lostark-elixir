@@ -30,20 +30,20 @@ const createFixedSubOptionAdvices = (odds: number, template: AdviceTemplate, par
 };
 
 export const ADVICES: AdviceBody[] = [
-  ...createFixedOptionAdvices(1.8, potentialLevelUpFixedOptionAdviceTemplate, { percentage: 25 }),
+  ...createFixedOptionAdvices(3.6, potentialLevelUpFixedOptionAdviceTemplate, { percentage: 25 }),
   ...createFixedOptionAdvices(0.2, potentialLevelUpFixedOptionAdviceTemplate, { percentage: 50 }),
-  potentialLevelSelectedOptionAdviceTemplate(0.15, { percentage: 25 }),
+  potentialLevelSelectedOptionAdviceTemplate(0.1, { percentage: 25 }),
   potentialLevelSelectedOptionAdviceTemplate(0.03, { percentage: 50 }),
 
-  ...createFixedOptionAdvices(1.8, potentialChangeLevelFixedOptionAdviceTemplate, { maxRisk: 2, maxReturn: 2 }),
+  ...createFixedOptionAdvices(3.0, potentialChangeLevelFixedOptionAdviceTemplate, { maxRisk: 2, maxReturn: 2 }),
   ...createFixedOptionAdvices(0.2, potentialChangeLevelFixedOptionAdviceTemplate, { maxRisk: 1, maxReturn: 2 }),
-  potentialChangeLevelSelectedOptionAdviceTemplate(0.15, { maxRisk: 2, maxReturn: 2 }),
+  potentialChangeLevelSelectedOptionAdviceTemplate(0.1, { maxRisk: 2, maxReturn: 2 }),
   potentialChangeLevelSelectedOptionAdviceTemplate(0.03, { maxRisk: 1, maxReturn: 2 }),
 
   // 확정 레벨업, 리스크 O
   levelUpHighestOptionAdviceTemplate(0.2, { maxReturn: 1, maxRisk: 2, remainChanceUpperBound: 12 }),
   levelUpLowestOptionAdviceTemplate(1, { remainChanceUpperBound: 12 }),
-  levelUpRandomOptionAdviceTemplate(1, { n: 1 }),
+  levelUpRandomOptionAdviceTemplate(0.8, { n: 1 }),
   levelUpSelectedOptionAdviceTemplate(1, { n: 2, special: SageTypesTypes.ORDER }),
   levelUpHighestOptionAdviceTemplate(1, { maxReturn: 1, special: SageTypesTypes.ORDER }),
 
@@ -53,32 +53,32 @@ export const ADVICES: AdviceBody[] = [
   raiseAllBelowNAdviceTemplate(0.1, { n: 4, remainChanceUpperBound: 6, remainChanceLowerBound: 4 }),
   raiseAllBelowNAdviceTemplate(0.1, { n: 6, remainChanceUpperBound: 3 }),
 
-  ...createFixedOptionAdvices(0.2, changeFixedOptionToFixedLevelAdviceTemplate, { n: 1, remainChanceUpperBound: 12, remainChanceLowerBound: 10 }),
-  ...createFixedOptionAdvices(0.2, changeFixedOptionToFixedLevelAdviceTemplate, { n: 2, remainChanceUpperBound: 9, remainChanceLowerBound: 7 }),
-  ...createFixedOptionAdvices(0.2, changeFixedOptionToFixedLevelAdviceTemplate, { n: 3, remainChanceUpperBound: 6, remainChanceLowerBound: 4 }),
+  ...createFixedOptionAdvices(0.1, changeFixedOptionToFixedLevelAdviceTemplate, { n: 1, remainChanceUpperBound: 12, remainChanceLowerBound: 10 }),
+  ...createFixedOptionAdvices(0.1, changeFixedOptionToFixedLevelAdviceTemplate, { n: 2, remainChanceUpperBound: 9, remainChanceLowerBound: 7 }),
+  ...createFixedOptionAdvices(0.1, changeFixedOptionToFixedLevelAdviceTemplate, { n: 3, remainChanceUpperBound: 6, remainChanceLowerBound: 4 }),
 
-  changeSelectedOptionToFixedLevelAdviceTemplate(0.15, { n: 1, remainChanceUpperBound: 12, remainChanceLowerBound: 10 }),
-  changeSelectedOptionToFixedLevelAdviceTemplate(0.15, { n: 2, remainChanceUpperBound: 9, remainChanceLowerBound: 7 }),
-  changeSelectedOptionToFixedLevelAdviceTemplate(0.15, { n: 3, remainChanceUpperBound: 6, remainChanceLowerBound: 4 }),
+  changeSelectedOptionToFixedLevelAdviceTemplate(0.07, { n: 1, remainChanceUpperBound: 12, remainChanceLowerBound: 10 }),
+  changeSelectedOptionToFixedLevelAdviceTemplate(0.07, { n: 2, remainChanceUpperBound: 9, remainChanceLowerBound: 7 }),
+  changeSelectedOptionToFixedLevelAdviceTemplate(0.07, { n: 3, remainChanceUpperBound: 6, remainChanceLowerBound: 4 }),
   //
 
-  ...createFixedOptionAdvices(0.8, amplifyFixedOptionHitRateTemporarilyAdviceTemplate, { percentage: 100, name: `이번 연성에서 ${P.OPTION} 효과를 연성해${P.주겠네}.` }),
-  ...createFixedOptionAdvices(0.8, amplifyFixedOptionHitRateTemporarilyAdviceTemplate, { percentage: 70 }),
-  ...createFixedOptionAdvices(0.8, amplifyFixedOptionHitRateTemporarilyAdviceTemplate, { percentage: 35 }),
-  ...createFixedOptionAdvices(0.8, amplifyFixedOptionHitRateTemporarilyAdviceTemplate, { percentage: -20 }),
-  ...createFixedOptionAdvices(0.8, amplifyFixedOptionHitRateTemporarilyAdviceTemplate, { percentage: -40 }),
+  ...createFixedOptionAdvices(1.2, amplifyFixedOptionHitRateTemporarilyAdviceTemplate, { percentage: 100, name: `이번 연성에서 ${P.OPTION} 효과를 연성해${P.주겠네}.` }),
+  ...createFixedOptionAdvices(0.6, amplifyFixedOptionHitRateTemporarilyAdviceTemplate, { percentage: 70 }),
+  ...createFixedOptionAdvices(0.6, amplifyFixedOptionHitRateTemporarilyAdviceTemplate, { percentage: 35 }),
+  ...createFixedOptionAdvices(1.4, amplifyFixedOptionHitRateTemporarilyAdviceTemplate, { percentage: -20 }),
+  ...createFixedOptionAdvices(0.1, amplifyFixedOptionHitRateTemporarilyAdviceTemplate, { percentage: -40 }),
 
-  ...createFixedOptionAdvices(1.4, amplifyFixedOptionHitRateAdviceTemplate, { percentage: 5 }),
-  ...createFixedOptionAdvices(0.6, amplifyFixedOptionHitRateAdviceTemplate, { percentage: 10 }),
+  ...createFixedOptionAdvices(1.6, amplifyFixedOptionHitRateAdviceTemplate, { percentage: 5 }),
+  ...createFixedOptionAdvices(0.4, amplifyFixedOptionHitRateAdviceTemplate, { percentage: 10 }),
   ...createFixedOptionAdvices(1, amplifyFixedOptionHitRateAdviceTemplate, { percentage: -5 }),
 
-  ...createFixedOptionAdvices(1.25, amplifyFixedOptionBigHitRateAdviceTemplate, { percentage: 7 }),
-  ...createFixedOptionAdvices(0.15, amplifyFixedOptionBigHitRateAdviceTemplate, { percentage: 15 }),
+  ...createFixedOptionAdvices(1.2, amplifyFixedOptionBigHitRateAdviceTemplate, { percentage: 7 }),
+  ...createFixedOptionAdvices(0.07, amplifyFixedOptionBigHitRateAdviceTemplate, { percentage: 15 }),
   ...createFixedOptionAdvices(1, amplifyFixedOptionBigHitRateTemporarilyAdviceTemplate, { percentage: 100 }),
 
-  amplifySelectedOptionBigHitRateTemporarilyAdviceTemplate(0.3, { percentage: 100 }),
+  amplifySelectedOptionBigHitRateTemporarilyAdviceTemplate(0.05, { percentage: 100 }),
   amplifyAllBigHitRateTemporarilyAdviceTemplate(0.3, { percentage: 30 }),
-  amplifyAllBigHitRateTemporarilyAdviceTemplate(0.1, { percentage: 60 }),
+  amplifyAllBigHitRateTemporarilyAdviceTemplate(0.05, { percentage: 60 }),
 
   amplifyAllBigHitRateAdviceTemplate(0.2, { percentage: 5 }),
   amplifyAllBigHitRateAdviceTemplate(0.03, { percentage: 10 }),
@@ -100,8 +100,8 @@ export const ADVICES: AdviceBody[] = [
   moveUpLevelAdviceTemplate(2, { special: SageTypesTypes.CHAOS }),
   moveDownLevelAdviceTemplate(2, { special: SageTypesTypes.CHAOS }),
 
-  lockRandomOptionAdviceTemplate(0.5, { remainChanceUpperBound: 13, remainChanceLowerBound: 8 }),
-  ...createFixedOptionAdvices(1.2, lockFixedOptionAdviceTemplate, { type: 'utillock', remainChanceUpperBound: 13, remainChanceLowerBound: 8, extraChanceConsume: 1 }),
+  lockRandomOptionAdviceTemplate(0.2, { remainChanceUpperBound: 13, remainChanceLowerBound: 8 }),
+  ...createFixedOptionAdvices(0.8, lockFixedOptionAdviceTemplate, { type: 'utillock', remainChanceUpperBound: 13, remainChanceLowerBound: 8, extraChanceConsume: 1 }),
 
   unlockRandomOptionAndLockOtherOptionAdviceTemplate(2),
 
@@ -114,8 +114,8 @@ export const ADVICES: AdviceBody[] = [
   lockSelectedOptionAndLevelUpLowestOptionAdviceTemplate(1, { special: SageTypesTypes.CHAOS }),
 
   redistributeAdviceTemplate(2, { special: SageTypesTypes.CHAOS }),
-  exchangeOddEvenAdviceTemplate(0.2, { odd: true, n: 1, remainChanceUpperBound: 12 }),
-  exchangeOddEvenAdviceTemplate(0.2, { odd: false, n: 1, remainChanceUpperBound: 12 }),
+  exchangeOddEvenAdviceTemplate(0.05, { odd: true, n: 1, remainChanceUpperBound: 12 }),
+  exchangeOddEvenAdviceTemplate(0.05, { odd: false, n: 1, remainChanceUpperBound: 12 }),
   ...createFixedSubOptionAdvices(1, exchangeOneLevelBetweenFixedOptionsAdviceTemplate, { n: 1, remainChanceUpperBound: 12 }),
   ...createFixedSubOptionAdvices(1, exchangeOneLevelBetweenFixedOptionsAdviceTemplate, { n: 2, remainChanceUpperBound: 12 }),
   ...createFixedSubOptionAdvices(0.5, exchangeLevelBetweenFixedOptionsAdviceTemplate, { remainChanceUpperBound: 12 }),
@@ -123,21 +123,21 @@ export const ADVICES: AdviceBody[] = [
   exchangeLevelBetweenMaxMinAdviceTemplate(0.5, { remainChanceUpperBound: 12 }),
   exchangeLevelBetweenMaxMinAdviceTemplate(0.5, { n: 1, remainChanceUpperBound: 12 }),
 
-  amplifySelectedOptionHitRateTemporarilyAdviceTemplate(0.5, { extraChanceConsume: 1, extraAlchemy: 1, remainChanceUpperBound: 11 }),
+  amplifySelectedOptionHitRateTemporarilyAdviceTemplate(0.2, { extraChanceConsume: 1, extraAlchemy: 1, remainChanceUpperBound: 11 }),
 
-  addExtraTargetAdviceTemplate(0.5, { extraTarget: 1, remainChanceUpperBound: 11 }),
-  addExtraTargetAdviceTemplate(0.5, { extraTarget: 2, extraChanceConsume: 1, remainChanceUpperBound: 11 }),
+  addExtraTargetAdviceTemplate(0.2, { extraTarget: 1, remainChanceUpperBound: 11 }),
+  addExtraTargetAdviceTemplate(0.05, { extraTarget: 2, extraChanceConsume: 1, remainChanceUpperBound: 11 }),
 
-  extraAlchemyAdviceTemplate(0.5, { extraAlchemy: 1 }),
-  extraAlchemyAdviceTemplate(0.5, { extraAlchemy: 2, extraChanceConsume: 1, remainChanceUpperBound: 11 }),
+  extraAlchemyAdviceTemplate(0.07, { extraAlchemy: 1 }),
+  extraAlchemyAdviceTemplate(0.03, { extraAlchemy: 2, extraChanceConsume: 1, remainChanceUpperBound: 11 }),
   extraAlchemyAdviceTemplate(0.5, { extraAlchemy: 2, special: SageTypesTypes.ORDER }),
 
   saveChanceAdviceTemplate(1),
 
   changeOptionSelectedSlotAdviceTemplate(1),
 
-  discountGoldCostAdviceTemplate(1, { percentage: 20 }),
-  discountGoldCostAdviceTemplate(1, { percentage: 40 }),
+  discountGoldCostAdviceTemplate(0.4, { percentage: 20 }),
+  discountGoldCostAdviceTemplate(0.1, { percentage: 40 }),
   discountGoldCostAdviceTemplate(1, { percentage: 100, special: SageTypesTypes.ORDER }),
 
   resetAdviceTemplate(1),
