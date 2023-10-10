@@ -44,8 +44,8 @@ export const ADVICES: AdviceBody[] = [
   levelUpHighestOptionAdviceTemplate(0.2, { maxReturn: 1, maxRisk: 2, remainChanceUpperBound: 12 }),
   levelUpLowestOptionAdviceTemplate(1, { remainChanceUpperBound: 12 }),
   levelUpRandomOptionAdviceTemplate(0.8, { n: 1 }),
-  levelUpSelectedOptionAdviceTemplate(1, { n: 2, special: SageTypesTypes.ORDER }),
-  levelUpHighestOptionAdviceTemplate(1, { maxReturn: 1, special: SageTypesTypes.ORDER }),
+  levelUpSelectedOptionAdviceTemplate(0.2, { n: 2, special: SageTypesTypes.ORDER }),
+  levelUpHighestOptionAdviceTemplate(0.2, { maxReturn: 1, special: SageTypesTypes.ORDER }),
 
   // 고정 레벨 변경
   raiseAllBelowNAdviceTemplate(0.1, { n: 0, remainChanceUpperBound: 12, remainChanceLowerBound: 10 }),
@@ -82,10 +82,10 @@ export const ADVICES: AdviceBody[] = [
 
   amplifyAllBigHitRateAdviceTemplate(0.2, { percentage: 5 }),
   amplifyAllBigHitRateAdviceTemplate(0.03, { percentage: 10 }),
-  amplifyAllBigHitRateAdviceTemplate(1, { percentage: 15, special: SageTypesTypes.ORDER }),
-  amplifyOddOrEvenBigHitRateAdviceTemplate(1, { odd: true, percentage: 15, special: SageTypesTypes.ORDER }),
-  amplifyOddOrEvenBigHitRateAdviceTemplate(1, { odd: false, percentage: 15, special: SageTypesTypes.ORDER }),
-  amplifySelectedOptionBigHitRateAdviceTemplate(1, { percentage: 25, special: SageTypesTypes.ORDER }),
+  amplifyAllBigHitRateAdviceTemplate(0.25, { percentage: 15, special: SageTypesTypes.ORDER }),
+  amplifyOddOrEvenBigHitRateAdviceTemplate(0.5, { odd: true, percentage: 15, special: SageTypesTypes.ORDER }),
+  amplifyOddOrEvenBigHitRateAdviceTemplate(0.9, { odd: false, percentage: 15, special: SageTypesTypes.ORDER }),
+  amplifySelectedOptionBigHitRateAdviceTemplate(0.75, { percentage: 25, special: SageTypesTypes.ORDER }),
 
   potentialChangeLevelSelectedOptionAdviceTemplate(3, { maxRisk: 0, maxReturn: 4, special: SageTypesTypes.CHAOS, sage: SageKeys.L, enterMeditation: true }),
   potentialChangeLevelSelectedOptionAdviceTemplate(3, { maxRisk: -2, maxReturn: 3, special: SageTypesTypes.CHAOS, sage: SageKeys.B, enterMeditation: true }),
@@ -94,11 +94,11 @@ export const ADVICES: AdviceBody[] = [
   amplifySelectedHitRateAdviceTemplate(1, { percentage: 15, special: SageTypesTypes.ORDER }),
   amplifySelectedHitRateAdviceTemplate(1, { percentage: -20, special: SageTypesTypes.ORDER }),
 
-  addRerollChanceAdviceTemplate(1, { addRerollChance: 1, special: SageTypesTypes.ORDER }),
-  addRerollChanceAdviceTemplate(1, { addRerollChance: 2, special: SageTypesTypes.ORDER }),
+  addRerollChanceAdviceTemplate(1.8, { addRerollChance: 1, special: SageTypesTypes.ORDER }),
+  addRerollChanceAdviceTemplate(0.8, { addRerollChance: 2, special: SageTypesTypes.ORDER }),
 
-  moveUpLevelAdviceTemplate(2, { special: SageTypesTypes.CHAOS }),
-  moveDownLevelAdviceTemplate(2, { special: SageTypesTypes.CHAOS }),
+  moveUpLevelAdviceTemplate(1, { special: SageTypesTypes.CHAOS }),
+  moveDownLevelAdviceTemplate(1, { special: SageTypesTypes.CHAOS }),
 
   lockRandomOptionAdviceTemplate(0.2, { remainChanceUpperBound: 13, remainChanceLowerBound: 8 }),
   ...createFixedOptionAdvices(0.8, lockFixedOptionAdviceTemplate, { type: 'utillock', remainChanceUpperBound: 13, remainChanceLowerBound: 8, extraChanceConsume: 1 }),
@@ -127,24 +127,26 @@ export const ADVICES: AdviceBody[] = [
 
   addExtraTargetAdviceTemplate(0.2, { extraTarget: 1, remainChanceUpperBound: 11 }),
   addExtraTargetAdviceTemplate(0.05, { extraTarget: 2, extraChanceConsume: 1, remainChanceUpperBound: 11 }),
+  addExtraTargetAdviceTemplate(0.2, { extraTarget: 2, remainChanceUpperBound: 11, special: SageTypesTypes.ORDER }),
 
   extraAlchemyAdviceTemplate(0.07, { extraAlchemy: 1 }),
   extraAlchemyAdviceTemplate(0.03, { extraAlchemy: 2, extraChanceConsume: 1, remainChanceUpperBound: 11 }),
-  extraAlchemyAdviceTemplate(0.5, { extraAlchemy: 2, special: SageTypesTypes.ORDER }),
+  extraAlchemyAdviceTemplate(0.9, { extraAlchemy: 1, special: SageTypesTypes.ORDER }),
+  extraAlchemyAdviceTemplate(0.2, { extraAlchemy: 2, special: SageTypesTypes.ORDER }),
 
-  saveChanceAdviceTemplate(1),
+  saveChanceAdviceTemplate(0.6),
 
   changeOptionSelectedSlotAdviceTemplate(1),
 
   discountGoldCostAdviceTemplate(0.4, { percentage: 20 }),
   discountGoldCostAdviceTemplate(0.1, { percentage: 40 }),
-  discountGoldCostAdviceTemplate(1, { percentage: 100, special: SageTypesTypes.ORDER }),
+  discountGoldCostAdviceTemplate(2.6, { percentage: 100, special: SageTypesTypes.ORDER }),
 
-  resetAdviceTemplate(1),
+  resetAdviceTemplate(2),
 
-  redistributeSelectedOptionAdvice(1),
-  redistributeHighestOptionAdvice(1),
-  redistributeLowestOptionAdvice(1),
+  redistributeSelectedOptionAdvice(0.25),
+  redistributeHighestOptionAdvice(0.5),
+  redistributeLowestOptionAdvice(0.5),
 ];
 
 function potentialLevelUpFixedOptionAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
@@ -467,13 +469,14 @@ function amplifyAllBigHitRateTemporarilyAdviceTemplate(odds: number, params: Adv
 
 function addExtraTargetAdviceTemplate(odds: number, params?: AdviceTemplateProps): AdviceBody {
   params ??= {};
-  const { extraTarget, extraChanceConsume, remainChanceUpperBound } = params;
+  const { extraTarget, extraChanceConsume, remainChanceUpperBound, special } = params;
   return {
     name: `이번 연성에서 ${extraTarget + 1}개의 효과를 동시에 연성해${P.주겠네}.${extraChanceConsume ? ` 다만, 기회를 ${extraChanceConsume + 1}번 소모${P.할걸세}.` : ''}`,
     type: 'util',
     remainChanceUpperBound,
     effect: (options) => ({ options: options, extraTarget, extraChanceConsume }),
     odds,
+    special,
     extraChanceConsume,
     contradictLastOption: true,
   };
