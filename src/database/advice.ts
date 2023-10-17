@@ -44,6 +44,7 @@ export const ADVICES: AdviceBody[] = [
   levelUpHighestOptionAdviceTemplate(0.2, { maxReturn: 1, maxRisk: 2, remainChanceUpperBound: 12 }),
   levelUpLowestOptionAdviceTemplate(1, { remainChanceUpperBound: 12 }),
   levelUpRandomOptionAdviceTemplate(0.8, { n: 1 }),
+  levelUpSelectedOptionAdviceTemplate(1.2, { n: 1, special: SageTypesTypes.ORDER }),
   levelUpSelectedOptionAdviceTemplate(0.2, { n: 2, special: SageTypesTypes.ORDER }),
   levelUpHighestOptionAdviceTemplate(0.2, { maxReturn: 1, special: SageTypesTypes.ORDER }),
 
@@ -106,6 +107,7 @@ export const ADVICES: AdviceBody[] = [
   unlockRandomOptionAndLockOtherOptionAdviceTemplate(2),
 
   ...createFixedOptionAdvices(1, lockFixedOptionAdviceTemplate, {}),
+  lockSelectedOptionAdviceTemplate(0.2, { type: 'utillock', remainChanceUpperBound: 13, remainChanceLowerBound: 8, special: SageTypesTypes.ORDER }),
   lockSelectedOptionAdviceTemplate(1, { saveChance: true, special: SageTypesTypes.ORDER }),
   lockSelectedOptionAdviceTemplate(1, { extraTarget: 1, special: SageTypesTypes.ORDER }),
   lockSelectedOptionAdviceTemplate(1, { extraAlchemy: 1, special: SageTypesTypes.ORDER }),
@@ -131,7 +133,7 @@ export const ADVICES: AdviceBody[] = [
 
   extraAlchemyAdviceTemplate(0.07, { extraAlchemy: 1 }),
   extraAlchemyAdviceTemplate(0.03, { extraAlchemy: 2, extraChanceConsume: 1, remainChanceUpperBound: 11 }),
-  extraAlchemyAdviceTemplate(0.9, { extraAlchemy: 1, special: SageTypesTypes.ORDER }),
+  amplifySelectedOptionHitRateTemporarilyAdviceTemplate(0.9, { extraAlchemy: 1, special: SageTypesTypes.ORDER }),
   extraAlchemyAdviceTemplate(0.2, { extraAlchemy: 2, special: SageTypesTypes.ORDER }),
 
   saveChanceAdviceTemplate(0.6),
@@ -320,12 +322,13 @@ function amplifyFixedOptionHitRateTemporarilyAdviceTemplate(odds: number, params
 }
 
 function amplifySelectedOptionHitRateTemporarilyAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
-  const { extraAlchemy, extraChanceConsume, remainChanceUpperBound } = params;
+  const { extraAlchemy, extraChanceConsume, remainChanceUpperBound, special } = params;
   const percentage = 100;
   return {
-    name: `이번에는 ${P.자네가} ${P.선택한} 효과를 ${1 + extraAlchemy}단계 연성해${P.주겠네}. 다만 기회를 ${1 + extraChanceConsume}번 소모${P.할걸세}.`,
+    name: `이번에는 ${P.자네가} ${P.선택한} 효과를 ${1 + extraAlchemy}단계 연성해${P.주겠네}.${extraChanceConsume ? ` 다만 기회를 ${1 + extraChanceConsume}번 소모${P.할걸세}.` : ''}`,
     type: 'util',
     remainChanceUpperBound,
+    special,
     effect: (options, optionIndex) => {
       validateOptionIndex(optionIndex);
       const result = options.map((option) => ({ ...option }));
@@ -575,14 +578,14 @@ function lockFixedOptionAdviceTemplate(odds: number, params: AdviceTemplateProps
 }
 
 function lockSelectedOptionAdviceTemplate(odds: number, params: AdviceTemplateProps): AdviceBody {
-  const { extraChanceConsume, saveChance, special, extraAlchemy, extraTarget } = params;
+  const { extraChanceConsume, saveChance, special, extraAlchemy, extraTarget, type, remainChanceLowerBound, remainChanceUpperBound } = params;
   return {
     name: `선택한 효과 하나를 봉인${P.하겠네}.
     ${extraChanceConsume ? ` 다만, 기회를 ${1 + extraChanceConsume}번 소모${P.할걸세}.` : ''}
     ${saveChance ? ` 이번 연성은 기회를 소모하지 ${P.않을걸세}.` : ''}
     ${extraAlchemy ? ` ${getExtraAlchemyText(extraAlchemy)}` : ''}
     ${extraTarget ? ` ${getExtraTargetText(extraTarget)}` : ''}`,
-    type: 'lock',
+    type: type ?? 'lock',
     special,
     effect: (options, optionIndex) => {
       validateOptionIndex(optionIndex);
@@ -592,6 +595,8 @@ function lockSelectedOptionAdviceTemplate(odds: number, params: AdviceTemplatePr
 
       return { options: result, saveChance, extraChanceConsume, extraAlchemy, extraTarget };
     },
+    remainChanceLowerBound,
+    remainChanceUpperBound,
     odds,
     extraChanceConsume,
   };
