@@ -467,6 +467,7 @@ function amplifyAllBigHitRateTemporarilyAdviceTemplate(odds: number, params: Adv
       return { options: result };
     },
     odds: odds,
+    uniqueKey: AdviceUniqueKeys.AMPLIFY_ALL_BIG_HIT_RATE_TEMPORARILY,
   };
 }
 

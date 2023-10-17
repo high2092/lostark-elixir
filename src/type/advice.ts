@@ -11,6 +11,7 @@ export const AdviceUniqueKeys = {
   AMPLIFY_FIXED_OPTION_BIG_HIT_RATE: 'amplifyFixedOptionBigHitRate',
   AMPLIFY_FIXED_OPTION_BIG_HIT_RATE_TEMPRORARILY: 'amplifyFixedOptionBigHitRateTemporarily',
   AMPLIFY_ALL_BIG_HIT_RATE: 'amplifyAllBigHitRate',
+  AMPLIFY_ALL_BIG_HIT_RATE_TEMPORARILY: 'amplifyAllBigHitRateTemporarily',
   DISCOUNT_GOLD_COST: 'discountGoldCost',
   EXCHANGE_ONE_LEVEL_BETWEEN_FIXED_OPTIONS: 'exchangeOneLevelBetweenFixedOptions',
   EXCHANGE_LEVEL_BETWEEN_FIXED_OPTIONS: 'exchangeOneLevelBetweenFixedOptions',
