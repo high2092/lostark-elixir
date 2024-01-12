@@ -6,7 +6,7 @@ export const Footer = styled.div`
   bottom: 0;
 
   font-family: 'Poor Story', cursive;
-  font-size: 0.8rem;
+  font-size: 0.6rem;
 
   display: flex;
 
