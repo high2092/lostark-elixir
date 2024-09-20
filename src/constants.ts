@@ -107,8 +107,8 @@ export const INITIAL_MATERIAL = {
 };
 
 export const COST_PER_ALCHEMY = {
-  GOLD: 280,
-  CATALYST: 5,
+  GOLD: 140,
+  CATALYST: 3,
 };
 
 export const MODAL_DEFAULT_BORDER_RADIUS = '2rem';
