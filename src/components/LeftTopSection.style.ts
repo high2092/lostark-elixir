@@ -5,7 +5,6 @@ export const LeftTopSection = styled.div`
 
   z-index: 5;
 
-  height: 1rem;
   padding: 0.5rem;
   background-color: rgba(0, 0, 0, 0.2);
 
@@ -13,6 +12,7 @@ export const LeftTopSection = styled.div`
   fill: white;
 
   display: flex;
+  flex-direction: column-reverse;
   align-items: center;
   gap: 0.6rem;
 `;

@@ -64,11 +64,11 @@ export const LeftTopSection = () => {
         />
       </S.YouTube>
       <S.LeftTopSection>
-        <IconButton onClick={handlePlayButtonClick} outline={TUTORIALS[tutorialIndex] === TutorialStatus.PLAY_BGM}>
-          {playing ? <PauseIcon /> : <PlayIcon />}
-        </IconButton>
         <IconButton onClick={handleResetButtonClick} outline={TUTORIALS[tutorialIndex] === TutorialStatus.RESET}>
           <ResetIcon />
+        </IconButton>
+        <IconButton onClick={handlePlayButtonClick} outline={TUTORIALS[tutorialIndex] === TutorialStatus.PLAY_BGM}>
+          {playing ? <PauseIcon /> : <PlayIcon />}
         </IconButton>
         <IconButton onClick={handleInventoryButtonClick} outline={TUTORIALS[tutorialIndex] === TutorialStatus.OPEN_INVENTORY}>
           <InventoryIcon />
