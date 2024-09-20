@@ -157,11 +157,6 @@ export const FirstVisitHelpText = styled.div`
 
   color: red;
 
-  top: 2rem;
-  left: 0.2rem;
-
-  width: 12rem;
-
   word-break: keep-all;
   font-family: 'Poor Story', cursive;
   font-weight: bold;

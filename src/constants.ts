@@ -94,9 +94,9 @@ export const TutorialStatus = {
 export const TUTORIALS = [TutorialStatus.PLAY_BGM, TutorialStatus.RESET, TutorialStatus.OPEN_INVENTORY];
 
 export const TutorialTexts = {
-  [TutorialStatus.PLAY_BGM]: '좌측 상단의 버튼을 클릭해 BGM을 켜거나 끌 수 있어요.',
-  [TutorialStatus.RESET]: '좌측 상단의 버튼을 클릭해 연성 상태를 초기화할 수 있어요.',
-  [TutorialStatus.OPEN_INVENTORY]: '좌측 상단의 버튼을 클릭해 누적 연성 결과를 확인할 수 있어요.',
+  [TutorialStatus.PLAY_BGM]: '배경음악 ON/OFF 버튼이에요.',
+  [TutorialStatus.RESET]: '연성 상태 초기화 버튼이에요.',
+  [TutorialStatus.OPEN_INVENTORY]: '누적 연성 결과 확인 버튼이에요.',
 };
 
 export const MOBILE_CRITERIA_MAX_WIDTH = '768px';
