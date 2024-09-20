@@ -67,9 +67,9 @@ export const LeftTopSection = () => {
         <IconButton onClick={handleResetButtonClick} outline={TUTORIALS[tutorialIndex] === TutorialStatus.RESET}>
           <ResetIcon />
         </IconButton>
-        <IconButton onClick={handlePlayButtonClick} outline={TUTORIALS[tutorialIndex] === TutorialStatus.PLAY_BGM}>
+        <S.PlayButton onClick={handlePlayButtonClick} outline={TUTORIALS[tutorialIndex] === TutorialStatus.PLAY_BGM}>
           {playing ? <PauseIcon /> : <PlayIcon />}
-        </IconButton>
+        </S.PlayButton>
         <IconButton onClick={handleInventoryButtonClick} outline={TUTORIALS[tutorialIndex] === TutorialStatus.OPEN_INVENTORY}>
           <InventoryIcon />
         </IconButton>

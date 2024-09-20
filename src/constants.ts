@@ -101,6 +101,8 @@ export const TutorialTexts = {
 
 export const MOBILE_CRITERIA_MAX_WIDTH = '768px';
 
+export const MEDIA_PC = `@media only screen and (min-width: ${MOBILE_CRITERIA_MAX_WIDTH})`;
+
 export const INITIAL_MATERIAL = {
   GOLD: 5600000,
   CATALYST: 100000,

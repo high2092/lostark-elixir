@@ -1,4 +1,6 @@
 import styled from '@emotion/styled';
+import { MEDIA_PC } from '../constants';
+import { IconButton } from './common/IconButton';
 
 export const LeftTopSection = styled.div`
   position: fixed;
@@ -15,6 +17,16 @@ export const LeftTopSection = styled.div`
   flex-direction: column-reverse;
   align-items: center;
   gap: 0.6rem;
+
+  ${MEDIA_PC} {
+    flex-direction: row;
+  }
+`;
+
+export const PlayButton = styled(IconButton)`
+  ${MEDIA_PC} {
+    order: -1;
+  }
 `;
 
 export const YouTube = styled.div`
