@@ -9,6 +9,7 @@ export interface Patch {
 }
 
 export const PATCH_NOTE: Patch[] = [
+  { date: '2024-09-21', details: [{ time: '07:31', description: '좌측 상단 아이콘 UI가 개선되었습니다.' }] },
   {
     date: '2023-10-10',
     details: [{ time: '21:03', description: '질서 3스택, 혼돈 6스택 조언 등장 확률이 전체적으로 조정되었습니다.' }],
