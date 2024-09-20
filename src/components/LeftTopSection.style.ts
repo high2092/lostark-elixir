@@ -7,16 +7,14 @@ export const LeftTopSection = styled.div`
 
   height: 1rem;
   padding: 0.5rem;
+  background-color: rgba(0, 0, 0, 0.2);
 
   color: white;
   fill: white;
 
   display: flex;
   align-items: center;
-
-  & > * {
-    padding: 0 0.2rem;
-  }
+  gap: 0.6rem;
 `;
 
 export const YouTube = styled.div`

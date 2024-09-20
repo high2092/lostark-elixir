@@ -56,7 +56,7 @@ export const STACK_COUNTER_EXPECTED_HEIGHT = '3vw';
 
 export const DEFAULT_ADVICE_REROLL_CHANCE = 2;
 
-export const DEFAULT_ICON_SIZE = '1rem';
+export const DEFAULT_ICON_SIZE = '1.3rem';
 
 export const AUDIO_RESOURCE_URL_LIST = ['/sound/refine-success.mp3', '/sound/refine-failure.mp3', '/sound/click.mp3'];
 export const IMAGE_RESOURCE_URL_LIST = [
