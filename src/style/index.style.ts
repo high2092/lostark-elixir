@@ -76,7 +76,7 @@ export const MainSection = styled.div<{ hideBackgroundImage: boolean }>`
 
 export const DescriptionSection = styled.div`
   width: 100%;
-  height: calc(100% - ${MAIN_SECTION_HEIGHT_PERCENT}%);
+  flex-grow: 1;
 
   background-color: #a4907c;
 
