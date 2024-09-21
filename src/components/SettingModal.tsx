@@ -28,15 +28,15 @@ function SettingModalContent() {
 
   return (
     <S.SettingModal>
-      <div>
+      <div className="flex gap-1">
         <CheckBox id={HIDE_BACKGROUND_IMAGE_CHECKBOX_ID} checked={hideBackgroundImage} setChecked={(checked: boolean) => dispatch(setHideBackgroundImage(checked))} />
         <label htmlFor={HIDE_BACKGROUND_IMAGE_CHECKBOX_ID}>배경 제거</label>
       </div>
-      <div>
+      <div className="flex gap-1">
         <CheckBox id={MUTE_SOUND_EFFECT_CHECKBOX_ID} checked={muteSoundEffect} setChecked={(checked: boolean) => dispatch(setMuteSoundEffect(checked))} />
         <label htmlFor={MUTE_SOUND_EFFECT_CHECKBOX_ID}>효과음 음소거</label>
       </div>
-      <div>
+      <div className="flex gap-1">
         <CheckBox id={DOWNSIZE_HEIGHT_CHECKBOX_ID} checked={downsizeHeight} setChecked={(checked: boolean) => dispatch(setDownsizeHeight(checked))} />
         <label htmlFor={DOWNSIZE_HEIGHT_CHECKBOX_ID}>{`높이 축소 (모바일 UI 전용)`}</label>
       </div>

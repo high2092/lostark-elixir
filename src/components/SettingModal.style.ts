@@ -4,9 +4,8 @@ import { css } from '@emotion/react';
 import { AnchorStyle } from '../style/common';
 
 export const SettingModal = styled.div`
-  width: 30vw;
+  width: max-content;
   padding: 2rem;
-
   background-color: white;
 
   border-radius: ${MODAL_DEFAULT_BORDER_RADIUS};

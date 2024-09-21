@@ -113,6 +113,6 @@ export const COST_PER_ALCHEMY = {
   CATALYST: 3,
 };
 
-export const MODAL_DEFAULT_BORDER_RADIUS = '2rem';
+export const MODAL_DEFAULT_BORDER_RADIUS = '1rem';
 
 export const ELIXIR_ICON_SIZE = '4vh';
