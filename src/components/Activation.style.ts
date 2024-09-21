@@ -8,6 +8,7 @@ const ACTIVATION_WIDTH_REM_MOBILE = 13;
 const BORDER_WIDTH_PX = 3;
 export const Activation = styled.div<{ percentage: number }>`
   position: relative;
+  flex: none;
 
   width: ${ACTIVATION_WIDTH_REM}rem;
   height: ${ACTIVATION_WIDTH_REM / MAX_ACTIVE}rem;

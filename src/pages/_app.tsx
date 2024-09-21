@@ -1,4 +1,3 @@
-import '../../public/css/reset.css';
 import '../../public/css/index.css';
 import '../../globals.css';
 import { Provider } from 'react-redux';

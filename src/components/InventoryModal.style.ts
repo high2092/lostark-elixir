@@ -95,6 +95,7 @@ export const ElixirInfoModal = styled.div`
 `;
 
 export const BottomSection = styled.div`
+  padding: 0 2rem;
   position: absolute;
   bottom: 0;
 
@@ -110,4 +111,5 @@ export const BottomSection = styled.div`
 
 export const UsageInfo = styled.div`
   font-size: 0.6rem;
+  line-height: 1;
 `;
