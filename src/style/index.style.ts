@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { DEFAULT_BORDER_RADIUS_PX, MOBILE_CRITERIA_MAX_WIDTH } from '../constants';
+import { DEFAULT_BORDER_RADIUS_PX, MEDIA_PC, MOBILE_CRITERIA_MAX_WIDTH } from '../constants';
 
 export const Home = styled.div<{ downsizeHeight: boolean }>`
   width: 100vw;
@@ -59,7 +59,6 @@ export const ElixirOption = styled.div<{ selected?: boolean; locked?: boolean; d
   }
 `;
 
-const MAIN_SECTION_HEIGHT_PERCENT = 77;
 export const MainSection = styled.div<{ hideBackgroundImage: boolean }>`
   position: relative;
 
@@ -67,11 +66,15 @@ export const MainSection = styled.div<{ hideBackgroundImage: boolean }>`
   left: 0;
 
   width: 100%;
-  height: ${MAIN_SECTION_HEIGHT_PERCENT}%;
+  height: 77%;
 
   background: ${({ hideBackgroundImage }) => (hideBackgroundImage ? '#333333' : `url('image/background.webp')`)};
   background-size: cover;
   background-position: center center;
+
+  ${MEDIA_PC} {
+    height: 73%;
+  }
 `;
 
 export const DescriptionSection = styled.div`
