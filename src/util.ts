@@ -197,13 +197,8 @@ export function createOptionInstanceBody(option: Option): OptionInstanceBody {
   };
 }
 
-export function extractOptionDefaultProps(option: OptionInstance): Option {
-  return {
-    name: option.name,
-    type: option.type,
-    part: option.part,
-    odds: option.odds,
-  };
+export function extractOptionDefaultProps({ id, name, type, part, odds }: OptionInstance): Option {
+  return { id, name, type, part, odds };
 }
 
 interface ApplyAdviceProps {
