@@ -29,11 +29,13 @@ function FixRefineModalContent() {
     <div className="rounded-[16px] bg-black/70 p-2 flex flex-col items-center gap-2">
       <div className="text-yellow-500">다음 원하는 정제 효과를 선택하세요</div>
       <div className=" grid grid-cols-3 gap-1 h-[80vw] overflow-y-auto w-max">
-        {OPTIONS.map(({ id, name, part }) => {
+        {OPTIONS.sort((a, b) => {
+          return getFullName(a) < getFullName(b) ? -1 : getFullName(a) > getFullName(b) ? 1 : 0;
+        }).map(({ id, name, type, part }) => {
           const disabled = !!options.find((selected) => selected.id === id || (part && selected.part === part)); // @TODO: ID로 찾기
           return (
             <button key={name} className={twClsx('py-2 px-2 bg-slate-900 rounded-sm text-center whitespace-nowrap text-sm', disabled && 'brightness-50')} disabled={disabled} onClick={() => handleClick(id)}>
-              <div className="text-yellow-500">{name}</div>
+              <div className="text-yellow-500">{getFullName({ name, type })}</div>
               <div className="text-white text-xs">{`(${part ? `${part} 전용` : '공용'})`}</div>
             </button>
           );
@@ -42,3 +44,8 @@ function FixRefineModalContent() {
     </div>
   );
 }
+
+const getFullName = ({ name, type }: { name: string; type?: string }) => {
+  if (!type) return name;
+  return `${name} (${type})`;
+};

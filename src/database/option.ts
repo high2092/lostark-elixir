@@ -50,4 +50,4 @@ const _OPTIONS: Omit<Option, 'id'>[] = [
   { name: '회피의 달인', odds: 7.5 },
 ];
 
-export const OPTIONS: Option[] = _OPTIONS.map((option, i) => ({ ...option, id: i }));
+export const OPTIONS: Option[] = _OPTIONS.map((option, i) => ({ ...option, id: i + 1 }));
