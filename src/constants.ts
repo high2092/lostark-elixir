@@ -21,12 +21,12 @@ export const SageTypes = {
   [SageTypesTypes.CHAOS]: {
     displayName: '혼돈',
     fullStack: 6,
-    color: 'purple',
+    color: '#a855f7',
   },
   [SageTypesTypes.ORDER]: {
     displayName: '질서',
     fullStack: 3,
-    color: 'blue',
+    color: '#3b82f6',
   },
 };
 
@@ -51,7 +51,7 @@ export const Placeholders: Placeholders = {
   하겠네2: '?{하겠네2}',
 };
 
-export const SAGE_TYPE_STACK_SIZE = '1.4vw';
+export const SAGE_TYPE_STACK_SIZE = '1.8vw';
 export const STACK_COUNTER_EXPECTED_HEIGHT = '3vw';
 
 export const DEFAULT_ADVICE_REROLL_CHANCE = 2;

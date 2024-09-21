@@ -1,13 +1,16 @@
 import styled from '@emotion/styled';
 
-export const SageTypeStackCounter = styled.div<{ blank?: boolean }>`
-  padding: 0.5vw;
+const GAP = '0.6vw';
 
-  ${({ blank }) => (!blank ? `background-color: rgba(255, 255, 255, 0.2)` : '')};
+export const SageTypeStackCounter = styled.div<{ blank?: boolean }>`
+  padding: ${GAP};
+  margin-bottom: 4px;
+
+  ${({ blank }) => (!blank ? `background-color: rgba(0, 0, 0, 0.3)` : '')};
 
   border-radius: 1rem;
 
   display: flex;
   align-items: center;
-  gap: 0.5vw;
+  gap: ${GAP};
 `;
