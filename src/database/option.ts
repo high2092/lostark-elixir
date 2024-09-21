@@ -1,6 +1,6 @@
 import { Option } from '../type/option';
 
-export const OPTIONS: Option[] = [
+const _OPTIONS: Omit<Option, 'id'>[] = [
   { name: '강맹', type: '질서', part: '투구', odds: 0.555555555555555 },
   { name: '달인', type: '질서', part: '투구', odds: 0.555555555555555 },
   { name: '선각자', type: '질서', part: '투구', odds: 0.555555555555555 },
@@ -49,3 +49,5 @@ export const OPTIONS: Option[] = [
   { name: '폭발물 달인', odds: 7.5 },
   { name: '회피의 달인', odds: 7.5 },
 ];
+
+export const OPTIONS: Option[] = _OPTIONS.map((option, i) => ({ ...option, id: i }));

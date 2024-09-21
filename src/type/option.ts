@@ -1,6 +1,7 @@
 export type OptionType = '혼돈' | '질서';
 
 export interface Option {
+  id: number;
   name: string;
   type?: OptionType;
   part?: '투구' | '상의' | '하의' | '어깨' | '장갑';
