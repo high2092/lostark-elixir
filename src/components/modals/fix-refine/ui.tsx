@@ -26,7 +26,7 @@ function FixRefineModalContent() {
   };
 
   return (
-    <div className="rounded-[16px] bg-black/70 p-2 flex flex-col items-center gap-2">
+    <div className="rounded-[16px] bg-black/75 p-2 flex flex-col items-center gap-2">
       <div className="text-yellow-500">다음 원하는 정제 효과를 선택하세요</div>
       <div className=" grid grid-cols-3 gap-1 h-[60vh] overflow-y-auto w-max">
         {OPTIONS.sort((a, b) => {
