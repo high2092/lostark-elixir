@@ -115,6 +115,9 @@ const Home = () => {
   }, [alchemyStatus]);
 
   useEffect(() => {
+    if (options.length === 4) {
+      dispatch(openModal({ type: ModalTypes.FIX_REFINE }));
+    }
     setStatusTextTimeout();
   }, [options]);
 
