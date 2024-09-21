@@ -44,7 +44,7 @@ export const PatchDetail = styled.div`
 export const PatchDetailTime = styled.div`
   padding-right: 1rem;
 
-  width: 4.2rem;
+  width: 5.2rem;
 
   display: flex;
   justify-content: space-between;
