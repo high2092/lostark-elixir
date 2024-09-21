@@ -4,10 +4,10 @@ import { OptionInstance } from '../type/option';
 import { createOptionInstanceBody, gacha } from '../util';
 
 class OptionService {
-  options: OptionInstance[] = OPTIONS.map((option) => ({ ...createOptionInstanceBody(option), id: option.id }));
+  options: OptionInstance[] = OPTIONS.map((option) => ({ ...createOptionInstanceBody(option) }));
 
   reset() {
-    this.options = OPTIONS.map((option, idx) => ({ ...createOptionInstanceBody(option), id: idx }));
+    this.options = OPTIONS.map((option) => ({ ...createOptionInstanceBody(option) }));
   }
 
   drawOptions() {
