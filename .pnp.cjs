@@ -35,6 +35,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/react", "npm:18.2.0"],\
             ["@vercel/analytics", "npm:1.0.1"],\
             ["autoprefixer", "virtual:f72184d88f6f99d4574aad8a074bd84266784d1e9f4dedb5e47b294dcafd6c1f1918580966e642ee50ceb880a10ab12fdcdaed4a84049c963de0b13f14eed70e#npm:10.4.20"],\
+            ["clsx", "npm:2.1.1"],\
             ["next", "virtual:f72184d88f6f99d4574aad8a074bd84266784d1e9f4dedb5e47b294dcafd6c1f1918580966e642ee50ceb880a10ab12fdcdaed4a84049c963de0b13f14eed70e#npm:13.3.1"],\
             ["next-pwa", "virtual:f72184d88f6f99d4574aad8a074bd84266784d1e9f4dedb5e47b294dcafd6c1f1918580966e642ee50ceb880a10ab12fdcdaed4a84049c963de0b13f14eed70e#npm:5.6.0"],\
             ["postcss", "npm:8.4.47"],\
@@ -43,6 +44,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react-dom", "virtual:f72184d88f6f99d4574aad8a074bd84266784d1e9f4dedb5e47b294dcafd6c1f1918580966e642ee50ceb880a10ab12fdcdaed4a84049c963de0b13f14eed70e#npm:18.2.0"],\
             ["react-redux", "virtual:f72184d88f6f99d4574aad8a074bd84266784d1e9f4dedb5e47b294dcafd6c1f1918580966e642ee50ceb880a10ab12fdcdaed4a84049c963de0b13f14eed70e#npm:8.0.5"],\
             ["react-youtube", "virtual:f72184d88f6f99d4574aad8a074bd84266784d1e9f4dedb5e47b294dcafd6c1f1918580966e642ee50ceb880a10ab12fdcdaed4a84049c963de0b13f14eed70e#npm:10.1.0"],\
+            ["tailwind-merge", "npm:2.5.2"],\
+            ["tailwind-scrollbar-hide", "npm:1.1.7"],\
             ["tailwindcss", "npm:3.4.12"],\
             ["terser-webpack-plugin", "virtual:f72184d88f6f99d4574aad8a074bd84266784d1e9f4dedb5e47b294dcafd6c1f1918580966e642ee50ceb880a10ab12fdcdaed4a84049c963de0b13f14eed70e#npm:5.3.7"],\
             ["typescript", "patch:typescript@npm%3A5.0.4#~builtin<compat/typescript>::version=5.0.4&hash=85af82"],\
@@ -3820,6 +3823,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["clsx", [\
+        ["npm:2.1.1", {\
+          "packageLocation": "./.yarn/cache/clsx-npm-2.1.1-96125b98be-acd3e1ab9d.zip/node_modules/clsx/",\
+          "packageDependencies": [\
+            ["clsx", "npm:2.1.1"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["color-convert", [\
         ["npm:1.9.3", {\
           "packageLocation": "./.yarn/cache/color-convert-npm-1.9.3-1fe690075e-fd7a64a17c.zip/node_modules/color-convert/",\
@@ -5552,6 +5564,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/react", "npm:18.2.0"],\
             ["@vercel/analytics", "npm:1.0.1"],\
             ["autoprefixer", "virtual:f72184d88f6f99d4574aad8a074bd84266784d1e9f4dedb5e47b294dcafd6c1f1918580966e642ee50ceb880a10ab12fdcdaed4a84049c963de0b13f14eed70e#npm:10.4.20"],\
+            ["clsx", "npm:2.1.1"],\
             ["next", "virtual:f72184d88f6f99d4574aad8a074bd84266784d1e9f4dedb5e47b294dcafd6c1f1918580966e642ee50ceb880a10ab12fdcdaed4a84049c963de0b13f14eed70e#npm:13.3.1"],\
             ["next-pwa", "virtual:f72184d88f6f99d4574aad8a074bd84266784d1e9f4dedb5e47b294dcafd6c1f1918580966e642ee50ceb880a10ab12fdcdaed4a84049c963de0b13f14eed70e#npm:5.6.0"],\
             ["postcss", "npm:8.4.47"],\
@@ -5560,6 +5573,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react-dom", "virtual:f72184d88f6f99d4574aad8a074bd84266784d1e9f4dedb5e47b294dcafd6c1f1918580966e642ee50ceb880a10ab12fdcdaed4a84049c963de0b13f14eed70e#npm:18.2.0"],\
             ["react-redux", "virtual:f72184d88f6f99d4574aad8a074bd84266784d1e9f4dedb5e47b294dcafd6c1f1918580966e642ee50ceb880a10ab12fdcdaed4a84049c963de0b13f14eed70e#npm:8.0.5"],\
             ["react-youtube", "virtual:f72184d88f6f99d4574aad8a074bd84266784d1e9f4dedb5e47b294dcafd6c1f1918580966e642ee50ceb880a10ab12fdcdaed4a84049c963de0b13f14eed70e#npm:10.1.0"],\
+            ["tailwind-merge", "npm:2.5.2"],\
+            ["tailwind-scrollbar-hide", "npm:1.1.7"],\
             ["tailwindcss", "npm:3.4.12"],\
             ["terser-webpack-plugin", "virtual:f72184d88f6f99d4574aad8a074bd84266784d1e9f4dedb5e47b294dcafd6c1f1918580966e642ee50ceb880a10ab12fdcdaed4a84049c963de0b13f14eed70e#npm:5.3.7"],\
             ["typescript", "patch:typescript@npm%3A5.0.4#~builtin<compat/typescript>::version=5.0.4&hash=85af82"],\
@@ -7443,6 +7458,24 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/supports-preserve-symlinks-flag-npm-1.0.0-f17c4d0028-53b1e247e6.zip/node_modules/supports-preserve-symlinks-flag/",\
           "packageDependencies": [\
             ["supports-preserve-symlinks-flag", "npm:1.0.0"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["tailwind-merge", [\
+        ["npm:2.5.2", {\
+          "packageLocation": "./.yarn/cache/tailwind-merge-npm-2.5.2-dc41943d9c-af745fc162.zip/node_modules/tailwind-merge/",\
+          "packageDependencies": [\
+            ["tailwind-merge", "npm:2.5.2"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["tailwind-scrollbar-hide", [\
+        ["npm:1.1.7", {\
+          "packageLocation": "./.yarn/cache/tailwind-scrollbar-hide-npm-1.1.7-537baa5b75-2434a1db7a.zip/node_modules/tailwind-scrollbar-hide/",\
+          "packageDependencies": [\
+            ["tailwind-scrollbar-hide", "npm:1.1.7"]\
           ],\
           "linkType": "HARD"\
         }]\
