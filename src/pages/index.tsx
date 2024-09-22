@@ -210,49 +210,47 @@ const Home = () => {
         <AdviceSection />
       </S.MainSection>
       <S.DescriptionSection>
-        <S.DescriptionSSection>
+        <div className="grow w-full flex flex-col justify-center">
           {alchemyStatus === AlchemyStatuses.ADVICE ? (
-            <div style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+            <div className="grow flex flex-col justify-center items-center">
               <div>{`위 항목에서 현자의 조언을 선택해주세요`}</div>
               <div>{`(선택 후 결정 완료 시 취소 불가)`}</div>
             </div>
           ) : (
-            <>
-              <S.MaterialSectionText>{alchemyStatus === AlchemyStatuses.REFINE ? REFINE_DESCRIPTION_TEXT : ''}</S.MaterialSectionText>
-              <S.MaterialInfo>
-                <S.MaterialInfoSubSection>
-                  <div style={{ flex: 1, textAlign: 'left' }}>필요 재료</div>
-                  <div style={{ flex: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div style={{ display: 'flex', alignItems: 'center' }}>
-                      <img style={{ width: '30px', height: '30px', background: '#0b2447' }} src="image/material.png" />
-                      <div>안정된 연성 촉매</div>
-                    </div>
-                    <div>{`${INITIAL_MATERIAL.CATALYST - usedCatalyst}/${COST_PER_ALCHEMY.CATALYST}`}</div>
+            <div className="flex flex-col items-center grow">
+              <div className="flex justify-between w-full md:w-3/5 m-auto">
+                <div className="flex flex-col items-center justify-between flex-1 px-4 gap-2">
+                  <div className="text-left w-full">필요 재료</div>
+                  <div className="grow w-full flex items-center justify-between gap-1">
+                    <img className="w-7 h-7 bg-[#0b2447]" src="image/material.png" />
+                    <div className="whitespace-nowrap">안정된 연성 촉매</div> <div>{`${INITIAL_MATERIAL.CATALYST - usedCatalyst}/${COST_PER_ALCHEMY.CATALYST}`}</div>
                   </div>
-                </S.MaterialInfoSubSection>
-                <S.VerticalRule height="4rem" />
-                <S.MaterialInfoSubSection>
-                  <div style={{ flex: 1, textAlign: 'left' }}>필요 비용</div>
-                  <div style={{ flex: 4, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                    <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between' }}>
+                </div>
+                <div className="border-r-[1px] border-black" />
+                <div className="flex flex-col justify-between flex-1 px-4 gap-2">
+                  <div className="text-left">필요 비용</div>
+                  <div>
+                    <div className="flex justify-between">
                       <div>정제 비용</div>
                       <Gold amount={goldCost} />
                     </div>
-                    <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between' }}>
+                    <div className="flex justify-between">
                       <div>소지 금액</div>
                       <Gold amount={INITIAL_MATERIAL.GOLD - usedGold} />
                     </div>
                   </div>
-                </S.MaterialInfoSubSection>
-              </S.MaterialInfo>
-            </>
+                </div>
+              </div>
+            </div>
           )}
-        </S.DescriptionSSection>
+        </div>
 
-        <div>{`연성 ${alchemyChance}회 가능`}</div>
-        <S.RefineButton onClick={handleRefineButtonClick} disabled={getDisabled()}>
-          {ButtonTexts[alchemyStatus]}
-        </S.RefineButton>
+        <div className="text-center">
+          <div>{`연성 ${alchemyChance}회 가능`}</div>
+          <S.RefineButton onClick={handleRefineButtonClick} disabled={getDisabled()}>
+            {ButtonTexts[alchemyStatus]}
+          </S.RefineButton>
+        </div>
       </S.DescriptionSection>
       <LeftTopSection />
       {tutorialIndex < TUTORIALS.length && <S.FirstVisitHelpText>{TutorialTexts[TUTORIALS[tutorialIndex]]}</S.FirstVisitHelpText>}
