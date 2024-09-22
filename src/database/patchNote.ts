@@ -9,6 +9,7 @@ export interface Patch {
 }
 
 export const PATCH_NOTE: Patch[] = [
+  { date: '2024-09-23', details: [{ time: '03:20', description: '조언 확률이 업데이트되었습니다.' }] },
   { date: '2024-09-21', details: [{ time: '16:20', description: '마지막 슬롯 정제 효과를 선택할 수 있는 기능이 반영되었습니다.' }] },
   { date: '2024-09-21', details: [{ time: '07:31', description: '좌측 상단 아이콘 UI가 개선되었습니다.' }] },
   {
