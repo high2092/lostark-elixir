@@ -37,7 +37,7 @@ const PWAHelpModalContent = ({ type, length }: PWAHelpModalContentProps) => {
 
   return (
     <S.PWAHelpModal>
-      <div>
+      <div className="w-max">
         <S.Image src={`/image/pwa-help/${type}/${step}.${ext}`} />
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           {step > 1 ? (
