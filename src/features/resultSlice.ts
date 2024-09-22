@@ -3,7 +3,7 @@ import { Option, OptionInstance, OptionResult } from '../type/option';
 import { COST_PER_ALCHEMY } from '../constants';
 import { extractOptionDefaultProps } from '../util';
 
-interface Elixir {
+export interface Elixir {
   options: OptionResult[];
 }
 

@@ -1,10 +1,10 @@
 import { useAppSelector } from '../store';
 import { ModalType, ModalTypes } from '../type/common';
-import { InventoryModal } from './InventoryModal';
 import { PWAHelpModal } from './PWAHelpModal';
 import { PatchNoteModal } from './PatchNoteModal';
 import { SettingModal } from './SettingModal';
 import { FixRefineModal } from './modals/fix-refine/ui';
+import { InventoryModal } from './modals/inventory/ui';
 
 type ModalComponents = {
   [key in ModalType]: (...params: any[]) => JSX.Element;
